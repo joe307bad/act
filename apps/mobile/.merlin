@@ -1,0 +1,12 @@
+####{BSB GENERATED: NO EDIT
+FLG -ppx '/Users/jbadaczewski/.config/yarn/global/node_modules/bs-platform/darwin/bsc.exe -as-ppx -bs-jsx 3'
+S /Users/jbadaczewski/.config/yarn/global/node_modules/bs-platform/lib/ocaml
+B /Users/jbadaczewski/.config/yarn/global/node_modules/bs-platform/lib/ocaml
+FLG -w +a-4-9-20-40-41-42-50-61-102
+S /Users/jbadaczewski/Source/other/act/node_modules/@rescript/react/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/@rescript/react/lib/ocaml
+S /Users/jbadaczewski/Source/other/act/node_modules/rescript-react-native/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/rescript-react-native/lib/ocaml
+S re
+B lib/bs/re
+####BSB GENERATED: NO EDIT}

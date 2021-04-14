@@ -1,0 +1,19 @@
+{
+  "name": "Mobile",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "re:clean": "bsb -clean-world",
+    "re:watch": "bsb -clean-world -make-world -w",
+    "re:build": "bsb -clean-world -make-world"
+  },
+  "dependencies": {
+    "react-native": "*",
+    "react": "*",
+    "@testing-library/react-native": "*",
+    "rxjs": "*",
+    "@nozbe/watermelondb": "*",
+    "@nozbe/with-observables": "*",
+    "@testing-library/jest-native": "*"
+  }
+}
