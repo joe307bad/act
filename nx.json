@@ -1,15 +1,19 @@
 {
-  "npmScope": "act",
-  "affected": { "defaultBase": "master" },
   "implicitDependencies": {
     "package.json": { "dependencies": "*", "devDependencies": "*" },
     ".eslintrc.json": "*"
   },
+  "affected": { "defaultBase": "master" },
+  "npmScope": "act",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
     }
   },
-  "projects": { "mobile": { "tags": [] }, "data": { "tags": [] } }
+  "projects": {
+    "mobile": { "tags": [] },
+    "data": { "tags": [] },
+    "api": { "tags": [] }
+  }
 }
