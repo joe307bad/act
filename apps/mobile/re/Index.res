@@ -1,7 +1,7 @@
 open ReactNative
 
 @module("@act/data")
-external insertPost: ReactNative.Event.pressEvent => unit = "foo"
+external insertPost: ReactNative.Event.pressEvent => unit = "insertPost"
 
 type post = {
   id: int,
