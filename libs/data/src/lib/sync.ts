@@ -17,6 +17,9 @@ async function sync() {
     pushChanges: async ({ changes, lastPulledAt }) => {
       const response = await fetch(`http://localhost:3333/api/sync?last_pulled_at=${lastPulledAt}`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(changes)
       })
       if (!response.ok) {
