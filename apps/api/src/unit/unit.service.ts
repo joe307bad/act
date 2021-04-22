@@ -16,9 +16,7 @@ export class UnitsService {
     return this.unitRepo.list();
   }
 
-  create(): Promise<DocumentInsertResponse> {
-    const types = ['achievement', 'checkin'];
-    const randomType = types[Math.floor(Math.random() * types.length)];
-    return this.unitRepo.insert({type: randomType as UnitType})
+  create(unit: any): Promise<DocumentInsertResponse> {
+    return this.unitRepo.insert(unit)
   }
 }
