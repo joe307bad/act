@@ -1,8 +1,10 @@
 import { Controller, Get, Query, Post, Req, Body } from '@nestjs/common';
-import { UnitsService } from '../unit/unit.service';
+import { UnitsService, UnitType } from '../unit/unit.service';
 import { SyncDatabaseChangeSet } from '@nozbe/watermelondb/sync';
 
 import { AppService } from './app.service';
+
+type Changes = { [key in UnitType]: any };
 
 @Controller()
 export class AppController {
@@ -17,11 +19,27 @@ export class AppController {
   }
 
   @Get("/sync")
-  pullChanges(@Query() query: Record<string, any>) {
+  async pullChanges(@Query() query: Record<string, any>) {
     const { last_pulled_at, migration, schema_version } = query;
+
+    const changes = await Object.keys(UnitType).reduce<Promise<Changes>>(async (acc, unitType) => {
+      const a = await acc;
+      a[unitType] = {
+        // TODO un-harcode timestamp -> null on "first sync"
+        created: await this.unitService.getCreatedAfterTimestamp(unitType as UnitType, 1619405191),
+        updated: [],
+        deleted: []
+      };
+
+      return a;
+    }, Promise.resolve({} as Changes));
+
+    delete changes.achievement;
+    delete changes.checkin;
+
     return {
-      changes: {},
-      timestamp: 10000
+      changes,
+      timestamp: last_pulled_at === "null" ? Date.now() : last_pulled_at
     };
   }
 

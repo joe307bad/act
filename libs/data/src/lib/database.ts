@@ -16,6 +16,7 @@ const schema = appSchema({
                 { name: 'subtitle', type: 'string', isOptional: true },
                 { name: 'body', type: 'string' },
                 { name: 'is_pinned', type: 'boolean' },
+                { name: 'created', type: 'number' },
             ]
         }),
         tableSchema({
@@ -36,6 +37,7 @@ const adapter = new SQLiteAdapter({
 export default class Post extends Model {
     static table = 'posts'
     @field('title') title: string;
+    @field('created') created: number;
 }
 
 const database = new Database({

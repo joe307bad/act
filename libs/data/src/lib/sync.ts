@@ -5,7 +5,7 @@ async function sync() {
   await synchronize({
     database,
     pullChanges: async ({ lastPulledAt, schemaVersion, migration }) => {
-      const urlParams = `last_pulled_at=${lastPulledAt}&schema_version=${schemaVersion}&migration=${encodeURIComponent(JSON.stringify(migration))}`
+      const urlParams = `last_pulled_at=${null}&schema_version=${schemaVersion}&migration=${encodeURIComponent(JSON.stringify(migration))}`
       const response = await fetch(`http://localhost:3333/api/sync?${urlParams}`)
       if (!response.ok) {
         throw new Error(await response.text())
