@@ -1,7 +1,7 @@
 open ReactNative
 
-@module("@act/data")
-external insertPost: ReactNative.Event.pressEvent => unit = "insertPost"
+// @module("@act/data")
+// external insertPost: ReactNative.Event.pressEvent => unit = "insertPost"
 
 type post = {
   id: int,
@@ -9,7 +9,7 @@ type post = {
 }
 
 @react.component
-let make = (~allPosts: array<post>) => {
+let make = (~allPosts: array<post>, ~insertPost: ReactNative.Event.pressEvent => unit) => {
   <View>
     <Button title="Add Post" onPress={insertPost} />
     <FlatList

@@ -1,12 +1,11 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb'
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite'
-import { Database } from '@nozbe/watermelondb'
 import { field } from '@nozbe/watermelondb/decorators'
 
 import { Model } from '@nozbe/watermelondb'
 import { schemaMigrations } from '@nozbe/watermelondb/Schema/migrations'
 
-const schema = appSchema({
+export const schema = appSchema({
     version: 1,
     tables: [
         tableSchema({
@@ -29,23 +28,8 @@ const schema = appSchema({
     ]
 })
 
-const adapter = new SQLiteAdapter({
-    schema,
-    migrations: schemaMigrations({ migrations: [] })
-})
-
 export default class Post extends Model {
     static table = 'posts'
     @field('title') title: string;
     @field('created') created: number;
 }
-
-const database = new Database({
-    adapter,
-    modelClasses: [Post],
-    actionsEnabled: true,
-})
-
-const postsCollection = database.collections.get<Post>('posts')
-
-export { database, postsCollection };

@@ -3,5 +3,6 @@ module.exports = {
     '<rootDir>/apps/mobile',
     '<rootDir>/libs/data',
     '<rootDir>/apps/api',
+    '<rootDir>/apps/web',
   ],
 };

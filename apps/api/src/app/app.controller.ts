@@ -21,12 +21,12 @@ export class AppController {
   @Get("/sync")
   async pullChanges(@Query() query: Record<string, any>) {
     const { last_pulled_at, migration, schema_version } = query;
+    const lastPulledAt = last_pulled_at === "null" ? 0 : Number(last_pulled_at);
 
     const changes = await Object.keys(UnitType).reduce<Promise<Changes>>(async (acc, unitType) => {
       const a = await acc;
       a[unitType] = {
-        // TODO un-harcode timestamp -> null on "first sync"
-        created: await this.unitService.getCreatedAfterTimestamp(unitType as UnitType, 1619405191),
+        created: await this.unitService.getCreatedAfterTimestamp(unitType as UnitType, lastPulledAt),
         updated: [],
         deleted: []
       };
@@ -39,7 +39,7 @@ export class AppController {
 
     return {
       changes,
-      timestamp: last_pulled_at === "null" ? Date.now() : last_pulled_at
+      timestamp: lastPulledAt === 0 ? Date.now() : lastPulledAt
     };
   }
 
@@ -50,6 +50,7 @@ export class AppController {
       for(const changeType in changes[table]) {
         switch(changeType){
           case 'created':
+            // TODO change this to a createMany
             changes[table][changeType].forEach(unit => {
               delete unit._status;
               delete unit._changed;
