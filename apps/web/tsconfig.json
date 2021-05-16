@@ -1,8 +1,16 @@
 {
   "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "lib": ["dom", "esnext"],
+    "jsx": "react",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
   "files": [],
   "include": [],
-  "jsxFactory": "h",
   "references": [
     {
       "path": "./tsconfig.app.json"
@@ -10,5 +18,6 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ]
+  ],
+  "exclude": ["node_modules"]
 }
