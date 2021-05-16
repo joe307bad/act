@@ -1,32 +1,72 @@
 {
-  "root": true,
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
-          "error",
-          {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
-            ]
-          }
-        ]
+  "extends": ["airbnb", "prettier"],
+  "plugins": ["react", "import", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "useJSXTextNode": true,
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": "./"
+  },
+  "env": {
+    "es6": true,
+    "node": true,
+    "jest": true
+  },
+  "rules": {
+    "react/require-default-props": ["warn", {
+      "ignoreFunctionalComponents": true
+    }],
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-use-before-define": ["off"],
+    "react/jsx-props-no-spreading": "off",
+    "no-extra-boolean-cast": "off",
+    "comma-dangle": ["error", "never"],
+    "complexity": [
+      "warn",
+      {
+        "max": 5
       }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
-      "rules": {}
+    ],
+    "max-depth": [
+      "error",
+      {
+        "max": 2
+      }
+    ],
+    "max-params": ["off"],
+    "import/extensions": ["off"],
+    "import/no-extraneous-dependencies": ["off"],
+    "import/prefer-default-export": 0,
+    "react/jsx-filename-extension": 0,
+    "react/no-array-index-key": 0,
+    "react/destructuring-assignment": 0,
+    "global-require": 0,
+    "prettier/prettier": [
+      "error",
+      { "singleQuote": true }
+    ],
+    "@typescript-eslint/no-unused-vars":  [
+      "warn",
+      {
+        "args": "all",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/switch-exhaustiveness-check": ["error"]
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {},
+      "node": {
+        "extensions": [".js", ".ios.js", ".android.js", ".ts", ".tsx", ".jsx"]
+      }
     }
-  ]
+  },
+  "globals": {
+    "JSX":"readonly",
+    "__DEV__": true
+  }
 }
