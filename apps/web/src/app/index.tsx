@@ -23,8 +23,6 @@ import withObservables from '@nozbe/with-observables';
 import { sync, Community } from '@act/data';
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 
-let process = { env: {} };
-
 const columns: GridColDef[] = [
   { field: 'name', headerName: 'Title', width: 100 },
   { field: 'created', headerName: 'Created', width: 130 }
