@@ -11,7 +11,7 @@ export const contextBuilder = (adapter: DatabaseAdapter) => {
   });
 
   const communitiesCollection =
-    database.collections.get<Community>('posts');
+    database.collections.get<Community>('communities');
 
   return {
     database,
@@ -22,9 +22,9 @@ export const contextBuilder = (adapter: DatabaseAdapter) => {
         insert: (onComplete?: () => {}) =>
           database
             .action(() =>
-              communitiesCollection.create((post) => {
-                post.name = 'New community';
-                post.created = Date.now();
+              communitiesCollection.create((community) => {
+                community.name = 'New community';
+                community.created = Date.now();
               })
             )
             .then(() => {

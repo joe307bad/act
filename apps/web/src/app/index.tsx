@@ -26,7 +26,7 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 let process = { env: {} };
 
 const columns: GridColDef[] = [
-  { field: 'title', headerName: 'Title', width: 100 },
+  { field: 'name', headerName: 'Title', width: 100 },
   { field: 'created', headerName: 'Created', width: 130 }
 ];
 
@@ -138,7 +138,7 @@ const enhance = compose(
           database.collections
             .get('communities')
             .create((community) => {
-              community.title = 'New community';
+              community.name = 'New community';
               community.created = Date.now();
             })
         );

@@ -18,6 +18,6 @@ export const schema = appSchema({
 
 export class Community extends Model {
   static table = 'communities';
-  @field('community') name: string;
+  @field('name') name: string;
   @field('created') created: number;
 }
