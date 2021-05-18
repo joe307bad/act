@@ -6,49 +6,39 @@ import {
   Req,
   Body
 } from '@nestjs/common';
-import { UnitsService, UnitType } from '../unit/unit.service';
+import { UnitsService } from '../unit/unit.service';
 import { SyncDatabaseChangeSet } from '@nozbe/watermelondb/sync';
-
-import { AppService } from './app.service';
-
-type Changes = { [key in UnitType]: any };
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly unitService: UnitsService
-  ) {}
-
-  @Get()
-  getData() {
-    return this.appService.getData();
-  }
+  constructor(private readonly unitService: UnitsService) {}
 
   @Get('/sync')
-  async pullChanges(@Query() query: Record<string, any>) {
-    const { last_pulled_at, migration, schema_version } = query;
+  async pullChanges(@Query() query: Record<string, string>) {
+    const { last_pulled_at, tables } = query;
     const lastPulledAt =
       last_pulled_at === 'null' ? 0 : Number(last_pulled_at);
 
-    const changes = await Object.keys(UnitType).reduce<
-      Promise<Changes>
-    >(async (acc, unitType) => {
-      const a = await acc;
-      a[unitType] = {
-        created: await this.unitService.getCreatedAfterTimestamp(
-          unitType as UnitType,
-          lastPulledAt
-        ),
-        updated: [],
-        deleted: []
-      };
+    const changes = await tables
+      .split(',')
+      .reduce<any[]>((acc, i) => {
+        acc.push(i.replace(/[^A-Za-z0-9]/g, ''));
+        return acc;
+      }, [])
+      .reduce<Promise<any>>(async (acc, unitType) => {
+        const a = await acc;
+        a[unitType] = {
+          created: await this.unitService.getCreatedAfterTimestamp(
+            unitType,
+            lastPulledAt
+          ),
+          updated: [],
+          deleted: []
+        };
 
-      return a;
-    }, Promise.resolve({} as Changes));
+        return a;
+      }, Promise.resolve({}));
 
-    delete changes.achievement;
-    delete changes.checkin;
     const now = Date.now();
 
     return {

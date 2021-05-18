@@ -1,28 +1,29 @@
 import { DatabaseAdapter } from '@nozbe/watermelondb/adapters/type';
 import Database from '@nozbe/watermelondb/Database';
-import Post from './database';
+import { Community } from './database';
 import { sync } from './sync';
 
 export const contextBuilder = (adapter: DatabaseAdapter) => {
   const database = new Database({
     adapter,
-    modelClasses: [Post],
+    modelClasses: [Community],
     actionsEnabled: true
   });
 
-  const postsCollection = database.collections.get<Post>('posts');
+  const communitiesCollection =
+    database.collections.get<Community>('posts');
 
   return {
     database,
     sync: () => sync(database),
     entities: {
-      posts: {
-        collection: postsCollection,
+      communities: {
+        collection: communitiesCollection,
         insert: (onComplete?: () => {}) =>
           database
             .action(() =>
-              postsCollection.create((post) => {
-                post.title = 'New post';
+              communitiesCollection.create((post) => {
+                post.name = 'New community';
                 post.created = Date.now();
               })
             )

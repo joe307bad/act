@@ -3,7 +3,6 @@ import { CouchDbModule } from 'nest-couchdb';
 import { UnitsModule } from '../unit/unit.module';
 
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -11,11 +10,10 @@ import { AppService } from './app.service';
       url: 'http://localhost:5984',
       username: 'admin',
       userpass: 'password',
-      requestDefaults: { jar: true },
+      requestDefaults: { jar: true }
     }),
     UnitsModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController]
 })
 export class AppModule {}

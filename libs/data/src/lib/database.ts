@@ -4,30 +4,20 @@ import { field } from '@nozbe/watermelondb/decorators';
 import { Model } from '@nozbe/watermelondb';
 
 export const schema = appSchema({
-  version: 1,
+  version: 2,
   tables: [
     tableSchema({
-      name: 'posts',
+      name: 'communities',
       columns: [
-        { name: 'title', type: 'string' },
-        { name: 'subtitle', type: 'string', isOptional: true },
-        { name: 'body', type: 'string' },
-        { name: 'is_pinned', type: 'boolean' },
+        { name: 'name', type: 'string' },
         { name: 'created', type: 'number' }
-      ]
-    }),
-    tableSchema({
-      name: 'comments',
-      columns: [
-        { name: 'body', type: 'string' },
-        { name: 'post_id', type: 'string', isIndexed: true }
       ]
     })
   ]
 });
 
-export default class Post extends Model {
-  static table = 'posts';
-  @field('title') title: string;
+export class Community extends Model {
+  static table = 'communities';
+  @field('community') name: string;
   @field('created') created: number;
 }

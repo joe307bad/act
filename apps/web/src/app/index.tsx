@@ -17,21 +17,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import LocationCity from '@material-ui/icons/LocationCity';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import {
-  DataGrid,
-  GridColDef,
-  GridValueGetterParams
-} from '@material-ui/data-grid';
-import {
-  compose,
-  withPropsOnChange,
-  withHandlers,
-  withStateHandlers
-} from 'recompose';
+import { DataGrid, GridColDef } from '@material-ui/data-grid';
+import { compose, withHandlers } from 'recompose';
 import withObservables from '@nozbe/with-observables';
+import { sync, Community } from '@act/data';
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
-import Post from 'libs/data/src/lib/database';
-import { sync } from '@act/data';
 
 let process = { env: {} };
 
@@ -85,9 +75,14 @@ const App = ({ allPosts, insertPost, sync }) => {
             startIcon={<AddIcon />}
             onClick={insertPost}
           >
-            Add Post
+            Add Commmunity
           </Button>
-          <Button variant="contained" color="default" onClick={sync}>
+          <Button
+            style={{ marginLeft: 10 }}
+            variant="contained"
+            color="default"
+            onClick={sync}
+          >
             Sync
           </Button>
         </Toolbar>
@@ -128,10 +123,11 @@ const App = ({ allPosts, insertPost, sync }) => {
 };
 
 const enhance = compose(
-  withObservables(['post'], ({ database }) => {
-    const posts = database.collections.get<Post>('posts');
+  withObservables(['community'], ({ database }) => {
+    const communities =
+      database.collections.get<Community>('communities');
     return {
-      allPosts: posts.query()
+      allPosts: communities.query()
     };
   }),
   withHandlers({
@@ -139,17 +135,18 @@ const enhance = compose(
       ({ database }) =>
       async () => {
         await database.action(() =>
-          database.collections.get<Post>('posts').create((post) => {
-            post.title = 'New post';
-            post.created = Date.now();
-          })
+          database.collections
+            .get('communities')
+            .create((community) => {
+              community.title = 'New community';
+              community.created = Date.now();
+            })
         );
       },
     sync:
       ({ database }) =>
-      async () => {
-        await sync(database);
-      }
+      () =>
+        sync(database)
   })
 );
 

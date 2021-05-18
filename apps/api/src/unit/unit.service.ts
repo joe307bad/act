@@ -3,14 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from 'nest-couchdb';
 import { Unit } from './unit.entity';
 
-//type UnitType = 'achievement' | 'checkin' | 'posts';
-
-export enum UnitType {
-  achievement = 'achievement',
-  checkin = 'checkin',
-  posts = 'posts'
-}
-
 @Injectable()
 export class UnitsService {
   constructor(
@@ -22,11 +14,11 @@ export class UnitsService {
     return this.unitRepo.list();
   }
 
-  getAllByType(type: UnitType) {
+  getAllByType(type: string) {
     return this.unitRepo.find({ selector: { type: { $eq: type } } });
   }
 
-  getCreatedAfterTimestamp(type: UnitType, timestamp: number) {
+  getCreatedAfterTimestamp(type: string, timestamp: number) {
     return this.unitRepo
       .find({
         selector: { type: { $eq: type }, created: { $gt: timestamp } }
