@@ -9,8 +9,9 @@
       "request": "launch",
       "name": "Debug launcher",
       "protocol": "inspector",
+      "preLaunchTask": "tsc: build - apps/api/tsconfig.json",
       "program": "${workspaceFolder}/apps/api/src/main.ts",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "outFiles": ["${workspaceFolder}/dist/apps/api/**/*.js"],
       "sourceMaps": true,
       "console": "integratedTerminal"
     }

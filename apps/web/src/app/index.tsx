@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const useCommunities = (database) => {
   const c = database.collections.get('communities');
   return {
-    observe: () => c.query().observe(),
+    observe: () => c.query().observeWithColumns(['name']),
     insert: async () => {
       await database.action(() =>
         c.create((community) => {
@@ -88,6 +88,7 @@ const useCommunities = (database) => {
         const communityToEdit = await c.find(id);
         await communityToEdit.update((community) => {
           community.name = name;
+          community.updated = Date.now();
         });
       });
     }

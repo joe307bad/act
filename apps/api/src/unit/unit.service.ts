@@ -48,8 +48,8 @@ export class UnitsService {
       .find({
         selector: {
           type: { $eq: type },
+          _id: { $nin: c },
           updated: { $gt: timestamp }
-          //_id: { $nin: c }
         }
       })
       .then((response) =>
