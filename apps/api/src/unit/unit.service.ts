@@ -21,7 +21,10 @@ export class UnitsService {
   getCreatedAfterTimestamp(type: string, timestamp: number) {
     return this.unitRepo
       .find({
-        selector: { type: { $eq: type }, created: { $gt: timestamp } }
+        selector: {
+          type: { $eq: type },
+          created: { $gt: timestamp }
+        }
       })
       .then((response) =>
         response.docs.map((d) => {
@@ -35,7 +38,43 @@ export class UnitsService {
       );
   }
 
+  async getUpdatedAfterTimestamp(
+    type: string,
+    timestamp: number,
+    created: any[]
+  ) {
+    const c = created.map((c) => c.id);
+    const b = await this.unitRepo
+      .find({
+        selector: {
+          type: { $eq: type },
+          updated: { $gt: timestamp }
+          //_id: { $nin: c }
+        }
+      })
+      .then((response) =>
+        response.docs.map((d) => {
+          // @ts-ignore
+          d.id = d._id;
+          delete d._id;
+          delete d._rev;
+          delete d.type;
+          return d;
+        })
+      );
+
+    return b;
+  }
+
   create(unit: any): Promise<DocumentInsertResponse> {
     return this.unitRepo.insert(unit);
+  }
+
+  async update(unit: any): Promise<DocumentInsertResponse> {
+    const existingUnit = await this.unitRepo.get(unit._id);
+    return this.unitRepo.insert({
+      ...unit,
+      ...{ _rev: existingUnit._rev }
+    });
   }
 }

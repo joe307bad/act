@@ -27,12 +27,18 @@ export class AppController {
       }, [])
       .reduce<Promise<any>>(async (acc, unitType) => {
         const a = await acc;
-        a[unitType] = {
-          created: await this.unitService.getCreatedAfterTimestamp(
+        const created =
+          await this.unitService.getCreatedAfterTimestamp(
             unitType,
             lastPulledAt
+          );
+        a[unitType] = {
+          created,
+          updated: await this.unitService.getUpdatedAfterTimestamp(
+            unitType,
+            lastPulledAt,
+            created
           ),
-          updated: [],
           deleted: []
         };
 
@@ -65,6 +71,17 @@ export class AppController {
               delete unit.id;
               this.unitService.create({ type: table, ...unit });
             });
+            break;
+          case 'updated':
+            // TODO change this to a updateMany
+            changes[table][changeType].forEach((unit) => {
+              delete unit._status;
+              delete unit._changed;
+              unit._id = unit.id;
+              delete unit.id;
+              this.unitService.update({ type: table, ...unit });
+            });
+            break;
         }
       }
     }

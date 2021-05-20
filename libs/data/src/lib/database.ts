@@ -10,7 +10,8 @@ export const schema = appSchema({
       name: 'communities',
       columns: [
         { name: 'name', type: 'string' },
-        { name: 'created', type: 'number' }
+        { name: 'created', type: 'number' },
+        { name: 'updated', type: 'number' }
       ]
     })
   ]
@@ -20,4 +21,5 @@ export class Community extends Model {
   static table = 'communities';
   @field('name') name: string;
   @field('created') created: number;
+  @field('updated') updated: number;
 }

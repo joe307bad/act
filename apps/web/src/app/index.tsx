@@ -17,15 +17,30 @@ import ListItemText from '@material-ui/core/ListItemText';
 import LocationCity from '@material-ui/icons/LocationCity';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import { DataGrid, GridColDef } from '@material-ui/data-grid';
+import {
+  DataGrid,
+  GridColDef,
+  GridRowData
+} from '@material-ui/data-grid';
 import { compose, withHandlers } from 'recompose';
 import withObservables from '@nozbe/with-observables';
 import { sync, Community } from '@act/data';
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
+import { useDatabase } from '@nozbe/watermelondb/hooks';
+import { useObservable, useObservableState } from 'observable-hooks';
 
 const columns: GridColDef[] = [
-  { field: 'name', headerName: 'Title', width: 100 },
-  { field: 'created', headerName: 'Created', width: 130 }
+  {
+    field: 'name',
+    editable: true,
+    headerName: 'Name',
+    width: 200
+  },
+  {
+    field: 'created',
+    headerName: 'Created',
+    width: 200
+  }
 ];
 
 const drawerWidth = 240;
@@ -56,8 +71,42 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const App = ({ allPosts, insertPost, sync }) => {
+const useCommunities = (database) => {
+  const c = database.collections.get('communities');
+  return {
+    observe: () => c.query().observe(),
+    insert: async () => {
+      await database.action(() =>
+        c.create((community) => {
+          community.name = 'New community';
+          community.created = Date.now();
+        })
+      );
+    },
+    update: async (id, name) => {
+      await database.action(async () => {
+        const communityToEdit = await c.find(id);
+        await communityToEdit.update((community) => {
+          community.name = name;
+        });
+      });
+    }
+  };
+};
+
+const App = () => {
   const classes = useStyles();
+  const database = useDatabase();
+  const { observe, insert, update } = useCommunities(database);
+  let communities: any[] = useObservableState(
+    useObservable(observe),
+    []
+  );
+
+  const handleEditCellChangeCommitted = React.useCallback(
+    async ({ id, field, props }) => update(id, props.value),
+    [communities]
+  );
 
   return (
     <div className={classes.root}>
@@ -71,7 +120,7 @@ const App = ({ allPosts, insertPost, sync }) => {
             variant="contained"
             color="default"
             startIcon={<AddIcon />}
-            onClick={insertPost}
+            onClick={insert}
           >
             Add Commmunity
           </Button>
@@ -79,7 +128,7 @@ const App = ({ allPosts, insertPost, sync }) => {
             style={{ marginLeft: 10 }}
             variant="contained"
             color="default"
-            onClick={sync}
+            onClick={() => sync(database)}
           >
             Sync
           </Button>
@@ -109,8 +158,10 @@ const App = ({ allPosts, insertPost, sync }) => {
         <div className={classes.toolbar} />
         <div style={{ height: 400, width: '100%' }}>
           <DataGrid
-            rows={allPosts}
+            editMode="client"
+            rows={communities.map((c) => c._raw)}
             columns={columns}
+            onEditCellChangeCommitted={handleEditCellChangeCommitted}
             pageSize={5}
             checkboxSelection
           />
@@ -120,32 +171,4 @@ const App = ({ allPosts, insertPost, sync }) => {
   );
 };
 
-const enhance = compose(
-  withObservables(['community'], ({ database }) => {
-    const communities =
-      database.collections.get<Community>('communities');
-    return {
-      allPosts: communities.query()
-    };
-  }),
-  withHandlers({
-    insertPost:
-      ({ database }) =>
-      async () => {
-        await database.action(() =>
-          database.collections
-            .get('communities')
-            .create((community) => {
-              community.name = 'New community';
-              community.created = Date.now();
-            })
-        );
-      },
-    sync:
-      ({ database }) =>
-      () =>
-        sync(database)
-  })
-);
-
-export default withDatabase(enhance(App));
+export default App;
