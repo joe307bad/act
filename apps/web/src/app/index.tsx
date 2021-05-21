@@ -15,6 +15,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import LocationCity from '@material-ui/icons/LocationCity';
+import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import {
@@ -22,26 +23,45 @@ import {
   GridColDef,
   GridRowData
 } from '@material-ui/data-grid';
-import { compose, withHandlers } from 'recompose';
-import withObservables from '@nozbe/with-observables';
 import { sync, Community } from '@act/data';
-import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 import { useDatabase } from '@nozbe/watermelondb/hooks';
 import { useObservable, useObservableState } from 'observable-hooks';
+import { IconButton } from '@material-ui/core';
 
-const columns: GridColDef[] = [
-  {
-    field: 'name',
-    editable: true,
-    headerName: 'Name',
-    width: 200
-  },
-  {
-    field: 'created',
-    headerName: 'Created',
-    width: 200
-  }
-];
+const columns = (deleteCommunity): GridColDef[] => {
+  return [
+    {
+      field: 'name',
+      editable: true,
+      headerName: 'Name',
+      width: 200
+    },
+    {
+      field: 'created_at',
+      headerName: 'Created',
+      width: 200
+    },
+    {
+      field: '',
+      filterable: false,
+      width: 200,
+      disableColumnMenu: true,
+      sortable: false,
+      disableClickEventBubbling: true,
+      renderCell: ({ id }) => {
+        return (
+          <IconButton
+            onClick={() => deleteCommunity(id)}
+            aria-label="delete"
+            color="secondary"
+          >
+            <DeleteIcon />
+          </IconButton>
+        );
+      }
+    }
+  ];
+};
 
 const drawerWidth = 240;
 
@@ -73,13 +93,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const useCommunities = (database) => {
   const c = database.collections.get('communities');
+  const d = database.collections.get('deleted');
   return {
     observe: () => c.query().observeWithColumns(['name']),
     insert: async () => {
       await database.action(() =>
         c.create((community) => {
           community.name = 'New community';
-          community.created = Date.now();
         })
       );
     },
@@ -88,8 +108,16 @@ const useCommunities = (database) => {
         const communityToEdit = await c.find(id);
         await communityToEdit.update((community) => {
           community.name = name;
-          community.updated = Date.now();
         });
+      });
+    },
+    delete: async (id) => {
+      await database.action(async () => {
+        const communityToDelete = await c.find(id);
+        await d.create((deletedUnit) => {
+          deletedUnit.deletedId = id;
+        });
+        await communityToDelete.markAsDeleted();
       });
     }
   };
@@ -98,7 +126,12 @@ const useCommunities = (database) => {
 const App = () => {
   const classes = useStyles();
   const database = useDatabase();
-  const { observe, insert, update } = useCommunities(database);
+  const {
+    observe,
+    insert,
+    update,
+    delete: d
+  } = useCommunities(database);
   let communities: any[] = useObservableState(
     useObservable(observe),
     []
@@ -161,7 +194,7 @@ const App = () => {
           <DataGrid
             editMode="client"
             rows={communities.map((c) => c._raw)}
-            columns={columns}
+            columns={columns(d)}
             onEditCellChangeCommitted={handleEditCellChangeCommitted}
             pageSize={5}
             checkboxSelection

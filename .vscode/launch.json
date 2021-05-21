@@ -7,7 +7,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug launcher",
+      "name": "Debug API",
       "protocol": "inspector",
       "preLaunchTask": "tsc: build - apps/api/tsconfig.json",
       "program": "${workspaceFolder}/apps/api/src/main.ts",

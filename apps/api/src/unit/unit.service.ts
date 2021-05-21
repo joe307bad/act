@@ -2,6 +2,7 @@ import { DocumentInsertResponse, DocumentListResponse } from 'nano';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository, Repository } from 'nest-couchdb';
 import { Unit } from './unit.entity';
+import { DirtyRaw } from '@nozbe/watermelondb';
 
 @Injectable()
 export class UnitsService {
@@ -18,12 +19,59 @@ export class UnitsService {
     return this.unitRepo.find({ selector: { type: { $eq: type } } });
   }
 
+  findById(id: string): Promise<DirtyRaw> {
+    return this.unitRepo
+      .find({ selector: { _id: { $eq: id } } })
+      .then((response) => response[0]);
+  }
+
   getCreatedAfterTimestamp(type: string, timestamp: number) {
     return this.unitRepo
       .find({
         selector: {
           type: { $eq: type },
-          created: { $gt: timestamp }
+          created_at: { $gt: timestamp },
+          deleted: { $or: [{ $eq: false }, { $exists: false }] }
+        }
+      })
+      .then((response) =>
+        response.docs.map((d) => {
+          // @ts-ignore
+          d.id = d._id;
+          delete d._id;
+          delete d._rev;
+          delete d.type;
+          return d;
+        })
+      );
+  }
+
+  getDeletedByType(type: string) {
+    return this.unitRepo
+      .find({
+        selector: {
+          type: { $eq: type },
+          deleted: { $eq: true }
+        }
+      })
+      .then((response) =>
+        response.docs.map((d) => {
+          // @ts-ignore
+          d.id = d._id;
+          delete d._id;
+          delete d._rev;
+          delete d.type;
+          return d;
+        })
+      );
+  }
+
+  getDeletedAfterTimestamp(type: string, timestamp: number) {
+    return this.unitRepo
+      .find({
+        selector: {
+          type: { $eq: type },
+          created_at: { $gt: timestamp }
         }
       })
       .then((response) =>
@@ -49,7 +97,8 @@ export class UnitsService {
         selector: {
           type: { $eq: type },
           _id: { $nin: c },
-          updated: { $gt: timestamp }
+          deleted: { $eq: false },
+          updated_at: { $gt: timestamp }
         }
       })
       .then((response) =>
@@ -73,8 +122,8 @@ export class UnitsService {
   async update(unit: any): Promise<DocumentInsertResponse> {
     const existingUnit = await this.unitRepo.get(unit._id);
     return this.unitRepo.insert({
-      ...unit,
-      ...{ _rev: existingUnit._rev }
+      ...existingUnit,
+      ...unit
     });
   }
 }

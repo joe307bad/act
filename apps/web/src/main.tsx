@@ -25,6 +25,18 @@ const adapter = new LokiJSAdapter({
             ]
           })
         ]
+      },
+      {
+        toVersion: 3,
+        steps: [
+          createTable({
+            name: 'deleted',
+            columns: [
+              { name: 'deleted_id', type: 'string' },
+              { name: 'created', type: 'number' }
+            ]
+          })
+        ]
       }
     ]
   }),

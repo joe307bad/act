@@ -1,12 +1,12 @@
 import { DatabaseAdapter } from '@nozbe/watermelondb/adapters/type';
 import Database from '@nozbe/watermelondb/Database';
-import { Community } from './database';
+import { Community, Deleted } from './database';
 import { sync } from './sync';
 
 export const contextBuilder = (adapter: DatabaseAdapter) => {
   const database = new Database({
     adapter,
-    modelClasses: [Community],
+    modelClasses: [Community, Deleted],
     actionsEnabled: true
   });
 
