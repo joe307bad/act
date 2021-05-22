@@ -26,6 +26,10 @@ export class AppController {
       )
     ).map((u: any) => u.deleted_id);
 
+    // TODO should we have a table type that consumes this
+    // tables var and creates units of type table and then
+    // every other units type is the id of one of these "table units"
+
     const changes = await tables
       .split(',')
       .reduce<any[]>((acc, i) => {

@@ -1,14 +1,9 @@
 {
   "implicitDependencies": {
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
     ".eslintrc.json": "*"
   },
-  "affected": {
-    "defaultBase": "master"
-  },
+  "affected": { "defaultBase": "master" },
   "npmScope": "act",
   "tasksRunnerOptions": {
     "default": {
@@ -19,17 +14,11 @@
     }
   },
   "projects": {
-    "mobile": {
-      "tags": []
-    },
-    "data": {
-      "tags": []
-    },
-    "api": {
-      "tags": []
-    },
-    "web": {
-      "tags": []
-    }
+    "mobile": { "tags": [] },
+    "data": { "tags": [] },
+    "api": { "tags": [] },
+    "web": { "tags": [] },
+    "wm-web": { "tags": [] },
+    "wm-rn": { "tags": [] }
   }
 }

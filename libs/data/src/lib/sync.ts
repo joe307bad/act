@@ -1,7 +1,6 @@
-import { appSchema } from '@nozbe/watermelondb';
 import Database from '@nozbe/watermelondb/Database';
 import { synchronize } from '@nozbe/watermelondb/sync';
-import { schema } from './database';
+import { schemaAndMigrations } from './schema';
 
 async function sync(database: Database) {
   await synchronize({
@@ -13,7 +12,9 @@ async function sync(database: Database) {
     }) => {
       const urlParams = `last_pulled_at=${lastPulledAt}&schema_version=${schemaVersion}&migration=${encodeURIComponent(
         JSON.stringify(migration)
-      )}&tables=${JSON.stringify(Object.keys(schema.tables))}`;
+      )}&tables=${JSON.stringify(
+        Object.keys(schemaAndMigrations.schema.tables)
+      )}`;
       const response = await fetch(
         `http://localhost:3333/api/sync?${urlParams}`
       );

@@ -1,8 +1,6 @@
 {
   "version": 2,
-  "cli": {
-    "defaultCollection": "@nrwl/nest"
-  },
+  "cli": { "defaultCollection": "@nrwl/nest" },
   "defaultProject": "mobile",
   "generators": {
     "@nrwl/web:application": {
@@ -26,15 +24,11 @@
       "targets": {
         "start": {
           "executor": "@nrwl/react-native:start",
-          "options": {
-            "port": 8081
-          }
+          "options": { "port": 8081 }
         },
         "serve": {
           "executor": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "nx start mobile"
-          }
+          "options": { "command": "nx start mobile" }
         },
         "run-ios": {
           "executor": "@nrwl/react-native:run-ios",
@@ -96,9 +90,7 @@
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/data/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["libs/data/**/*.ts"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
@@ -140,15 +132,11 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "api:build"
-          }
+          "options": { "buildTarget": "api:build" }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/api/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["apps/api/**/*.ts"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
@@ -177,7 +165,7 @@
             "assets": ["apps/web/src/favicon.ico"],
             "styles": [],
             "scripts": [],
-            "webpackConfig":  "apps/web/webpack.config.ts"
+            "webpackConfig": "apps/web/webpack.config.ts"
           },
           "configurations": {
             "production": {
@@ -208,25 +196,59 @@
           "executor": "@nrwl/web:dev-server",
           "options": {
             "buildTarget": "web:build",
-            "webpackConfig":  "apps/web/webpack.config.ts"
+            "webpackConfig": "apps/web/webpack.config.ts"
           },
           "configurations": {
-            "production": {
-              "buildTarget": "web:build:production"
-            }
+            "production": { "buildTarget": "web:build:production" }
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/web/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["apps/web/**/*.ts"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
           "outputs": ["coverage/apps/web"],
           "options": {
             "jestConfig": "apps/web/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "wm-web": {
+      "root": "libs/wm/web",
+      "sourceRoot": "libs/wm/web/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/wm/web/**/*.ts"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/wm/web"],
+          "options": {
+            "jestConfig": "libs/wm/web/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "wm-rn": {
+      "root": "libs/wm/rn",
+      "sourceRoot": "libs/wm/rn/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/wm/rn/**/*.ts"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/wm/rn"],
+          "options": {
+            "jestConfig": "libs/wm/rn/jest.config.js",
             "passWithNoTests": true
           }
         }

@@ -18,14 +18,8 @@ import LocationCity from '@material-ui/icons/LocationCity';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import {
-  DataGrid,
-  GridColDef,
-  GridRowData
-} from '@material-ui/data-grid';
-import { sync, Community } from '@act/data';
-import { useDatabase } from '@nozbe/watermelondb/hooks';
-import { useObservable, useObservableState } from 'observable-hooks';
+import { DataGrid, GridColDef } from '@material-ui/data-grid';
+import { useCollection, getDatabase, sync } from './database';
 import { IconButton } from '@material-ui/core';
 
 const columns = (deleteCommunity): GridColDef[] => {
@@ -125,17 +119,14 @@ const useCommunities = (database) => {
 
 const App = () => {
   const classes = useStyles();
-  const database = useDatabase();
   const {
     observe,
     insert,
     update,
     delete: d
-  } = useCommunities(database);
-  let communities: any[] = useObservableState(
-    useObservable(observe),
-    []
-  );
+  } = useCommunities(getDatabase());
+
+  let communities: any[] = useCollection('communities');
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) => update(id, props.value),
@@ -162,7 +153,7 @@ const App = () => {
             style={{ marginLeft: 10 }}
             variant="contained"
             color="default"
-            onClick={() => sync(database)}
+            onClick={() => sync()}
           >
             Sync
           </Button>
@@ -193,7 +184,7 @@ const App = () => {
         <div style={{ height: 400, width: '100%' }}>
           <DataGrid
             editMode="client"
-            rows={communities.map((c) => c._raw)}
+            rows={communities}
             columns={columns(d)}
             onEditCellChangeCommitted={handleEditCellChangeCommitted}
             pageSize={5}

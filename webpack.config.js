@@ -67,7 +67,8 @@ module.exports = {
   ],
   resolve: {
     alias: {
-      '@act/data': path.join(__dirname, '/libs/data/src')
+      '@act/data': path.join(__dirname, '/libs/data/src'),
+      '@act/wm/web': path.join(__dirname, '/libs/wm/web/src')
     },
     fallback: {
       fs: false
