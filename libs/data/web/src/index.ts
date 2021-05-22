@@ -6,7 +6,7 @@ import {
   schemaAndMigrations,
   databaseFactory,
   useCollectionFactory
-} from '@act/data';
+} from '@act/data/core';
 
 let adapter: LokiAdapterOptions;
 

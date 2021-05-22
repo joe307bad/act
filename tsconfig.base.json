@@ -15,9 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@act/data": ["libs/data/src/index.ts"],
-      "@act/wm/web": ["libs/wm/web/src/index.ts"],
-      "@act/wm/rn": ["libs/wm/rn/src/index.ts"]
+      "@act/data/core": ["libs/data/core/src/index.ts"],
+      "@act/data/web": ["libs/data/web/src/index.ts"],
+      "@act/data/rn": ["libs/data/rn/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

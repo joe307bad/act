@@ -83,25 +83,6 @@
         }
       }
     },
-    "data": {
-      "root": "libs/data",
-      "sourceRoot": "libs/data/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["libs/data/**/*.ts"] }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/data"],
-          "options": {
-            "jestConfig": "libs/data/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api": {
       "root": "apps/api",
       "sourceRoot": "apps/api/src",
@@ -216,39 +197,60 @@
         }
       }
     },
-    "wm-web": {
-      "root": "libs/wm/web",
-      "sourceRoot": "libs/wm/web/src",
+    "data-core": {
+      "root": "libs/data/core",
+      "sourceRoot": "libs/data/core/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["libs/wm/web/**/*.ts"] }
+          "options": {
+            "lintFilePatterns": ["libs/data/core/**/*.ts"]
+          }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/wm/web"],
+          "outputs": ["coverage/libs/data/core"],
           "options": {
-            "jestConfig": "libs/wm/web/jest.config.js",
+            "jestConfig": "libs/data/core/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "wm-rn": {
-      "root": "libs/wm/rn",
-      "sourceRoot": "libs/wm/rn/src",
+    "data-web": {
+      "root": "libs/data/web",
+      "sourceRoot": "libs/data/web/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": { "lintFilePatterns": ["libs/wm/rn/**/*.ts"] }
+          "options": { "lintFilePatterns": ["libs/data/web/**/*.ts"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/wm/rn"],
+          "outputs": ["coverage/libs/data/web"],
           "options": {
-            "jestConfig": "libs/wm/rn/jest.config.js",
+            "jestConfig": "libs/data/web/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "data-rn": {
+      "root": "libs/data/rn",
+      "sourceRoot": "libs/data/rn/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/data/rn/**/*.ts"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/data/rn"],
+          "options": {
+            "jestConfig": "libs/data/rn/jest.config.js",
             "passWithNoTests": true
           }
         }

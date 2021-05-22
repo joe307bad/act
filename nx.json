@@ -15,10 +15,10 @@
   },
   "projects": {
     "mobile": { "tags": [] },
-    "data": { "tags": [] },
     "api": { "tags": [] },
     "web": { "tags": [] },
-    "wm-web": { "tags": [] },
-    "wm-rn": { "tags": [] }
+    "data-core": { "tags": [] },
+    "data-web": { "tags": [] },
+    "data-rn": { "tags": [] }
   }
 }
