@@ -96,7 +96,14 @@ export class AppController {
                 delete unit._changed;
                 unit._id = unit.id;
                 delete unit.id;
-                this.unitService.create({ type: table, ...unit });
+                this.unitService
+                  .create({ type: table, ...unit })
+                  .catch((e) => {
+                    throw new HttpException(
+                      `Push Changes Failed: ${e.toString()}`,
+                      HttpStatus.INTERNAL_SERVER_ERROR
+                    );
+                  });
               });
               break;
             case 'updated':
@@ -106,7 +113,14 @@ export class AppController {
                 delete unit._changed;
                 unit._id = unit.id;
                 delete unit.id;
-                this.unitService.update({ type: table, ...unit });
+                this.unitService
+                  .update({ type: table, ...unit })
+                  .catch((e) => {
+                    throw new HttpException(
+                      `Push Changes Failed: ${e.toString()}`,
+                      HttpStatus.INTERNAL_SERVER_ERROR
+                    );
+                  });
               });
               break;
             case 'deleted':
@@ -115,10 +129,17 @@ export class AppController {
                 // then deletes that unit, then syncs, we lose the most recent edit
                 // since watermelondb discards the edits if the record is marked
                 // for deletion
-                this.unitService.update({
-                  type: table,
-                  ...{ _id: id, deleted: true }
-                });
+                this.unitService
+                  .update({
+                    type: table,
+                    ...{ _id: id, deleted: true }
+                  })
+                  .catch((e) => {
+                    throw new HttpException(
+                      `Push Changes Failed: ${e.toString()}`,
+                      HttpStatus.INTERNAL_SERVER_ERROR
+                    );
+                  });
               });
               break;
           }
