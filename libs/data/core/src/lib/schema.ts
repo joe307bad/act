@@ -11,12 +11,23 @@ import {
 
 export const schemaAndMigrations = {
   schema: appSchema({
-    version: 3,
+    version: 4,
     tables: [
       tableSchema({
         name: 'communities',
         columns: [
           { name: 'name', type: 'string' },
+          { name: 'deleted', type: 'boolean' },
+          { name: 'created_at', type: 'number' },
+          { name: 'updated_at', type: 'number' }
+        ]
+      }),
+      tableSchema({
+        name: 'events',
+        columns: [
+          { name: 'name', type: 'string' },
+          { name: 'start_date', type: 'number' },
+          { name: 'end_date', type: 'number' },
           { name: 'deleted', type: 'boolean' },
           { name: 'created_at', type: 'number' },
           { name: 'updated_at', type: 'number' }
@@ -56,6 +67,22 @@ export const schemaAndMigrations = {
             ]
           })
         ]
+      },
+      {
+        toVersion: 4,
+        steps: [
+          createTable({
+            name: 'events',
+            columns: [
+              { name: 'name', type: 'string' },
+              { name: 'start_date', type: 'number' },
+              { name: 'end_date', type: 'number' },
+              { name: 'deleted', type: 'boolean' },
+              { name: 'created_at', type: 'number' },
+              { name: 'updated_at', type: 'number' }
+            ]
+          })
+        ]
       }
     ]
   })
@@ -64,6 +91,16 @@ export const schemaAndMigrations = {
 export class Community extends Model {
   static table = 'communities';
   @field('name') name: string;
+  @field('deleted') deleted: boolean;
+  @readonly @date('created_at') createdAt;
+  @readonly @date('updated_at') updatedAt;
+}
+
+export class Event extends Model {
+  static table = 'events';
+  @field('name') name: string;
+  @date('start_date') startDate;
+  @date('end_date') endDate;
   @field('deleted') deleted: boolean;
   @readonly @date('created_at') createdAt;
   @readonly @date('updated_at') updatedAt;

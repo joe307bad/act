@@ -4,11 +4,13 @@ import { ContextService } from './services/context';
 import { ActContext } from './context';
 import { SyncService } from './services/sync';
 import { useCollectionFactory } from './react/use-collection';
+import { EventsService } from './services/events';
 
 export const registryFactory = (adapter) => {
   container.register('ContextService', ContextService);
   container.register('SyncService', SyncService);
   container.register('CommunitiesService', CommunitiesService);
+  container.register('EventsService', EventsService);
 
   container.register('ActContext', {
     useFactory: instanceCachingFactory<ActContext>(() => {
@@ -23,7 +25,8 @@ export const registryFactory = (adapter) => {
     get: database,
     useCollection: useCollectionFactory(database),
     models: {
-      communities: new CommunitiesService()
+      communities: new CommunitiesService(),
+      events: new EventsService()
     }
   };
 };
