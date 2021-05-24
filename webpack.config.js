@@ -36,7 +36,8 @@ module.exports = {
                   helpers: true,
                   regenerator: true
                 }
-              ]
+              ],
+              ['babel-plugin-transform-typescript-metadata']
             ]
           }
         },

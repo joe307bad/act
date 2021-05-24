@@ -19,8 +19,10 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
-import { useCollection, getDatabase, sync } from './database';
 import { IconButton } from '@material-ui/core';
+import Database from '@nozbe/watermelondb/Database';
+import { Community, Deleted } from '@act/data/core';
+import { db } from '@act/data/web';
 
 const columns = (deleteCommunity): GridColDef[] => {
   return [
@@ -85,12 +87,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const useCommunities = (database) => {
-  const c = database.collections.get('communities');
-  const d = database.collections.get('deleted');
+const useCommunities = (database: Database) => {
+  const c = database.collections.get<Community>('communities');
+  const d = database.collections.get<Deleted>('deleted');
   return {
     observe: () => c.query().observeWithColumns(['name']),
     insert: async () => {
+      database.batch;
+      db.models.communities.insert();
       await database.action(() =>
         c.create((community) => {
           community.name = 'New community';
@@ -123,10 +127,10 @@ const App = () => {
     observe,
     insert,
     update,
-    delete: d
-  } = useCommunities(getDatabase());
+    delete: del
+  } = useCommunities(db.get);
 
-  let communities: any[] = useCollection('communities');
+  let communities: any[] = db.useCollection('communities', ['name']);
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) => update(id, props.value),
@@ -153,7 +157,7 @@ const App = () => {
             style={{ marginLeft: 10 }}
             variant="contained"
             color="default"
-            onClick={() => sync()}
+            onClick={db.sync}
           >
             Sync
           </Button>
@@ -185,7 +189,7 @@ const App = () => {
           <DataGrid
             editMode="client"
             rows={communities}
-            columns={columns(d)}
+            columns={columns(del)}
             onEditCellChangeCommitted={handleEditCellChangeCommitted}
             pageSize={5}
             checkboxSelection
