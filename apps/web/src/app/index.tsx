@@ -20,8 +20,6 @@ import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { IconButton } from '@material-ui/core';
-import Database from '@nozbe/watermelondb/Database';
-import { Community, Deleted } from '@act/data/core';
 import { db } from '@act/data/web';
 
 const columns = (deleteCommunity): GridColDef[] => {
@@ -87,53 +85,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const useCommunities = (database: Database) => {
-  const c = database.collections.get<Community>('communities');
-  const d = database.collections.get<Deleted>('deleted');
-  return {
-    observe: () => c.query().observeWithColumns(['name']),
-    insert: async () => {
-      database.batch;
-      db.models.communities.insert();
-      await database.action(() =>
-        c.create((community) => {
-          community.name = 'New community';
-        })
-      );
-    },
-    update: async (id, name) => {
-      await database.action(async () => {
-        const communityToEdit = await c.find(id);
-        await communityToEdit.update((community) => {
-          community.name = name;
-        });
-      });
-    },
-    delete: async (id) => {
-      await database.action(async () => {
-        const communityToDelete = await c.find(id);
-        await d.create((deletedUnit) => {
-          deletedUnit.deletedId = id;
-        });
-        await communityToDelete.markAsDeleted();
-      });
-    }
-  };
-};
-
 const App = () => {
   const classes = useStyles();
-  const {
-    observe,
-    insert,
-    update,
-    delete: del
-  } = useCommunities(db.get);
 
   let communities: any[] = db.useCollection('communities', ['name']);
 
   const handleEditCellChangeCommitted = React.useCallback(
-    async ({ id, field, props }) => update(id, props.value),
+    async ({ id, field, props }) =>
+      db.models.communities.update(id, props.value),
     [communities]
   );
 
@@ -149,7 +108,7 @@ const App = () => {
             variant="contained"
             color="default"
             startIcon={<AddIcon />}
-            onClick={insert}
+            onClick={db.models.communities.insert}
           >
             Add Commmunity
           </Button>
@@ -189,7 +148,7 @@ const App = () => {
           <DataGrid
             editMode="client"
             rows={communities}
-            columns={columns(del)}
+            columns={columns(db.models.communities.delete)}
             onEditCellChangeCommitted={handleEditCellChangeCommitted}
             pageSize={5}
             checkboxSelection
