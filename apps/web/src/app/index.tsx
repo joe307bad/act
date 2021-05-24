@@ -15,6 +15,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import LocationCity from '@material-ui/icons/LocationCity';
+import { Stars } from '@material-ui/icons';
 import EventIcon from '@material-ui/icons/Event';
 import AddIcon from '@material-ui/icons/Add';
 import Category from '@material-ui/icons/Category';
@@ -28,9 +29,10 @@ import {
   Redirect,
   useLocation
 } from 'react-router-dom';
-import Communities from './communities';
-import Events from './events';
-import AchievementCategories from './achievement-categories';
+import Communities from './pages/communities';
+import Events from './pages/events';
+import AchievementCategories from './pages/achievement-categories';
+import Achievements from './pages/achievement';
 
 const drawerWidth = 240;
 
@@ -50,63 +52,147 @@ const useStyles = makeStyles((theme: Theme) =>
     drawerPaper: {
       width: drawerWidth
     },
-    toolbar: theme.mixins.toolbar
+    toolbar: theme.mixins.toolbar,
+    active: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+      pointerEvents: 'none'
+    }
   })
 );
 
-const ToolBar = () => {
+type CurrentPage = {
+  title: string;
+  insertText?: string;
+  insertFn?: (...args: any) => void;
+};
+
+const ToolBarAndSideBar = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
 
-  const [title, insertText, insertFn] = ((): [
-    string?,
-    string?,
-    (() => void)?
-  ] => {
+  const { title, insertText, insertFn } = ((): CurrentPage => {
     switch (pathname) {
       case '/achievement-categories':
-        return [
-          'Achievement Categories',
-          'Add Category',
-          db.models.achievementCategories.insert
-        ];
+        return {
+          title: 'Achievement Categories',
+          insertText: 'Add Category',
+          insertFn: db.models.achievementCategories.insert
+        };
       case '/communities':
-        return [
-          'Communities',
-          'Add Community',
-          db.models.communities.insert
-        ];
+        return {
+          title: 'Communities',
+          insertText: 'Add Community',
+          insertFn: db.models.communities.insert
+        };
+      case '/events':
+        return {
+          title: 'Events',
+          insertText: 'Add Event'
+        };
+      case '/achievements':
+        return {
+          title: 'Achievements',
+          insertText: 'Add Achievement',
+          insertFn: () =>
+            db.models.achievements.insert('New Achievement')
+        };
       default:
-        return [undefined, undefined, undefined];
+        return {} as CurrentPage;
     }
   })();
 
+  const isActive = (route) =>
+    pathname === route ? classes.active : undefined;
+
   return (
-    <AppBar position="fixed" className={classes.appBar}>
-      <Toolbar>
-        <Typography style={{ flex: 1 }} variant="h6" noWrap>
-          {title}
-        </Typography>
-        {insertFn && (
+    <>
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar>
+          <Typography style={{ flex: 1 }} variant="h6" noWrap>
+            {title}
+          </Typography>
+          {insertFn && (
+            <Button
+              variant="contained"
+              color="default"
+              startIcon={<AddIcon />}
+              onClick={insertFn}
+            >
+              {insertText}
+            </Button>
+          )}
           <Button
+            style={{ marginLeft: 10 }}
             variant="contained"
             color="default"
-            startIcon={<AddIcon />}
-            onClick={insertFn}
+            onClick={db.sync}
           >
-            {insertText}
+            Sync
           </Button>
-        )}
-        <Button
-          style={{ marginLeft: 10 }}
-          variant="contained"
-          color="default"
-          onClick={db.sync}
-        >
-          Sync
-        </Button>
-      </Toolbar>
-    </AppBar>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        className={classes.drawer}
+        variant="permanent"
+        classes={{
+          paper: classes.drawerPaper
+        }}
+        anchor="left"
+      >
+        <div className={classes.toolbar} />
+        <Divider />
+        <List>
+          <ListItem
+            component={Link}
+            to="/communities"
+            button
+            className={isActive('/communities')}
+          >
+            <ListItemIcon>
+              <LocationCity className={isActive('/communities')} />
+            </ListItemIcon>
+            <ListItemText primary={'Communities'} />
+          </ListItem>
+          <ListItem
+            component={Link}
+            to="/events"
+            button
+            className={isActive('/events')}
+          >
+            <ListItemIcon>
+              <EventIcon className={isActive('/events')} />
+            </ListItemIcon>
+            <ListItemText primary={'Events'} />
+          </ListItem>
+          <ListItem
+            component={Link}
+            to="/achievements"
+            button
+            className={isActive('/achievements')}
+          >
+            <ListItemIcon>
+              <Stars className={isActive('/achievements')} />
+            </ListItemIcon>
+            <ListItemText primary={'Achievements'} />
+          </ListItem>
+          <ListItem
+            component={Link}
+            to="/achievement-categories"
+            button
+            className={isActive('/achievement-categories')}
+          >
+            <ListItemIcon>
+              <Category
+                className={isActive('/achievement-categories')}
+              />
+            </ListItemIcon>
+            <ListItemText primary={'Achievement Categories'} />
+          </ListItem>
+        </List>
+        <Divider />
+      </Drawer>
+    </>
   );
 };
 
@@ -117,43 +203,7 @@ const App = () => {
     <div className={classes.root}>
       <Router>
         <CssBaseline />
-        <ToolBar />
-        <Drawer
-          className={classes.drawer}
-          variant="permanent"
-          classes={{
-            paper: classes.drawerPaper
-          }}
-          anchor="left"
-        >
-          <div className={classes.toolbar} />
-          <Divider />
-          <List>
-            <ListItem component={Link} to="/communities" button>
-              <ListItemIcon>
-                <LocationCity />
-              </ListItemIcon>
-              <ListItemText primary={'Communities'} />
-            </ListItem>
-            <ListItem component={Link} to="/events" button>
-              <ListItemIcon>
-                <EventIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Events'} />
-            </ListItem>
-            <ListItem
-              component={Link}
-              to="/achievement-categories"
-              button
-            >
-              <ListItemIcon>
-                <Category />
-              </ListItemIcon>
-              <ListItemText primary={'Achievement Categories'} />
-            </ListItem>
-          </List>
-          <Divider />
-        </Drawer>
+        <ToolBarAndSideBar />
         <Switch>
           <Route exact path="/">
             <Redirect to="/communities" />
@@ -166,6 +216,9 @@ const App = () => {
           </Route>
           <Route path="/achievement-categories">
             <AchievementCategories />
+          </Route>
+          <Route path="/achievements">
+            <Achievements />
           </Route>
         </Switch>
       </Router>

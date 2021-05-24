@@ -14,5 +14,5 @@ export class Achievement extends BaseModel {
   @field('photo') photo?: string;
 
   @relation('achievement_categories', 'category_id')
-  category: AchievementCategory;
+  category?: AchievementCategory;
 }

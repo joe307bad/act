@@ -6,7 +6,8 @@ import {
 } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Select } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
 import db from '@act/data/web';
 
 const columns: GridColDef[] = [
@@ -22,6 +23,21 @@ const columns: GridColDef[] = [
     width: 200
   },
   {
+    field: 'category_id',
+    headerName: 'Category',
+    editable: true,
+    width: 200,
+    renderEditCell: (params) => {
+      return (
+        <Select value={10} onChange={() => {}}>
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+      );
+    }
+  },
+  {
     field: '',
     filterable: false,
     width: 200,
@@ -31,7 +47,7 @@ const columns: GridColDef[] = [
     renderCell: ({ id }) => {
       return (
         <IconButton
-          onClick={() => db.models.achievementCategories.delete(id)}
+          onClick={() => db.models.achievements.delete(id)}
           aria-label="delete"
           color="secondary"
         >
@@ -53,18 +69,17 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const AchievementCategories = () => {
+const Achievements = () => {
   const classes = useStyles();
 
-  let achievementCategories: any[] = db.useCollection(
-    'achievement_categories',
-    ['name']
-  );
+  let achievements: any[] = db.useCollection('achievements', [
+    'name'
+  ]);
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) =>
-      db.models.achievementCategories.update(id, props.value),
-    [achievementCategories]
+      db.models.achievements.update(id, props.value),
+    [achievements]
   );
 
   return (
@@ -73,7 +88,7 @@ const AchievementCategories = () => {
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
           editMode="client"
-          rows={achievementCategories}
+          rows={achievements}
           columns={columns}
           onEditCellChangeCommitted={handleEditCellChangeCommitted}
           pageSize={5}
@@ -84,4 +99,4 @@ const AchievementCategories = () => {
   );
 };
 
-export default AchievementCategories;
+export default Achievements;

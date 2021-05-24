@@ -32,7 +32,7 @@ export const schemaAndMigrations = {
           { name: 'points', type: 'string' },
           { name: 'points', type: 'number' },
           { name: 'photo', type: 'string', isOptional: true },
-          { name: 'category_id', type: 'string' }
+          { name: 'category_id', type: 'string', isOptional: true }
         ])
       }),
       tableSchema({
