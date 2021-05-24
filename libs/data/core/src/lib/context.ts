@@ -1,7 +1,13 @@
 import { DatabaseAdapter } from '@nozbe/watermelondb/adapters/type';
 import Database from '@nozbe/watermelondb/Database';
 import { singleton } from 'tsyringe';
-import { Community, Deleted, Event } from './schema';
+import {
+  Achievement,
+  AchievementCategory,
+  Community,
+  Deleted,
+  Event
+} from './schema';
 
 @singleton()
 export class ActContext {
@@ -9,7 +15,13 @@ export class ActContext {
   constructor(adapter: DatabaseAdapter) {
     this._database = new Database({
       adapter,
-      modelClasses: [Community, Deleted, Event],
+      modelClasses: [
+        Community,
+        Deleted,
+        Event,
+        Achievement,
+        AchievementCategory
+      ],
       actionsEnabled: true
     });
   }

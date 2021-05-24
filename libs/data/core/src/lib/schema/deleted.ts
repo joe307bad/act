@@ -3,10 +3,9 @@ import {
   field,
   readonly
 } from '@nozbe/watermelondb/decorators';
-import { Model } from '@nozbe/watermelondb';
+import { BaseModel } from './base-model';
 
-export class Deleted extends Model {
+export class Deleted extends BaseModel {
   static table = 'deleted';
   @field('deleted_id') deletedId: string;
-  @readonly @date('created_at') createdAt;
 }

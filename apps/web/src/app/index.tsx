@@ -17,6 +17,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import LocationCity from '@material-ui/icons/LocationCity';
 import EventIcon from '@material-ui/icons/Event';
 import AddIcon from '@material-ui/icons/Add';
+import Category from '@material-ui/icons/Category';
 import Button from '@material-ui/core/Button';
 import db from '@act/data/web';
 import {
@@ -24,10 +25,12 @@ import {
   Switch,
   Route,
   Link,
-  Redirect
+  Redirect,
+  useLocation
 } from 'react-router-dom';
 import Communities from './communities';
 import Events from './events';
+import AchievementCategories from './achievement-categories';
 
 const drawerWidth = 240;
 
@@ -51,6 +54,62 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const ToolBar = () => {
+  const classes = useStyles();
+  const { pathname } = useLocation();
+
+  const [title, insertText, insertFn] = ((): [
+    string?,
+    string?,
+    (() => void)?
+  ] => {
+    switch (pathname) {
+      case '/achievement-categories':
+        return [
+          'Achievement Categories',
+          'Add Category',
+          db.models.achievementCategories.insert
+        ];
+      case '/communities':
+        return [
+          'Communities',
+          'Add Community',
+          db.models.communities.insert
+        ];
+      default:
+        return [undefined, undefined, undefined];
+    }
+  })();
+
+  return (
+    <AppBar position="fixed" className={classes.appBar}>
+      <Toolbar>
+        <Typography style={{ flex: 1 }} variant="h6" noWrap>
+          {title}
+        </Typography>
+        {insertFn && (
+          <Button
+            variant="contained"
+            color="default"
+            startIcon={<AddIcon />}
+            onClick={insertFn}
+          >
+            {insertText}
+          </Button>
+        )}
+        <Button
+          style={{ marginLeft: 10 }}
+          variant="contained"
+          color="default"
+          onClick={db.sync}
+        >
+          Sync
+        </Button>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
 const App = () => {
   const classes = useStyles();
 
@@ -58,29 +117,7 @@ const App = () => {
     <div className={classes.root}>
       <Router>
         <CssBaseline />
-        <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar>
-            <Typography style={{ flex: 1 }} variant="h6" noWrap>
-              Communities
-            </Typography>
-            <Button
-              variant="contained"
-              color="default"
-              startIcon={<AddIcon />}
-              onClick={db.models.communities.insert}
-            >
-              Add Commmunity
-            </Button>
-            <Button
-              style={{ marginLeft: 10 }}
-              variant="contained"
-              color="default"
-              onClick={db.sync}
-            >
-              Sync
-            </Button>
-          </Toolbar>
-        </AppBar>
+        <ToolBar />
         <Drawer
           className={classes.drawer}
           variant="permanent"
@@ -104,6 +141,16 @@ const App = () => {
               </ListItemIcon>
               <ListItemText primary={'Events'} />
             </ListItem>
+            <ListItem
+              component={Link}
+              to="/achievement-categories"
+              button
+            >
+              <ListItemIcon>
+                <Category />
+              </ListItemIcon>
+              <ListItemText primary={'Achievement Categories'} />
+            </ListItem>
           </List>
           <Divider />
         </Drawer>
@@ -116,6 +163,9 @@ const App = () => {
           </Route>
           <Route path="/events">
             <Events />
+          </Route>
+          <Route path="/achievement-categories">
+            <AchievementCategories />
           </Route>
         </Switch>
       </Router>

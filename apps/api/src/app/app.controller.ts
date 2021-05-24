@@ -36,7 +36,7 @@ export class AppController {
       const changes = await tables
         .split(',')
         .reduce<any[]>((acc, i) => {
-          acc.push(i.replace(/[^A-Za-z0-9]/g, ''));
+          acc.push(i.replace(/[^A-Za-z0-9_]/g, ''));
           return acc;
         }, [])
         .reduce<Promise<any>>(async (acc, unitType) => {

@@ -3,12 +3,9 @@ import {
   field,
   readonly
 } from '@nozbe/watermelondb/decorators';
-import { Model } from '@nozbe/watermelondb';
+import { BaseModel } from './base-model';
 
-export class Community extends Model {
+export class Community extends BaseModel {
   static table = 'communities';
   @field('name') name: string;
-  @field('deleted') deleted: boolean;
-  @readonly @date('created_at') createdAt;
-  @readonly @date('updated_at') updatedAt;
 }
