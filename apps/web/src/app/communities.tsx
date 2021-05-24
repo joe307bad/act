@@ -7,42 +7,40 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { IconButton } from '@material-ui/core';
-import { db } from '@act/data/web';
+import db from '@act/data/web';
 
-const columns = (deleteCommunity): GridColDef[] => {
-  return [
-    {
-      field: 'name',
-      editable: true,
-      headerName: 'Name',
-      width: 200
-    },
-    {
-      field: 'created_at',
-      headerName: 'Created',
-      width: 200
-    },
-    {
-      field: '',
-      filterable: false,
-      width: 200,
-      disableColumnMenu: true,
-      sortable: false,
-      disableClickEventBubbling: true,
-      renderCell: ({ id }) => {
-        return (
-          <IconButton
-            onClick={() => deleteCommunity(id)}
-            aria-label="delete"
-            color="secondary"
-          >
-            <DeleteIcon />
-          </IconButton>
-        );
-      }
+const columns: GridColDef[] = [
+  {
+    field: 'name',
+    editable: true,
+    headerName: 'Name',
+    width: 200
+  },
+  {
+    field: 'created_at',
+    headerName: 'Created',
+    width: 200
+  },
+  {
+    field: '',
+    filterable: false,
+    width: 200,
+    disableColumnMenu: true,
+    sortable: false,
+    disableClickEventBubbling: true,
+    renderCell: ({ id }) => {
+      return (
+        <IconButton
+          onClick={() => db.models.communities.delete(id)}
+          aria-label="delete"
+          color="secondary"
+        >
+          <DeleteIcon />
+        </IconButton>
+      );
     }
-  ];
-};
+  }
+];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,7 +71,7 @@ const Communities = () => {
         <DataGrid
           editMode="client"
           rows={communities}
-          columns={columns(db.models.communities.delete)}
+          columns={columns}
           onEditCellChangeCommitted={handleEditCellChangeCommitted}
           pageSize={5}
           checkboxSelection

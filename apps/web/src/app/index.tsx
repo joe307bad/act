@@ -18,7 +18,7 @@ import LocationCity from '@material-ui/icons/LocationCity';
 import EventIcon from '@material-ui/icons/Event';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import { db } from '@act/data/web';
+import db from '@act/data/web';
 import {
   BrowserRouter as Router,
   Switch,
