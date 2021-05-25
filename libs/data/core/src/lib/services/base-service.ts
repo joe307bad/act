@@ -39,6 +39,29 @@ export abstract class BaseService<T extends Model> {
     });
   };
 
+  updateWithProps = async (
+    id,
+    updateProps: { [key: string]: string }
+  ) => {
+    await this._db.action(async () => {
+      const model = await this._collection.find(id);
+      await model.update((m) => {
+        for (const property in updateProps) {
+          m[property] = updateProps[property];
+        }
+      });
+    });
+  };
+
+  updateRelation = async (id, relationName, relationId) => {
+    await this._db.action(async () => {
+      const model = await this._collection.find(id);
+      await model.update((m) => {
+        m[relationName].id = relationId;
+      });
+    });
+  };
+
   delete = async (id) => {
     await this._db.action(async () => {
       const model = await this._collection.find(id);

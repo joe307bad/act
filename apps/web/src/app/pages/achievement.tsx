@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   createStyles,
   Theme,
@@ -6,9 +6,63 @@ import {
 } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
-import { IconButton, Select } from '@material-ui/core';
+import { IconButton, NativeSelect, Select } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import db from '@act/data/web';
+import { Achievement, AchievementCategory } from '@act/data/core';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    content: {
+      flexGrow: 1,
+      backgroundColor: theme.palette.background.default,
+      padding: theme.spacing(3)
+    },
+    toolbar: theme.mixins.toolbar,
+    root: {
+      display: 'flex'
+    }
+  })
+);
+const SelectCategory = ({ id, value }) => {
+  const [v, setValue] = useState(null);
+
+  const actualValue = (() => {
+    if (v === null) {
+      return value ?? 0;
+    }
+
+    return v;
+  })();
+
+  const achievementCategories = db.useCollection<AchievementCategory>(
+    'achievement_categories'
+  );
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+    db.models.achievements.updateRelation(
+      id,
+      'category',
+      event.target.value
+    );
+  };
+
+  return (
+    <Select
+      style={{ flex: 1 }}
+      value={actualValue}
+      onChange={handleChange}
+    >
+      <MenuItem value={0}>No Category</MenuItem>
+      {achievementCategories.map((ac, i) => (
+        <MenuItem key={i} value={ac.id}>
+          {ac.name}
+        </MenuItem>
+      ))}
+    </Select>
+  );
+};
 
 const columns: GridColDef[] = [
   {
@@ -25,16 +79,11 @@ const columns: GridColDef[] = [
   {
     field: 'category_id',
     headerName: 'Category',
-    editable: true,
+    editable: false,
     width: 200,
-    renderEditCell: (params) => {
-      return (
-        <Select value={10} onChange={() => {}}>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-      );
+    disableClickEventBubbling: true,
+    renderCell: ({ id, value }) => {
+      return <SelectCategory id={id} value={value} />;
     }
   },
   {
@@ -58,27 +107,19 @@ const columns: GridColDef[] = [
   }
 ];
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      flexGrow: 1,
-      backgroundColor: theme.palette.background.default,
-      padding: theme.spacing(3)
-    },
-    toolbar: theme.mixins.toolbar
-  })
-);
-
 const Achievements = () => {
   const classes = useStyles();
 
-  let achievements: any[] = db.useCollection('achievements', [
-    'name'
+  let achievements = db.useCollection<Achievement>('achievements', [
+    'name',
+    'category'
   ]);
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) =>
-      db.models.achievements.update(id, props.value),
+      db.models.achievements.updateWithProps(id, {
+        name: props.value
+      }),
     [achievements]
   );
 
@@ -90,7 +131,7 @@ const Achievements = () => {
           editMode="client"
           rows={achievements}
           columns={columns}
-          onEditCellChangeCommitted={handleEditCellChangeCommitted}
+          //onEditCellChangeCommitted={handleEditCellChangeCommitted}
           pageSize={5}
           checkboxSelection
         />

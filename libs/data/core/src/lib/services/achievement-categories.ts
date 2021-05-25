@@ -29,7 +29,7 @@ export class AchievementCategoriesService {
     );
   };
 
-  update = async (id, name) => {
+  update = async (id, name: string) => {
     await this._db.action(async () => {
       const achievementCategoryToEdit = await this._collection.find(
         id
