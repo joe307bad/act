@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
-const SelectCategory = ({ id, value }) => {
+const SelectCategory = ({ id, value, categories }) => {
   const [v, setValue] = useState(null);
 
   const actualValue = (() => {
@@ -35,33 +35,30 @@ const SelectCategory = ({ id, value }) => {
     return v;
   })();
 
-  const achievementCategories = db.useCollection<AchievementCategory>(
-    'achievement_categories'
-  );
-
   const handleChange = (event) => {
-    setValue(event.target.value);
+    const newValue = event.target.value;
+    setValue(newValue);
     db.models.achievements.updateRelation(
       id,
       'category',
-      event.target.value
+      newValue === 0 ? null : newValue
     );
   };
 
-  return (
+  return categories.length > 0 ? (
     <Select
       style={{ flex: 1 }}
       value={actualValue}
       onChange={handleChange}
     >
       <MenuItem value={0}>No Category</MenuItem>
-      {achievementCategories.map((ac, i) => (
+      {categories.map((ac, i) => (
         <MenuItem key={i} value={ac.id}>
           {ac.name}
         </MenuItem>
       ))}
     </Select>
-  );
+  ) : null;
 };
 
 const columns: GridColDef[] = [
@@ -83,7 +80,17 @@ const columns: GridColDef[] = [
     width: 200,
     disableClickEventBubbling: true,
     renderCell: ({ id, value }) => {
-      return <SelectCategory id={id} value={value} />;
+      const achievementCategories =
+        db.useCollection<AchievementCategory>(
+          'achievement_categories'
+        );
+      return (
+        <SelectCategory
+          id={id}
+          value={value}
+          categories={achievementCategories}
+        />
+      );
     }
   },
   {
@@ -112,7 +119,7 @@ const Achievements = () => {
 
   let achievements = db.useCollection<Achievement>('achievements', [
     'name',
-    'category'
+    'category_id'
   ]);
 
   const handleEditCellChangeCommitted = React.useCallback(
@@ -131,7 +138,7 @@ const Achievements = () => {
           editMode="client"
           rows={achievements}
           columns={columns}
-          //onEditCellChangeCommitted={handleEditCellChangeCommitted}
+          onEditCellChangeCommitted={handleEditCellChangeCommitted}
           pageSize={5}
           checkboxSelection
         />
