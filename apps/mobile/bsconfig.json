@@ -1,18 +1,22 @@
 {
-    "name": "gain",
-    "refmt": 3,
-    "reason": {
-      "react-jsx": 3
-    },
-    "package-specs": {
-      "module": "es6"
-    },
-    "suffix": ".bs.js",
-    "sources": [
-      {
-        "dir": "re",
-        "subdirs": true
-      }
-    ],
-    "bs-dependencies": ["@rescript/react", "rescript-react-native"]
-  }
+  "name": "act",
+  "refmt": 3,
+  "reason": {
+    "react-jsx": 3
+  },
+  "package-specs": {
+    "module": "es6"
+  },
+  "suffix": ".bs.js",
+  "sources": [
+    {
+      "dir": "re",
+      "subdirs": true
+    }
+  ],
+  "bs-dependencies": [
+    "@rescript/react",
+    "rescript-react-native",
+    "@rescript-react-native/paper"
+  ]
+}

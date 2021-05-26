@@ -1,6 +1,6 @@
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import { registryFactory, schemaAndMigrations } from '@act/data/core';
 
-export const db = registryFactory(
+export default registryFactory(
   new SQLiteAdapter(schemaAndMigrations)
 );

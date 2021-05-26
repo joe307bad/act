@@ -14,6 +14,8 @@
     "rxjs": "*",
     "@nozbe/watermelondb": "*",
     "@nozbe/with-observables": "*",
-    "@testing-library/jest-native": "*"
+    "@testing-library/jest-native": "*",
+    "tsyringe": "*",
+    "reflect-metadata": "*"
   }
 }

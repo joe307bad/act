@@ -1,19 +1,9 @@
 import React from 'react';
-import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
-import { schemaMigrations } from '@nozbe/watermelondb/Schema/migrations';
-import withObservables from '@nozbe/with-observables';
 import { make as App } from '../../lib/es6/re/Index.bs';
+import 'reflect-metadata';
+import db from '@act/data/rn';
 
-// const adapter = new SQLiteAdapter({
-//   schema,
-//   migrations: schemaMigrations({ migrations: [] })
-// });
-
-// const { sync, entities } = contextBuilder(adapter);
-
-// const appWithPosts = withObservables(['post'], () => ({
-//   allPosts: entities.posts.collection.query().observe()
-// }));
-// const AppWithPosts = appWithPosts(make);
-
-export default () => <App insertPost={() => {}} />;
+export default () => {
+  const achievements = db.useCollection('achievements');
+  return <App sync={db.sync} allPosts={achievements} />;
+};
