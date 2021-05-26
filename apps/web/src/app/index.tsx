@@ -67,30 +67,37 @@ type CurrentPage = {
   insertFn?: (...args: any) => void;
 };
 
+enum PAGE {
+  ACHIEVEMENT_CATEGORIES = '/achievement-categories',
+  COMMUNITIES = '/communities',
+  EVENTS = '/events',
+  ACHIEVEMENT = '/achievements'
+}
+
 const ToolBarAndSideBar = () => {
   const classes = useStyles();
   const { pathname } = useLocation();
 
   const { title, insertText, insertFn } = ((): CurrentPage => {
     switch (pathname) {
-      case '/achievement-categories':
+      case PAGE.ACHIEVEMENT_CATEGORIES:
         return {
           title: 'Achievement Categories',
           insertText: 'Add Category',
           insertFn: db.models.achievementCategories.insert
         };
-      case '/communities':
+      case PAGE.COMMUNITIES:
         return {
           title: 'Communities',
           insertText: 'Add Community',
           insertFn: db.models.communities.insert
         };
-      case '/events':
+      case PAGE.EVENTS:
         return {
           title: 'Events',
           insertText: 'Add Event'
         };
-      case '/achievements':
+      case PAGE.ACHIEVEMENT:
         return {
           title: 'Achievements',
           insertText: 'Add Achievement',
@@ -145,46 +152,46 @@ const ToolBarAndSideBar = () => {
         <List>
           <ListItem
             component={Link}
-            to="/communities"
+            to={PAGE.COMMUNITIES}
             button
-            className={isActive('/communities')}
+            className={isActive(PAGE.COMMUNITIES)}
           >
             <ListItemIcon>
-              <LocationCity className={isActive('/communities')} />
+              <LocationCity className={isActive(PAGE.COMMUNITIES)} />
             </ListItemIcon>
             <ListItemText primary={'Communities'} />
           </ListItem>
           <ListItem
             component={Link}
-            to="/events"
+            to={PAGE.EVENTS}
             button
-            className={isActive('/events')}
+            className={isActive(PAGE.EVENTS)}
           >
             <ListItemIcon>
-              <EventIcon className={isActive('/events')} />
+              <EventIcon className={isActive(PAGE.EVENTS)} />
             </ListItemIcon>
             <ListItemText primary={'Events'} />
           </ListItem>
           <ListItem
             component={Link}
-            to="/achievements"
+            to={PAGE.ACHIEVEMENT}
             button
-            className={isActive('/achievements')}
+            className={isActive(PAGE.ACHIEVEMENT)}
           >
             <ListItemIcon>
-              <Stars className={isActive('/achievements')} />
+              <Stars className={isActive(PAGE.ACHIEVEMENT)} />
             </ListItemIcon>
             <ListItemText primary={'Achievements'} />
           </ListItem>
           <ListItem
             component={Link}
-            to="/achievement-categories"
+            to={PAGE.ACHIEVEMENT_CATEGORIES}
             button
-            className={isActive('/achievement-categories')}
+            className={isActive(PAGE.ACHIEVEMENT_CATEGORIES)}
           >
             <ListItemIcon>
               <Category
-                className={isActive('/achievement-categories')}
+                className={isActive(PAGE.ACHIEVEMENT_CATEGORIES)}
               />
             </ListItemIcon>
             <ListItemText primary={'Achievement Categories'} />

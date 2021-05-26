@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
-const SelectCategory = ({ id, value, categories }) => {
+const SelectCategory = ({ id, value }) => {
   const [v, setValue] = useState(null);
 
   const actualValue = (() => {
@@ -34,6 +34,11 @@ const SelectCategory = ({ id, value, categories }) => {
 
     return v;
   })();
+
+  const achievementCategories = db.useCollection<AchievementCategory>(
+    'achievement_categories',
+    ['name']
+  );
 
   const handleChange = (event) => {
     const newValue = event.target.value;
@@ -45,14 +50,14 @@ const SelectCategory = ({ id, value, categories }) => {
     );
   };
 
-  return categories.length > 0 ? (
+  return achievementCategories.length > 0 ? (
     <Select
       style={{ flex: 1 }}
       value={actualValue}
       onChange={handleChange}
     >
       <MenuItem value={0}>No Category</MenuItem>
-      {categories.map((ac, i) => (
+      {achievementCategories.map((ac, i) => (
         <MenuItem key={i} value={ac.id}>
           {ac.name}
         </MenuItem>
@@ -80,17 +85,7 @@ const columns: GridColDef[] = [
     width: 200,
     disableClickEventBubbling: true,
     renderCell: ({ id, value }) => {
-      const achievementCategories =
-        db.useCollection<AchievementCategory>(
-          'achievement_categories'
-        );
-      return (
-        <SelectCategory
-          id={id}
-          value={value}
-          categories={achievementCategories}
-        />
-      );
+      return <SelectCategory id={id} value={value} />;
     }
   },
   {
