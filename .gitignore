@@ -95,3 +95,4 @@ buck-out/
 
 node_modules/
 apps/mobile/re/**/*.bs.js
+apps/mobile/lib
