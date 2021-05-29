@@ -38,6 +38,7 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/data-grid": "^4.0.0-alpha.26",
     "@material-ui/icons": "^4.11.2",
+    "@mobily/stacks": "v1.2.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
@@ -48,6 +49,7 @@
     "bs-fetch": "0.6.2",
     "core-js": "^3.6.5",
     "document-register-element": "1.13.1",
+    "gentype": "^4.0.0",
     "nano": "9.0.3",
     "nest-couchdb": "github:tosscaster/nest-couchdb",
     "observable-hooks": "^4.0.3",
@@ -65,7 +67,8 @@
     "rescript-react-native": "0.64.2",
     "rxjs": "^6.6.7",
     "tslib": "^2.0.0",
-    "tsyringe": "^4.5.0"
+    "tsyringe": "^4.5.0",
+    "wonka": "^4.0.15"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.13.0",

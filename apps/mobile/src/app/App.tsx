@@ -1,5 +1,5 @@
 import React from 'react';
-import { make as App } from '../../lib/es6/re/Index.bs';
+import { make as App } from '../../re/Index.bs';
 import 'reflect-metadata';
 import db from '@act/data/rn';
 

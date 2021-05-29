@@ -8,14 +8,18 @@
     "re:build": "bsb -clean-world -make-world"
   },
   "dependencies": {
-    "react-native": "*",
-    "react": "*",
-    "@testing-library/react-native": "*",
-    "rxjs": "*",
+    "@mobily/stacks": "*",
     "@nozbe/watermelondb": "*",
     "@nozbe/with-observables": "*",
     "@testing-library/jest-native": "*",
+    "@testing-library/react-native": "*",
+    "gentype": "*",
+    "react": "*",
+    "react-native": "*",
+    "reflect-metadata": "*",
+    "rxjs": "*",
     "tsyringe": "*",
-    "reflect-metadata": "*"
+    "wonka": "*",
+    "react-native-paper": "*"
   }
 }
