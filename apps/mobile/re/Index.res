@@ -9,19 +9,42 @@ type post = {
 let styles = {
   open Style
   StyleSheet.create({
-    "red": viewStyle(~backgroundColor="red", ~height=100.->pct, ()),
-    "green": viewStyle(~backgroundColor="green", ~height=100.->pct, ()),
+    "red": Some(viewStyle(~height=100.->pct, ())),
   })
+}
+
+module App = {
+  open Paper
+  @react.component
+  let make = () => {
+    let debugStyle = useDebugStyle()
+    Js.log(debugStyle)
+    <Rows space=[1.] alignY=[#center] padding=[5.]>
+      <Row height=[#content]>
+        <View style={Style.arrayOption([debugStyle])}>
+          <Headline> {"Login"->React.string} </Headline>
+        </View>
+      </Row>
+      <Row height=[#content]>
+        <View style={Style.arrayOption([debugStyle])}>
+          <TextInput mode=#outlined label="Username" />
+        </View>
+      </Row>
+      <Row height=[#content]>
+        <View style={Style.arrayOption([debugStyle])}>
+          <TextInput mode=#outlined label="Password" secureTextEntry=true />
+        </View>
+      </Row>
+      <Row height=[#content]>
+        <View style={Style.arrayOption([debugStyle])}>
+          <Button onPress={_ => {Js.log()}} mode=#contained> {"Login"->React.string} </Button>
+        </View>
+      </Row>
+    </Rows>
+  }
 }
 
 @react.component
 let make = (~allPosts: array<post>, ~sync: ReactNative.Event.pressEvent => unit) => {
-  <StacksProvider spacing=5.>
-    <Rows space=[1.] alignY=[#center]>
-      <Row height=[#x14]>
-        <View style={styles["red"]}> <Text> {"hey there"->React.string} </Text> </View>
-      </Row>
-      <Row> <View style={styles["green"]}> <Text> {"hey there"->React.string} </Text> </View> </Row>
-    </Rows>
-  </StacksProvider>
+  <StacksProvider debug={true} spacing=5.> <App /> </StacksProvider>
 }
