@@ -1,6 +1,7 @@
 import React from 'react';
 import ReallyAwesomeButton from 'react-native-really-awesome-button';
 import { Headline } from 'react-native-paper';
+import { authorize } from '@act/data/rn';
 
 const AwesomeButton = ({ children }) => {
   return (
@@ -8,6 +9,7 @@ const AwesomeButton = ({ children }) => {
       stretch
       backgroundColor="#470FF4"
       backgroundDarker="#3809C3"
+      onNativePress={() => authorize()}
     >
       <Headline style={{ color: 'white' }}>{children}</Headline>
     </ReallyAwesomeButton>

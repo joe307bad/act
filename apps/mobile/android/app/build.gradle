@@ -135,6 +135,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [
+          appAuthRedirectScheme: 'io.act.auth'
+        ]
     }
     splits {
         abi {

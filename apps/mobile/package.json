@@ -21,6 +21,7 @@
     "tsyringe": "*",
     "wonka": "*",
     "react-native-paper": "*",
-    "react-native-really-awesome-button": "*"
+    "react-native-really-awesome-button": "*",
+    "react-native-app-auth": "*"
   }
 }

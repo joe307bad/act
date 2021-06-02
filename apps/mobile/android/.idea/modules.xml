@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Mobile.iml" filepath="$PROJECT_DIR$/.idea/modules/Mobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Mobile.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Mobile.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1146217243/Mobile.nozbe_watermelondb.iml" filepath="$PROJECT_DIR$/.idea/modules/-1146217243/Mobile.nozbe_watermelondb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1624138704/Mobile.react-native-app-auth.iml" filepath="$PROJECT_DIR$/.idea/modules/-1624138704/Mobile.react-native-app-auth.iml" />
+    </modules>
+  </component>
+</project>

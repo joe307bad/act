@@ -11,13 +11,6 @@ type post = {
   name: string,
 }
 
-let styles = {
-  open Style
-  StyleSheet.create({
-    "red": Some(viewStyle(~height=100.->pct, ())),
-  })
-}
-
 module App = {
   open Paper
   @react.component
