@@ -12,6 +12,31 @@ services:
     volumes:
       - couchdb_data:/bitnami/couchdb
       - /Users/jbadaczewski/Source/other/act/apps/api/couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
 volumes:
+  postgres_data:
+    driver: local
   couchdb_data:
     driver: local
