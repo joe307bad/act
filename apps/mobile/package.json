@@ -20,6 +20,7 @@
     "rxjs": "*",
     "tsyringe": "*",
     "wonka": "*",
-    "react-native-paper": "*"
+    "react-native-paper": "*",
+    "react-native-really-awesome-button": "*"
   }
 }

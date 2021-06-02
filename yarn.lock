@@ -3280,10 +3280,9 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
-"@rescript-react-native/paper@^3.0.6":
+"@rescript-react-native/paper@github:joe307bad/paper":
   version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@rescript-react-native/paper/-/paper-3.0.6.tgz#6a8973d0797d2b0dab0258d29657d2ed0a76390f"
-  integrity sha512-gXNS2cVMdfQgGyuWYHagZ1MUBuINip8TuOTImCSXdtrZJNAJLpCZIm6AYFB3AU4p27XNMhNQDzhfzXp5GpI1bQ==
+  resolved "https://codeload.github.com/joe307bad/paper/tar.gz/b149a33a3c64e84c1d0aeab54d4b75ee6cee8160"
 
 "@rescript/react@0.10.1":
   version "0.10.1"
@@ -14557,6 +14556,10 @@ react-native-paper@^4.8.1:
     "@callstack/react-theme-provider" "^3.0.5"
     color "^3.1.2"
     react-native-iphone-x-helper "^1.3.1"
+
+"react-native-really-awesome-button@github:joe307bad/react-native-really-awesome-button":
+  version "1.6.0"
+  resolved "https://codeload.github.com/joe307bad/react-native-really-awesome-button/tar.gz/e51c612a5bad89def92ed1c172a80d94e06d6d53"
 
 react-native-vector-icons@^8.1.0:
   version "8.1.0"
