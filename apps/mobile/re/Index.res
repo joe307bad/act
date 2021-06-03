@@ -1,9 +1,15 @@
 open ReactNative
 open Stacks
+open Paper
 
 module AwesomeButton = {
   @module("../src/app/AwesomeButton") @react.component
-  external make: (~children: React.element) => React.element = "default"
+  external make: (~children: React.element, ~onPress: unit => 'a) => React.element = "default"
+}
+
+module ActData = {
+  @module("@act/data/rn")
+  external authorize: unit => Js.Promise.t<unit> = "authorize"
 }
 
 type post = {
@@ -12,7 +18,6 @@ type post = {
 }
 
 module App = {
-  open Paper
   @react.component
   let make = () => {
     let fontFamily = "Bebas-Regular"
@@ -38,25 +43,42 @@ module App = {
       ~disabled="#adacb5",
       ~error="#c83e4d",
       ~placeholder="#470FF4",
-      ~surface="#f2ede9",
+      ~surface="white",
       ~text="black",
     )
 
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
+    let {colors} = ThemeProvider.useTheme()
     let debugStyle = useDebugStyle()
     <ThemeProvider theme>
-      <Rows space=[1.] alignY=[#center] padding=[3.]>
-        <Row height=[#content]>
-          <View style={Style.arrayOption([debugStyle])}>
-            <Headline> {"Welcome to the Act App"->React.string} </Headline>
-          </View>
-        </Row>
-        <Row height=[#content]>
-          <View style={Style.arrayOption([debugStyle])}>
-            <AwesomeButton> {"Authorize"->React.string} </AwesomeButton>
-          </View>
-        </Row>
-      </Rows>
+      <FillView
+        padding=[2.]
+        style={Style.style(~backgroundColor=colors.background, ())}
+        alignX=[#center]
+        alignY=[#center]>
+        <Rows space=[1.] alignY=[#center]>
+          <Card elevation=5>
+            <Box padding=[2.]>
+              <Row height=[#content] paddingBottom=[2.]>
+                <View style={Style.arrayOption([debugStyle])}>
+                  <Headline> {"Welcome to the Act App"->React.string} </Headline>
+                  <Paper.Text style={Style.style(~fontFamily="sans-serif", ())}>
+                    {"Authorize using Keycloak"->React.string}
+                  </Paper.Text>
+                </View>
+              </Row>
+              <Row height=[#content]>
+                <View style={Style.arrayOption([debugStyle])}>
+                  <AwesomeButton onPress={() => ActData.authorize()->Js.Promise.then_(result => {
+                        Js.log(result)
+                        Js.Promise.resolve()
+                      }, _)}> {"Authorize"->React.string} </AwesomeButton>
+                </View>
+              </Row>
+            </Box>
+          </Card>
+        </Rows>
+      </FillView>
     </ThemeProvider>
   }
 }

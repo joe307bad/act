@@ -1,15 +1,15 @@
 import React from 'react';
 import ReallyAwesomeButton from 'react-native-really-awesome-button';
-import { Headline } from 'react-native-paper';
-import { authorize } from '@act/data/rn';
+import { Headline, useTheme } from 'react-native-paper';
 
-const AwesomeButton = ({ children }) => {
+const AwesomeButton = ({ children, onPress }) => {
+  const { colors } = useTheme();
   return (
     <ReallyAwesomeButton
       stretch
-      backgroundColor="#470FF4"
+      backgroundColor={colors.primary}
       backgroundDarker="#3809C3"
-      onNativePress={() => authorize()}
+      onNativePress={onPress}
     >
       <Headline style={{ color: 'white' }}>{children}</Headline>
     </ReallyAwesomeButton>

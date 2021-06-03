@@ -3280,9 +3280,9 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
-"@rescript-react-native/paper@github:joe307bad/paper":
+"@rescript-react-native/paper@github:joe307bad/paper#f9d541e":
   version "3.0.6"
-  resolved "https://codeload.github.com/joe307bad/paper/tar.gz/b149a33a3c64e84c1d0aeab54d4b75ee6cee8160"
+  resolved "https://codeload.github.com/joe307bad/paper/tar.gz/f9d541e58d677e20d4f5c06e8996871f785720b5"
 
 "@rescript/react@0.10.1":
   version "0.10.1"

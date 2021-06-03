@@ -44,7 +44,7 @@
     "@nestjs/platform-express": "^7.0.0",
     "@nozbe/watermelondb": "^0.21.0",
     "@nozbe/with-observables": "1.2.0",
-    "@rescript-react-native/paper": "github:joe307bad/paper",
+    "@rescript-react-native/paper": "github:joe307bad/paper#f9d541e",
     "@rescript/react": "0.10.1",
     "bs-fetch": "0.6.2",
     "core-js": "^3.6.5",
