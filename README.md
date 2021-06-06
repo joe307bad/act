@@ -42,7 +42,7 @@ This repository is an exploratory exercise and case study of three concepts: **[
 
 #### `/libs/data/rn` & `/libs/data/web`
 
-- These two projects are to handle the occurence of diverging capabilities between the `web` and `mobile` applications. Not everything can or should be shared with both applications.
+- These two libraries handle the diverging data configurations of the `web` and `mobile` applications. Not everything can or should be shared with both applications.
 - Primary tools
   - TypeScript
 - Mobile tools
