@@ -20,6 +20,7 @@
     "@rescript/react",
     "rescript-react-native",
     "@rescript-react-native/paper",
-    "wonka"
+    "wonka",
+    "rescript-react-navigation"
   ]
 }

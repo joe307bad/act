@@ -1,6 +1,7 @@
 open ReactNative
 open Stacks
 open Paper
+open ReactNavigation
 
 module AwesomeButton = {
   @module("../src/app/AwesomeButton") @react.component
@@ -12,12 +13,76 @@ module ActData = {
   external authorize: unit => Js.Promise.t<unit> = "authorize"
 }
 
-type post = {
-  id: int,
-  name: string,
+// type post = {
+//   id: int,
+//   name: string,
+// }
+
+module ScreenContainer = {
+  @react.component
+  let make = (~children) => {
+    let {colors} = ThemeProvider.useTheme()
+    <FillView style={Style.style(~backgroundColor=colors.background, ())} padding=[2.]>
+      {children}
+    </FillView>
+  }
 }
 
-module App = {
+module Login = {
+  include ReactNavigation.Stack.Make({
+    type params = unit
+  })
+  @react.component
+  let make = (~navigation, ~route as _) => {
+    let debugStyle = useDebugStyle()
+    <ScreenContainer>
+      <Rows space=[1.] alignY=[#center]>
+        <Card elevation=5>
+          <Box padding=[2.]>
+            <Row height=[#content] paddingBottom=[2.]>
+              <View style={Style.arrayOption([debugStyle])}>
+                <Headline> {"Welcome to the Act App"->React.string} </Headline>
+                <Paper.Text style={Style.style(~fontFamily="sans-serif", ())}>
+                  {"Authorize using Keycloak"->React.string}
+                </Paper.Text>
+              </View>
+            </Row>
+            <Row height=[#content]>
+              <View style={Style.arrayOption([debugStyle])}>
+                <AwesomeButton onPress={() => ActData.authorize()->Js.Promise.then_(result => {
+                      Js.log(result)
+                      Js.Promise.resolve()
+                    }, _)}> {"Authorize"->React.string} </AwesomeButton> <AwesomeButton
+                  onPress={() => navigation->Navigation.navigate("CreateCheckin")}>
+                  {"Go to Create Checkin Screen"->React.string}
+                </AwesomeButton>
+              </View>
+            </Row>
+          </Box>
+        </Card>
+      </Rows>
+    </ScreenContainer>
+  }
+}
+
+// @react.component
+// let make = (~allPosts: array<post>, ~sync: ReactNative.Event.pressEvent => unit) => {
+//   <StacksProvider debug={false} spacing=5.> <Login /> </Sta cksProvider>
+// }
+
+module CreateCheckin = {
+  @react.component
+  let make = (~navigation, ~route as _) => {
+    <ScreenContainer>
+      <Headline> {"Create Checkin page"->React.string} </Headline>
+    </ScreenContainer>
+  }
+}
+
+module Root = {
+  include ReactNavigation.Stack.Make({
+    type params = unit
+  })
   @react.component
   let make = () => {
     let fontFamily = "Bebas-Regular"
@@ -48,42 +113,15 @@ module App = {
     )
 
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
-    let {colors} = ThemeProvider.useTheme()
-    let debugStyle = useDebugStyle()
-    <ThemeProvider theme>
-      <FillView
-        padding=[2.]
-        style={Style.style(~backgroundColor=colors.background, ())}
-        alignX=[#center]
-        alignY=[#center]>
-        <Rows space=[1.] alignY=[#center]>
-          <Card elevation=5>
-            <Box padding=[2.]>
-              <Row height=[#content] paddingBottom=[2.]>
-                <View style={Style.arrayOption([debugStyle])}>
-                  <Headline> {"Welcome to the Act App"->React.string} </Headline>
-                  <Paper.Text style={Style.style(~fontFamily="sans-serif", ())}>
-                    {"Authorize using Keycloak"->React.string}
-                  </Paper.Text>
-                </View>
-              </Row>
-              <Row height=[#content]>
-                <View style={Style.arrayOption([debugStyle])}>
-                  <AwesomeButton onPress={() => ActData.authorize()->Js.Promise.then_(result => {
-                        Js.log(result)
-                        Js.Promise.resolve()
-                      }, _)}> {"Authorize"->React.string} </AwesomeButton>
-                </View>
-              </Row>
-            </Box>
-          </Card>
-        </Rows>
-      </FillView>
-    </ThemeProvider>
+    <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
+      <ThemeProvider theme>
+        <Native.NavigationContainer>
+          <Navigator headerMode=#none>
+            <Screen name="Login" component=Login.make />
+            <Screen name="CreateCheckin" component=CreateCheckin.make />
+          </Navigator>
+        </Native.NavigationContainer>
+      </ThemeProvider>
+    </FillView>
   }
-}
-
-@react.component
-let make = (~allPosts: array<post>, ~sync: ReactNative.Event.pressEvent => unit) => {
-  <StacksProvider debug={false} spacing=5.> <App /> </StacksProvider>
 }

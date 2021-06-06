@@ -22,6 +22,9 @@
     "wonka": "*",
     "react-native-paper": "*",
     "react-native-really-awesome-button": "*",
-    "react-native-app-auth": "*"
+    "react-native-app-auth": "*",
+    "react-native-gesture-handler": "*",
+    "react-native-screens": "*",
+    "react-native-safe-area-context": "*"
   }
 }
