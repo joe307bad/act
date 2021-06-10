@@ -25,6 +25,8 @@
     "react-native-app-auth": "*",
     "react-native-gesture-handler": "*",
     "react-native-screens": "*",
-    "react-native-safe-area-context": "*"
+    "react-native-safe-area-context": "*",
+    "@react-keycloak/native": "*",
+    "react-native-inappbrowser-reborn": "*"
   }
 }

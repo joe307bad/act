@@ -13,10 +13,12 @@ module ActData = {
   external authorize: unit => Js.Promise.t<unit> = "authorize"
 }
 
-// type post = {
-//   id: int,
-//   name: string,
-// }
+module Keycloak = {
+  type keycloak = {login: (. unit) => Js.Promise.t<unit>, logout: (. unit) => Js.Promise.t<unit>}
+  type keycloakHook = {keycloak: keycloak}
+  @module("@react-keycloak/native")
+  external useKeycloak: unit => keycloakHook = "useKeycloak"
+}
 
 module ScreenContainer = {
   @react.component
@@ -35,6 +37,7 @@ module Login = {
   @react.component
   let make = (~navigation, ~route as _) => {
     let debugStyle = useDebugStyle()
+    let {keycloak} = Keycloak.useKeycloak()
     <ScreenContainer>
       <Rows space=[1.] alignY=[#center]>
         <Card elevation=5>
@@ -49,10 +52,16 @@ module Login = {
             </Row>
             <Row height=[#content]>
               <View style={Style.arrayOption([debugStyle])}>
-                <AwesomeButton onPress={() => ActData.authorize()->Js.Promise.then_(result => {
+                <AwesomeButton onPress={() => keycloak.login(.)->Js.Promise.catch(result => {
                       Js.log(result)
                       Js.Promise.resolve()
                     }, _)}> {"Authorize"->React.string} </AwesomeButton> <AwesomeButton
+                  onPress={() => keycloak.logout(.)->Js.Promise.catch(result => {
+                      Js.log(result)
+                      Js.Promise.resolve()
+                    }, _)}>
+                  {"Logout"->React.string}
+                </AwesomeButton> <AwesomeButton
                   onPress={() => navigation->Navigation.navigate("CreateCheckin")}>
                   {"Go to Create Checkin Screen"->React.string}
                 </AwesomeButton>
@@ -111,11 +120,12 @@ module Root = {
       ~surface="white",
       ~text="black",
     )
-
+    let screens = Js.Dict.fromList(list{("CreateCheckin", "CreateCheckin/:id")})
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
     <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
       <ThemeProvider theme>
-        <Native.NavigationContainer>
+        <Native.NavigationContainer
+          linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
           <Navigator headerMode=#none>
             <Screen name="Login" component=Login.make />
             <Screen name="CreateCheckin" component=CreateCheckin.make />
