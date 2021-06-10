@@ -55,16 +55,7 @@ module Login = {
                 <AwesomeButton onPress={() => keycloak.login(.)->Js.Promise.catch(result => {
                       Js.log(result)
                       Js.Promise.resolve()
-                    }, _)}> {"Authorize"->React.string} </AwesomeButton> <AwesomeButton
-                  onPress={() => keycloak.logout(.)->Js.Promise.catch(result => {
-                      Js.log(result)
-                      Js.Promise.resolve()
-                    }, _)}>
-                  {"Logout"->React.string}
-                </AwesomeButton> <AwesomeButton
-                  onPress={() => navigation->Navigation.navigate("CreateCheckin")}>
-                  {"Go to Create Checkin Screen"->React.string}
-                </AwesomeButton>
+                    }, _)}> {"Authorize"->React.string} </AwesomeButton>
               </View>
             </Row>
           </Box>
@@ -82,6 +73,8 @@ module Login = {
 module CreateCheckin = {
   @react.component
   let make = (~navigation, ~route as _) => {
+    let keycloak = Keycloak.useKeycloak()
+    Js.log(keycloak)
     <ScreenContainer>
       <Headline> {"Create Checkin page"->React.string} </Headline>
     </ScreenContainer>

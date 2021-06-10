@@ -62,7 +62,6 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-native": "0.63.4",
-    "react-native-app-auth": "github:joe307bad/react-native-app-auth",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-inappbrowser-reborn": "^3.5.1",
     "react-native-keycloak": "^1.0.0",

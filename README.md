@@ -19,9 +19,10 @@ This repository is an exploratory exercise and case study of three concepts: **[
 
 - This application is the Android and iOS mobile applications in a single codebase. This is the main client facing consumer of the `api` application. Offline-first ideology dictates the need to maintain a database of information on the user's device and the ability to sync and persist any information to the `api` application.
 - Primary tools
-  - [ReScript](https://github.com/rescript-lang) ([`rescript-react-native`](https://github.com/rescript-react-native))
-  - [React Native](https://github.com/facebook/react-native) (TypeScript)
+  - [ReScript](https://github.com/rescript-lang) ([`rescript-react`](https://github.com/rescript-lang/rescript-react))
+  - [React Native](https://github.com/facebook/react-native) ([`rescript-react-native`](https://github.com/rescript-react-native))
   - [React Native Paper](https://github.com/callstack/react-native-paper) ([`rescript-react-native-paper`](https://github.com/rescript-react-native/paper))
+  - [React Navigation](https://github.com/react-navigation/react-navigation) ([`rescript-react-navigation`](https://github.com/rescript-react-native/rescript-react-navigation))
   - [WatermelonDB](https://github.com/Nozbe/WatermelonDB) ([SQLite](https://github.com/sqlite/sqlite))
 
 #### `/apps/web`
@@ -46,12 +47,12 @@ This repository is an exploratory exercise and case study of three concepts: **[
 - Primary tools
   - TypeScript
 - Mobile tools
-  - [React Native App Auth](https://github.com/FormidableLabs/react-native-app-auth)
+  - [Keycloak](https://github.com/keycloak/keycloak) as an OIDC provider ([`@react-keycloak/native`](https://github.com/react-keycloak/react-native-keycloak))
 
 #### `docker-compose.yml`
 
 - This file is for managing the required services to run The Act App.
 - Services
   - CouchDB
-  - [Keycloak](https://github.com/keycloak/keycloak)
+  - Keycloak
   - [PostgreSQL](https://github.com/postgres/postgres)

@@ -15,7 +15,6 @@ const keycloak = new RNKeycloak({
 
 export default () => {
   //const achievements = db.useCollection('achievements');
-  // TODO it may be better to just implement using inappbrowser https://github.com/proyecto26/react-native-inappbrowser#authentication-flow-using-deep-linking
   return (
     <ReactNativeKeycloakProvider
       authClient={keycloak}
