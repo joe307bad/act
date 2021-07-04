@@ -7,6 +7,7 @@ import { useCollectionFactory } from './react/use-collection';
 import { EventsService } from './services/events';
 import { AchievementCategoriesService } from './services/achievement-categories';
 import { AchievementsService } from './services/achievements';
+import { UsersService } from './services/users';
 
 export const registryFactory = (adapter) => {
   container.register('ContextService', ContextService);
@@ -34,7 +35,8 @@ export const registryFactory = (adapter) => {
       communities: new CommunitiesService(),
       events: new EventsService(),
       achievementCategories: new AchievementCategoriesService(),
-      achievements: new AchievementsService()
+      achievements: new AchievementsService(),
+      users: new UsersService()
     }
   };
 };

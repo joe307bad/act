@@ -2,6 +2,7 @@ import { Database, Model } from '@nozbe/watermelondb';
 import Collection from '@nozbe/watermelondb/Collection';
 import { ActContext } from '../context';
 import { Deleted } from '../schema';
+import { camelCase } from 'change-case';
 
 export abstract class BaseService<T extends Model> {
   _collection: Collection<T>;
@@ -30,6 +31,19 @@ export abstract class BaseService<T extends Model> {
     );
   };
 
+  insertWithProps = async (insertProps: {
+    [key: string]: string;
+  }): Promise<string> => {
+    return await this._db.action(
+      async () =>
+        await this._collection.create((m: any) => {
+          for (const property in insertProps) {
+            m[property] = insertProps[property];
+          }
+        })
+    );
+  };
+
   update = async (id, name) => {
     await this._db.action(async () => {
       const model = await this._collection.find(id);
@@ -47,7 +61,9 @@ export abstract class BaseService<T extends Model> {
       const model = await this._collection.find(id);
       await model.update((m) => {
         for (const property in updateProps) {
-          m[property] = updateProps[property];
+          const p = camelCase(property);
+          debugger;
+          m[p] = updateProps[property];
         }
       });
     });

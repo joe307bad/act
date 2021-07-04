@@ -19,6 +19,7 @@ import { Stars } from '@material-ui/icons';
 import EventIcon from '@material-ui/icons/Event';
 import AddIcon from '@material-ui/icons/Add';
 import Category from '@material-ui/icons/Category';
+import People from '@material-ui/icons/People';
 import Button from '@material-ui/core/Button';
 import db from '@act/data/web';
 import {
@@ -33,6 +34,7 @@ import Communities from './pages/communities';
 import Events from './pages/events';
 import AchievementCategories from './pages/achievement-categories';
 import Achievements from './pages/achievement';
+import Users from './pages/users';
 
 const drawerWidth = 240;
 
@@ -71,7 +73,8 @@ enum PAGE {
   ACHIEVEMENT_CATEGORIES = '/achievement-categories',
   COMMUNITIES = '/communities',
   EVENTS = '/events',
-  ACHIEVEMENT = '/achievements'
+  ACHIEVEMENT = '/achievements',
+  USERS = '/users'
 }
 
 const ToolBarAndSideBar = () => {
@@ -103,6 +106,12 @@ const ToolBarAndSideBar = () => {
           insertText: 'Add Achievement',
           insertFn: () =>
             db.models.achievements.insert('New Achievement')
+        };
+      case PAGE.USERS:
+        return {
+          title: 'Users',
+          insertText: 'Add User',
+          insertFn: () => db.models.users.insert('New User')
         };
       default:
         return {} as CurrentPage;
@@ -196,6 +205,17 @@ const ToolBarAndSideBar = () => {
             </ListItemIcon>
             <ListItemText primary={'Achievement Categories'} />
           </ListItem>
+          <ListItem
+            component={Link}
+            to={PAGE.USERS}
+            button
+            className={isActive(PAGE.USERS)}
+          >
+            <ListItemIcon>
+              <People className={isActive(PAGE.USERS)} />
+            </ListItemIcon>
+            <ListItemText primary={'Users'} />
+          </ListItem>
         </List>
         <Divider />
       </Drawer>
@@ -226,6 +246,9 @@ const App = () => {
           </Route>
           <Route path="/achievements">
             <Achievements />
+          </Route>
+          <Route path="/users">
+            <Users />
           </Route>
         </Switch>
       </Router>

@@ -4,6 +4,7 @@ import {
   ReactNativeKeycloakProvider,
   useKeycloak
 } from '@react-keycloak/native';
+import db from './';
 
 const keycloak = new RNKeycloak({
   url: 'http://192.168.0.4:8080/auth',
@@ -16,6 +17,10 @@ const KeycloakProvider: FC = ({ children }) => (
     authClient={keycloak}
     initOptions={{
       redirectUri: 'io.act.auth://io.act.host/CreateCheckin/'
+    }}
+    onTokens={(tokens) => {
+      // TODO create user if does not exist
+      db.models.users.insertIfDoesNotExist(tokens.idToken);
     }}
   >
     {children}

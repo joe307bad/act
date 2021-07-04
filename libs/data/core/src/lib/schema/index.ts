@@ -13,6 +13,7 @@ export * from './event';
 export * from './community';
 export * from './achievement';
 export * from './achievement-category';
+export * from './user';
 
 const baseColumns = (schema: ColumnSchema[]): ColumnSchema[] => [
   ...schema,
@@ -23,13 +24,20 @@ const baseColumns = (schema: ColumnSchema[]): ColumnSchema[] => [
 
 export const schemaAndMigrations = {
   schema: appSchema({
-    version: 5,
+    version: 6,
     tables: [
+      tableSchema({
+        name: 'users',
+        columns: baseColumns([
+          { name: 'full_name', type: 'string' },
+          { name: 'username', type: 'string' },
+          { name: 'keycloak_id', type: 'string' }
+        ])
+      }),
       tableSchema({
         name: 'achievements',
         columns: baseColumns([
           { name: 'name', type: 'string' },
-          { name: 'points', type: 'string' },
           { name: 'points', type: 'number' },
           { name: 'photo', type: 'string', isOptional: true },
           { name: 'category_id', type: 'string', isOptional: true }
@@ -115,6 +123,19 @@ export const schemaAndMigrations = {
           createTable({
             name: 'achievement_categories',
             columns: baseColumns([{ name: 'name', type: 'string' }])
+          })
+        ]
+      },
+      {
+        toVersion: 6,
+        steps: [
+          createTable({
+            name: 'users',
+            columns: baseColumns([
+              { name: 'full_name', type: 'string' },
+              { name: 'username', type: 'string' },
+              { name: 'keycloak_id', type: 'string' }
+            ])
           })
         ]
       }

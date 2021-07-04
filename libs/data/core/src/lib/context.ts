@@ -6,7 +6,8 @@ import {
   AchievementCategory,
   Community,
   Deleted,
-  Event
+  Event,
+  User
 } from './schema';
 
 @singleton()
@@ -20,7 +21,8 @@ export class ActContext {
         Deleted,
         Event,
         Achievement,
-        AchievementCategory
+        AchievementCategory,
+        User
       ],
       actionsEnabled: true
     });

@@ -26,6 +26,7 @@
     "react-native-screens": "*",
     "react-native-safe-area-context": "*",
     "@react-keycloak/native": "*",
-    "react-native-inappbrowser-reborn": "*"
+    "react-native-inappbrowser-reborn": "*",
+    "jwt-decode": "*"
   }
 }
