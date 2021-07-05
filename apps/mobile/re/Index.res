@@ -8,9 +8,19 @@ module AwesomeButton = {
   external make: (~children: React.element, ~onPress: unit => 'a) => React.element = "default"
 }
 
+module ExternalComponents = {
+  @module("../src/app/CreateCheckin") @react.component
+  external make: unit => React.element = "default"
+}
+
 module ActData = {
+  type authStatus =
+    | Pending
+    | Authenticated
+    | Unauthenticated
+  type useActAuthHook = {status: authStatus}
   @module("@act/data/rn")
-  external authorize: unit => Js.Promise.t<unit> = "authorize"
+  external useActAuth: unit => useActAuthHook = "useActAuth"
 }
 
 module Keycloak = {
@@ -74,10 +84,16 @@ module CreateCheckin = {
   @react.component
   let make = (~navigation, ~route as _) => {
     let keycloak = Keycloak.useKeycloak()
-    Js.log(keycloak)
     <ScreenContainer>
-      <Headline> {"Create Checkin page"->React.string} </Headline>
+      <Headline> {"Create Checkin page"->React.string} </Headline> <ExternalComponents />
     </ScreenContainer>
+  }
+}
+
+module Pending = {
+  @react.component
+  let make = (~navigation, ~route as _) => {
+    <ScreenContainer> <Headline> {""->React.string} </Headline> </ScreenContainer>
   }
 }
 
@@ -115,13 +131,17 @@ module Root = {
     )
     let screens = Js.Dict.fromList(list{("CreateCheckin", "CreateCheckin/:id")})
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
+    let {status} = ActData.useActAuth()
     <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
       <ThemeProvider theme>
         <Native.NavigationContainer
           linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
           <Navigator headerMode=#none>
-            <Screen name="Login" component=Login.make />
-            <Screen name="CreateCheckin" component=CreateCheckin.make />
+            {switch status {
+            | Authenticated => <Screen name="CreateCheckin" component=CreateCheckin.make />
+            | Unauthenticated => <Screen name="Login" component=Login.make />
+            | _ => <Screen name="Pending" component=Pending.make />
+            }}
           </Navigator>
         </Native.NavigationContainer>
       </ThemeProvider>

@@ -17,14 +17,12 @@ export class UsersService extends BaseService<User> {
   }
 
   async insertIfDoesNotExist(token: string) {
-    debugger;
     const decodedToken = jwt_decode<Token>(token);
 
     const userByKeycloakId = await this._collection
       .query(Q.where('keycloak_id', decodedToken.sub))
       .fetch();
 
-    debugger;
     if (userByKeycloakId.length > 0) {
       return userByKeycloakId[0].id;
     }
@@ -34,7 +32,7 @@ export class UsersService extends BaseService<User> {
       username: decodedToken.username,
       keycloakId: decodedToken.sub
     });
-    debugger;
+
     return newUserId;
   }
 }

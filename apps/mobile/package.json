@@ -27,6 +27,9 @@
     "react-native-safe-area-context": "*",
     "@react-keycloak/native": "*",
     "react-native-inappbrowser-reborn": "*",
-    "jwt-decode": "*"
+    "jwt-decode": "*",
+    "change-case": "*",
+    "react-use-promise": "*",
+    "@react-native-async-storage/async-storage": "*"
   }
 }

@@ -61,9 +61,7 @@ export abstract class BaseService<T extends Model> {
       const model = await this._collection.find(id);
       await model.update((m) => {
         for (const property in updateProps) {
-          const p = camelCase(property);
-          debugger;
-          m[p] = updateProps[property];
+          m[camelCase(property)] = updateProps[property];
         }
       });
     });
