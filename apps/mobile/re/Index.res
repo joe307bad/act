@@ -137,11 +137,16 @@ module Root = {
         <Native.NavigationContainer
           linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
           <Navigator headerMode=#none>
-            {switch status {
-            | Authenticated => <Screen name="CreateCheckin" component=CreateCheckin.make />
-            | Unauthenticated => <Screen name="Login" component=Login.make />
-            | _ => <Screen name="Pending" component=Pending.make />
-            }}
+            {
+              // This approach of rendering the screens based on auth status throws a
+              // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
+              // because the component itself is not rendered due to this instance of pattern matching
+              switch status {
+              | Authenticated => <Screen name="CreateCheckin" component=CreateCheckin.make />
+              | Unauthenticated => <Screen name="Login" component=Login.make />
+              | _ => <Screen name="Pending" component=Pending.make />
+              }
+            }
           </Navigator>
         </Native.NavigationContainer>
       </ThemeProvider>
