@@ -8,8 +8,8 @@ module AwesomeButton = {
   external make: (~children: React.element, ~onPress: unit => 'a) => React.element = "default"
 }
 
-module ExternalComponents = {
-  @module("../src/app/CreateCheckin") @react.component
+module Entry = {
+  @module("../src/app/Entry") @react.component
   external make: unit => React.element = "default"
 }
 
@@ -75,19 +75,9 @@ module Login = {
   }
 }
 
-// @react.component
-// let make = (~allPosts: array<post>, ~sync: ReactNative.Event.pressEvent => unit) => {
-//   <StacksProvider debug={false} spacing=5.> <Login /> </Sta cksProvider>
-// }
-
-module CreateCheckin = {
+module EntryComponent = {
   @react.component
-  let make = (~navigation, ~route as _) => {
-    let keycloak = Keycloak.useKeycloak()
-    <ScreenContainer>
-      <Headline> {"Create Checkin page"->React.string} </Headline> <ExternalComponents />
-    </ScreenContainer>
-  }
+  let make = (~navigation, ~route as _) => <Entry.make />
 }
 
 module Pending = {
@@ -142,7 +132,7 @@ module Root = {
               // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
               // because the component itself is not rendered due to this instance of pattern matching
               switch status {
-              | Authenticated => <Screen name="CreateCheckin" component=CreateCheckin.make />
+              | Authenticated => <Screen name="Entry" component=EntryComponent.make />
               | Unauthenticated => <Screen name="Login" component=Login.make />
               | _ => <Screen name="Pending" component=Pending.make />
               }
