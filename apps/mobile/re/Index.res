@@ -112,7 +112,7 @@ module Root = {
       ~primary="#470FF4",
       ~accent="#87FF65",
       ~background="#eae8ff",
-      ~backdrop="#eae8ff",
+      ~backdrop="rgba(0, 0, 0, 0.33)",
       ~disabled="#adacb5",
       ~error="#c83e4d",
       ~placeholder="#470FF4",
@@ -123,7 +123,7 @@ module Root = {
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
     let {status} = ActData.useActAuth()
     <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
-      <ThemeProvider theme>
+      <Paper.PaperProvider theme>
         <Native.NavigationContainer
           linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
           <Navigator headerMode=#none>
@@ -139,7 +139,7 @@ module Root = {
             }
           </Navigator>
         </Native.NavigationContainer>
-      </ThemeProvider>
+      </Paper.PaperProvider>
     </FillView>
   }
 }

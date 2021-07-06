@@ -5,11 +5,12 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Mobile.iml" filepath="$PROJECT_DIR$/.idea/modules/Mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Mobile.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Mobile.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1146217243/Mobile.nozbe_watermelondb.iml" filepath="$PROJECT_DIR$/.idea/modules/-1146217243/Mobile.nozbe_watermelondb.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1624138704/Mobile.react-native-app-auth.iml" filepath="$PROJECT_DIR$/.idea/modules/-1624138704/Mobile.react-native-app-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1060777903/Mobile.react-native-async-storage_async-storage.iml" filepath="$PROJECT_DIR$/.idea/modules/-1060777903/Mobile.react-native-async-storage_async-storage.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1435439702/Mobile.react-native-gesture-handler.iml" filepath="$PROJECT_DIR$/.idea/modules/-1435439702/Mobile.react-native-gesture-handler.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1436692991/Mobile.react-native-inappbrowser-reborn.iml" filepath="$PROJECT_DIR$/.idea/modules/-1436692991/Mobile.react-native-inappbrowser-reborn.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-121683053/Mobile.react-native-safe-area-context.iml" filepath="$PROJECT_DIR$/.idea/modules/-121683053/Mobile.react-native-safe-area-context.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/1364946795/Mobile.react-native-screens.iml" filepath="$PROJECT_DIR$/.idea/modules/1364946795/Mobile.react-native-screens.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1333126548/Mobile.react-native-vector-icons.iml" filepath="$PROJECT_DIR$/.idea/modules/-1333126548/Mobile.react-native-vector-icons.iml" />
     </modules>
   </component>
 </project>

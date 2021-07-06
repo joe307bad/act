@@ -30,6 +30,9 @@
     "jwt-decode": "*",
     "change-case": "*",
     "react-use-promise": "*",
-    "@react-native-async-storage/async-storage": "*"
+    "@react-native-async-storage/async-storage": "*",
+    "@react-navigation/stack": "*",
+    "react-native-vector-icons": "*",
+    "lodash": "*"
   }
 }
