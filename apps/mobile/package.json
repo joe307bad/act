@@ -34,6 +34,8 @@
     "@react-navigation/stack": "*",
     "react-native-vector-icons": "*",
     "lodash": "*",
-    "@react-navigation/native": "*"
+    "@react-navigation/native": "*",
+    "@react-navigation/drawer": "*",
+    "react-native-reanimated": "*"
   }
 }

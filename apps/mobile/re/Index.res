@@ -90,7 +90,7 @@ module Pending = {
 }
 
 module Root = {
-  include ReactNavigation.Stack.Make({
+  include ReactNavigation.Drawer.Make({
     type params = unit
   })
   @react.component
@@ -129,7 +129,7 @@ module Root = {
         <Paper.PaperProvider theme>
           <Native.NavigationContainer
             linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
-            <Navigator headerMode=#none>
+            <Navigator drawerWidth={() => 100.}>
               {
                 // This approach of rendering the screens based on auth status throws a
                 // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
