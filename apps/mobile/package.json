@@ -33,6 +33,7 @@
     "@react-native-async-storage/async-storage": "*",
     "@react-navigation/stack": "*",
     "react-native-vector-icons": "*",
-    "lodash": "*"
+    "lodash": "*",
+    "@react-navigation/native": "*"
   }
 }

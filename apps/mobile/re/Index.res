@@ -32,11 +32,15 @@ module Keycloak = {
 
 module ScreenContainer = {
   @react.component
-  let make = (~children) => {
+  let make = (~children, ~center: bool=false) => {
     let {colors} = ThemeProvider.useTheme()
-    <FillView style={Style.style(~backgroundColor=colors.background, ())} padding=[2.]>
-      {children}
-    </FillView>
+    <Box
+      flex=[#fluid]
+      padding=[2.]
+      alignY=[center ? #center : #top]
+      style={Style.style(~backgroundColor=colors.background, ())}>
+      <Stacks.Stack space=[2.]> {children} </Stacks.Stack>
+    </Box>
   }
 }
 
@@ -48,29 +52,27 @@ module Login = {
   let make = (~navigation, ~route as _) => {
     let debugStyle = useDebugStyle()
     let {keycloak} = Keycloak.useKeycloak()
-    <ScreenContainer>
-      <Rows space=[1.] alignY=[#center]>
-        <Card elevation=5>
-          <Box padding=[2.]>
-            <Row height=[#content] paddingBottom=[2.]>
-              <View style={Style.arrayOption([debugStyle])}>
-                <Headline> {"Welcome to the Act App"->React.string} </Headline>
-                <Paper.Text style={Style.style(~fontFamily="sans-serif", ())}>
-                  {"Authorize using Keycloak"->React.string}
-                </Paper.Text>
-              </View>
-            </Row>
-            <Row height=[#content]>
-              <View style={Style.arrayOption([debugStyle])}>
-                <AwesomeButton onPress={() => keycloak.login(.)->Js.Promise.catch(result => {
-                      Js.log(result)
-                      Js.Promise.resolve()
-                    }, _)}> {"Authorize"->React.string} </AwesomeButton>
-              </View>
-            </Row>
-          </Box>
-        </Card>
-      </Rows>
+    <ScreenContainer center={true}>
+      <Card elevation=5>
+        <Box padding=[2.]>
+          <Row height=[#content] paddingBottom=[2.]>
+            <View style={Style.arrayOption([debugStyle])}>
+              <Headline> {"Welcome to the Act App"->React.string} </Headline>
+              <Paper.Text style={Style.style(~fontFamily="sans-serif", ())}>
+                {"Authorize using Keycloak"->React.string}
+              </Paper.Text>
+            </View>
+          </Row>
+          <Row height=[#content]>
+            <View style={Style.arrayOption([debugStyle])}>
+              <AwesomeButton onPress={() => keycloak.login(.)->Js.Promise.catch(result => {
+                    Js.log(result)
+                    Js.Promise.resolve()
+                  }, _)}> {"Authorize"->React.string} </AwesomeButton>
+            </View>
+          </Row>
+        </Box>
+      </Card>
     </ScreenContainer>
   }
 }
@@ -122,24 +124,26 @@ module Root = {
     let screens = Js.Dict.fromList(list{("CreateCheckin", "CreateCheckin/:id")})
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
     let {status} = ActData.useActAuth()
-    <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
-      <Paper.PaperProvider theme>
-        <Native.NavigationContainer
-          linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
-          <Navigator headerMode=#none>
-            {
-              // This approach of rendering the screens based on auth status throws a
-              // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
-              // because the component itself is not rendered due to this instance of pattern matching
-              switch status {
-              | Authenticated => <Screen name="Entry" component=EntryComponent.make />
-              | Unauthenticated => <Screen name="Login" component=Login.make />
-              | _ => <Screen name="Pending" component=Pending.make />
+    <StacksProvider>
+      <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
+        <Paper.PaperProvider theme>
+          <Native.NavigationContainer
+            linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
+            <Navigator headerMode=#none>
+              {
+                // This approach of rendering the screens based on auth status throws a
+                // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
+                // because the component itself is not rendered due to this instance of pattern matching
+                switch status {
+                | Authenticated => <Screen name="Entry" component=EntryComponent.make />
+                | Unauthenticated => <Screen name="Login" component=Login.make />
+                | _ => <Screen name="Pending" component=Pending.make />
+                }
               }
-            }
-          </Navigator>
-        </Native.NavigationContainer>
-      </Paper.PaperProvider>
-    </FillView>
+            </Navigator>
+          </Native.NavigationContainer>
+        </Paper.PaperProvider>
+      </FillView>
+    </StacksProvider>
   }
 }

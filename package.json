@@ -48,6 +48,7 @@
     "@react-keycloak/native": "^0.5.2",
     "@react-native-async-storage/async-storage": "^1.15.5",
     "@react-native-community/masked-view": "^0.1.11",
+    "@react-navigation/drawer": "^5.12.5",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
     "@rescript-react-native/paper": "git+https://github.com/joe307bad/paper.git#f9d541e58d677e20d4f5c06e8996871f785720b5",

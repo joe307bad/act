@@ -53,7 +53,6 @@ const getActiveRouteName = (state) => {
   return route.name;
 };
 const Entry = () => {
-  const title = React.useRef();
   return (
     <Stack.Navigator
       initialRouteName="CreateCheckin"
