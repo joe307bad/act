@@ -1,4 +1,3 @@
-import { User } from '@act/data/core';
 import React, {
   FC,
   useState,
@@ -16,11 +15,10 @@ import {
   Surface,
   useTheme
 } from 'react-native-paper';
-import { chain } from 'lodash';
-import db from '@act/data/rn';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Modal from './Modal';
-import { RmOptions } from 'node:fs';
+import { BaseModel } from '@act/data/core';
+import { snakeCase } from 'change-case';
 
 type SelectedOption = { id: string; display: string };
 
@@ -61,14 +59,23 @@ const Option: FC<{
     />
   );
 };
-type SelectorProps<T> = {
-  data: User[];
+
+type OptionListProps<T extends BaseModel> = {
+  data: T[];
   onChange: (selected: Map<string, SelectedOption>) => void;
   initialSelected: Map<string, SelectedOption>;
+  optionTitleProperty: keyof T;
+  optionSubtitleProperty: keyof T;
 };
-const OptionList: <T>(
-  p: PropsWithChildren<SelectorProps<T>>
-) => ReactElement = ({ data, onChange, initialSelected }) => {
+const OptionList: <T extends BaseModel>(
+  p: PropsWithChildren<OptionListProps<T>>
+) => ReactElement = ({
+  data,
+  onChange,
+  initialSelected,
+  optionSubtitleProperty,
+  optionTitleProperty
+}) => {
   const [selected, setSelected] =
     useState<Map<string, SelectedOption>>(initialSelected);
 
@@ -82,8 +89,8 @@ const OptionList: <T>(
         <Option
           key={d.id}
           value={d.id}
-          title={d.fullName}
-          subtitle={d.username}
+          title={d[snakeCase(optionTitleProperty as string)]}
+          subtitle={d[snakeCase(optionSubtitleProperty as string)]}
           initialValue={initialSelected.has(d.id)}
           onChange={(v) =>
             setSelected((p) => {
@@ -95,7 +102,7 @@ const OptionList: <T>(
               }
               newSelected.set(d.id, {
                 id: d.id,
-                display: d.username
+                display: d[snakeCase(optionTitleProperty as string)]
               });
               return newSelected;
             })
@@ -105,10 +112,6 @@ const OptionList: <T>(
     </Surface>
   );
 };
-
-const LeftContent = (props) => (
-  <Avatar.Icon {...props} icon="account-box-multiple-outline" />
-);
 
 const SelectedChip = ({ title, onDelete }) => {
   const theme = useTheme();
@@ -133,7 +136,29 @@ const SelectedChip = ({ title, onDelete }) => {
   );
 };
 
-const Selector: FC = () => {
+type SelectorProps<T extends BaseModel> = {
+  data: T[];
+  single: string;
+  plural: string;
+  title: string;
+  subtitle: string;
+  icon: string;
+  optionTitleProperty: keyof T;
+  optionSubtitleProperty: keyof T;
+};
+
+const Selector: <T extends BaseModel>(
+  p: PropsWithChildren<SelectorProps<T>>
+) => ReactElement = ({
+  data,
+  single,
+  plural,
+  title,
+  subtitle,
+  icon,
+  optionSubtitleProperty,
+  optionTitleProperty
+}) => {
   const [selectorModalVisible, setSelectorModalVisible] =
     useState(false);
   const [selected, setSelected] = useState<
@@ -145,6 +170,8 @@ const Selector: FC = () => {
   return (
     <>
       <Modal
+        title={`${single} Selector`}
+        subtitle={`Select one or more ${plural.toLocaleLowerCase()} and then select Apply`}
         apply={() => {
           setSelected(pendingSelected);
           setSelectorModalVisible(false);
@@ -152,17 +179,19 @@ const Selector: FC = () => {
         onDismiss={() => setSelectorModalVisible(false)}
         visible={selectorModalVisible}
       >
-        <OptionList<User>
+        <OptionList
           onChange={setPendingSelected}
-          data={db.useCollection<User>('users')}
+          data={data}
           initialSelected={selected}
+          optionSubtitleProperty={optionSubtitleProperty}
+          optionTitleProperty={optionTitleProperty}
         />
       </Modal>
       <Card>
         <Card.Title
-          title="Checkin Users"
-          subtitle="Select multiple users to checkin"
-          left={LeftContent}
+          title={title}
+          subtitle={subtitle}
+          left={(props) => <Avatar.Icon {...props} icon={icon} />}
         />
         <Card.Content>
           <View style={{ flexDirection: 'row' }}>
@@ -185,11 +214,12 @@ const Selector: FC = () => {
           <AwesomeButtonMedium
             onPress={() => setSelectorModalVisible(true)}
           >
-            Select Users
+            Select {plural}
           </AwesomeButtonMedium>
         </Card.Actions>
       </Card>
     </>
   );
 };
+
 export default Selector;

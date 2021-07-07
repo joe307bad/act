@@ -10,12 +10,16 @@ type ModalProps = {
   visible: boolean;
   apply: () => void;
   onDismiss: () => void;
+  title: string;
+  subtitle: string;
 };
 const Modal: FC<ModalProps> = ({
   visible,
   children,
   apply,
-  onDismiss
+  onDismiss,
+  title,
+  subtitle
 }) => (
   <Portal>
     <PaperModal
@@ -28,10 +32,7 @@ const Modal: FC<ModalProps> = ({
       }}
     >
       <Card style={{ margin: 10 }}>
-        <Card.Title
-          title="User Selector"
-          subtitle="Select one or more users and then select Apply"
-        />
+        <Card.Title title={title} subtitle={subtitle} />
         <Card.Content>{children}</Card.Content>
         <Card.Actions>
           <AwesomeButtonMedium onPress={apply}>

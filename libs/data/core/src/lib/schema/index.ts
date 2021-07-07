@@ -14,6 +14,7 @@ export * from './community';
 export * from './achievement';
 export * from './achievement-category';
 export * from './user';
+export * from './base-model';
 
 const baseColumns = (schema: ColumnSchema[]): ColumnSchema[] => [
   ...schema,

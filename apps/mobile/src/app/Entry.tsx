@@ -1,15 +1,16 @@
 import React, { FC } from 'react';
-import { useKeycloak } from '@react-keycloak/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useActAuth } from '@act/data/rn';
-import { Headline, useTheme, Button } from 'react-native-paper';
-import { createStackNavigator } from '@react-navigation/stack';
+import { Headline, useTheme } from 'react-native-paper';
+import {
+  createStackNavigator,
+  StackHeaderProps
+} from '@react-navigation/stack';
 import { Appbar } from 'react-native-paper';
-import Selector from './shared/components/Selector';
-import { ScreenContainer } from '../../re/Index.bs';
-import db from '@act/data/rn';
-import { User } from '@act/data/core';
-import Modal from './shared/components/Modal';
+import CreateCheckin from './screens/CreateCheckin';
+import {
+  useNavigation,
+  useNavigationState,
+  useRoute
+} from '@react-navigation/native';
 // import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 // <MaterialCommunityIcons
 //           name="close-circle-outline"
@@ -21,48 +22,51 @@ import Modal from './shared/components/Modal';
 
 const Stack = createStackNavigator();
 
-function NavBar() {
-  const theme = useTheme();
+const NavBar: (props: StackHeaderProps) => React.ReactNode = ({
+  scene
+}) => {
+  const { options } = scene.descriptor;
+  const title =
+    options.headerTitle !== undefined
+      ? options.headerTitle
+      : options.title !== undefined
+      ? options.title
+      : scene.route.name;
   return (
     <Appbar.Header>
       <Appbar.Content
         title={
-          <Headline style={{ color: 'white' }}>Home Screen</Headline>
+          <Headline style={{ color: 'white' }}>{title}</Headline>
         }
       />
     </Appbar.Header>
   );
-}
+};
+const getActiveRouteName = (state) => {
+  const route = state.routes[state?.index || 0];
 
+  if (route.state) {
+    // Dive into nested navigators
+    return getActiveRouteName(route.state);
+  }
+
+  return route.name;
+};
 const Entry = () => {
+  const title = React.useRef();
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName="CreateCheckin"
       screenOptions={{
         header: NavBar
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen
+        name="CreateCheckin"
+        options={{ title: 'Create Checkin' }}
+        component={CreateCheckin}
+      />
     </Stack.Navigator>
-  );
-};
-
-const HomeScreen: FC = () => {
-  const { keycloak } = useKeycloak();
-  const { setForceLogout } = useActAuth();
-  return (
-    <ScreenContainer.make>
-      <Selector />
-      <Button
-        onPress={() => {
-          setForceLogout(true);
-          AsyncStorage.removeItem('currentUserId');
-          keycloak.logout();
-        }}
-      >
-        Logout
-      </Button>
-    </ScreenContainer.make>
   );
 };
 
