@@ -1,24 +1,12 @@
 import React, { FC } from 'react';
-import { Headline, useTheme } from 'react-native-paper';
+import { Headline } from 'react-native-paper';
 import {
   createStackNavigator,
   StackHeaderProps
 } from '@react-navigation/stack';
 import { Appbar } from 'react-native-paper';
 import CreateCheckin from './screens/CreateCheckin';
-import {
-  useNavigation,
-  useNavigationState,
-  useRoute
-} from '@react-navigation/native';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// <MaterialCommunityIcons
-//           name="close-circle-outline"
-//           color={theme.colors.primary}
-//           size={20}
-//         />
-
-//MaterialCommunityIcons.loadFont();
+import Achievements from './screens/Achievements';
 
 const Stack = createStackNavigator();
 
@@ -42,20 +30,12 @@ const NavBar: (props: StackHeaderProps) => React.ReactNode = ({
     </Appbar.Header>
   );
 };
-const getActiveRouteName = (state) => {
-  const route = state.routes[state?.index || 0];
 
-  if (route.state) {
-    // Dive into nested navigators
-    return getActiveRouteName(route.state);
-  }
-
-  return route.name;
-};
 const Entry = () => {
   return (
     <Stack.Navigator
       initialRouteName="CreateCheckin"
+      headerMode="float"
       screenOptions={{
         header: NavBar
       }}
@@ -64,6 +44,11 @@ const Entry = () => {
         name="CreateCheckin"
         options={{ title: 'Create Checkin' }}
         component={CreateCheckin}
+      />
+      <Stack.Screen
+        name="Achievements"
+        options={{ title: 'Achievements' }}
+        component={Achievements}
       />
     </Stack.Navigator>
   );

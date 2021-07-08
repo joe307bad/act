@@ -13,6 +13,11 @@ module Entry = {
   external make: unit => React.element = "default"
 }
 
+module ActDrawer = {
+  @module("../src/app/core/nav/Drawer.tsx") @react.component
+  external make: (~children: React.element) => React.element = "default"
+}
+
 module ActData = {
   type authStatus =
     | Pending
@@ -129,7 +134,7 @@ module Root = {
         <Paper.PaperProvider theme>
           <Native.NavigationContainer
             linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
-            <Navigator drawerWidth={() => 100.}>
+            <ActDrawer>
               {
                 // This approach of rendering the screens based on auth status throws a
                 // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
@@ -140,7 +145,7 @@ module Root = {
                 | _ => <Screen name="Pending" component=Pending.make />
                 }
               }
-            </Navigator>
+            </ActDrawer>
           </Native.NavigationContainer>
         </Paper.PaperProvider>
       </FillView>
