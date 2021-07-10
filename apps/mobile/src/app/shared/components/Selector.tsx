@@ -17,8 +17,13 @@ import {
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Modal from './Modal';
-import { BaseModel } from '@act/data/core';
+import { Achievement, BaseModel } from '@act/data/core';
 import { snakeCase } from 'change-case';
+import {
+  Category,
+  TabbedSelector,
+  TabbedSelectorProps as TSP
+} from './TabbedSelector';
 
 type SelectedOption = { id: string; display: string };
 
@@ -40,7 +45,7 @@ export const Option: FC<{
   return (
     <List.Item
       onPress={onPress}
-      titleStyle={{ fontSize: 18 }}
+      titleStyle={{ fontSize: 20 }}
       descriptionStyle={{ fontFamily: 'sans-serif' }}
       title={title}
       description={subtitle}
@@ -137,29 +142,75 @@ const SelectedChip = ({ title, onDelete }) => {
   );
 };
 
-type SelectorProps<T extends BaseModel> = {
-  data: T[];
+type AllProps = Partial<{
+  type: TType;
+  name: string;
+  points: number;
+}>;
+type TType = 'string' | 'number';
+export function Image(props: {
+  type: 'string';
+  name: string;
+}): React.ReactElement;
+export function Image(props: {
+  type: 'number';
+  points: number;
+}): React.ReactElement;
+export function Image(props: AllProps) {
+  if (props.type === 'number') {
+    const b = props.name;
+  }
+  // Imagine there is some logic to handle these props
+  return <div>placeholder</div>;
+}
+
+const b = () => {
+  <>
+    <Image type={'number'} points={3} />
+    <Image type={'string'} name={'eef'} />
+  </>;
+};
+
+type CommonSelectorProps = Partial<{
   single: string;
   plural: string;
   title: string;
   subtitle: string;
   icon: string;
+}>;
+
+type TabbedSelectorProps<T extends BaseModel, C extends Category> =
+  CommonSelectorProps & TSP<T, C>;
+
+type RegularSelectorProps<T> = CommonSelectorProps & {
+  data: T[];
   optionTitleProperty: keyof T;
   optionSubtitleProperty: keyof T;
 };
 
-const Selector: <T extends BaseModel>(
-  p: PropsWithChildren<SelectorProps<T>>
-) => ReactElement = ({
-  data,
-  single,
-  plural,
-  title,
-  subtitle,
-  icon,
-  optionSubtitleProperty,
-  optionTitleProperty
-}) => {
+function Selector<T extends BaseModel, C extends Category>(
+  props: PropsWithChildren<TabbedSelectorProps<T, C>>
+): ReactElement | null;
+function Selector<T extends BaseModel>(
+  props: PropsWithChildren<RegularSelectorProps<T>>
+): ReactElement | null;
+function Selector<T extends BaseModel, C extends Category = null>(
+  props: CommonSelectorProps &
+    TabbedSelectorProps<T, C> &
+    RegularSelectorProps<T>
+) {
+  const {
+    data,
+    single,
+    plural,
+    title,
+    subtitle,
+    icon,
+    optionSubtitleProperty,
+    optionTitleProperty,
+    categories = []
+  } = props;
+
   const [selectorModalVisible, setSelectorModalVisible] =
     useState(false);
   const [selected, setSelected] = useState<
@@ -168,6 +219,7 @@ const Selector: <T extends BaseModel>(
   const [pendingSelected, setPendingSelected] = useState<
     Map<string, SelectedOption>
   >(new Map());
+
   return (
     <>
       <Modal
@@ -179,14 +231,25 @@ const Selector: <T extends BaseModel>(
         }}
         onDismiss={() => setSelectorModalVisible(false)}
         visible={selectorModalVisible}
+        fullHeight={categories.length > 0}
       >
-        <OptionList
-          onChange={setPendingSelected}
-          data={data}
-          initialSelected={selected}
-          optionSubtitleProperty={optionSubtitleProperty}
-          optionTitleProperty={optionTitleProperty}
-        />
+        {categories.length === 0 && (
+          <OptionList
+            onChange={setPendingSelected}
+            data={data as T[]}
+            initialSelected={selected}
+            optionSubtitleProperty={optionSubtitleProperty as keyof T}
+            optionTitleProperty={optionTitleProperty as keyof T}
+          />
+        )}
+        {categories.length > 0 && (
+          <TabbedSelector
+            data={data}
+            categories={categories}
+            optionSubtitleProperty={optionSubtitleProperty}
+            optionTitleProperty={optionTitleProperty}
+          />
+        )}
       </Modal>
       <Card>
         <Card.Title
@@ -221,6 +284,6 @@ const Selector: <T extends BaseModel>(
       </Card>
     </>
   );
-};
+}
 
 export default Selector;
