@@ -22,10 +22,10 @@ import { snakeCase } from 'change-case';
 
 type SelectedOption = { id: string; display: string };
 
-const Option: FC<{
+export const Option: FC<{
   value: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   onChange: (v: boolean) => void;
   initialValue: boolean;
 }> = ({ title, subtitle, onChange, initialValue }) => {
@@ -40,7 +40,8 @@ const Option: FC<{
   return (
     <List.Item
       onPress={onPress}
-      titleStyle={{ fontFamily: 'sans-serif' }}
+      titleStyle={{ fontSize: 18 }}
+      descriptionStyle={{ fontFamily: 'sans-serif' }}
       title={title}
       description={subtitle}
       left={(props) => (

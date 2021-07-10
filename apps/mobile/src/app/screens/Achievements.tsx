@@ -1,9 +1,16 @@
 import React, { FC } from 'react';
-import { Headline, List } from 'react-native-paper';
+import {
+  Checkbox,
+  Headline,
+  List,
+  useTheme
+} from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import db from '@act/data/rn';
 import { Achievement, AchievementCategory } from '@act/data/core';
 import { groupBy, toPairs } from 'lodash';
+import { View } from 'react-native';
+import { Option } from '../shared/components/Selector';
 
 const Achievements: FC = () => {
   const achievements = db.useCollection<Achievement>('achievements', [
@@ -19,7 +26,6 @@ const Achievements: FC = () => {
   );
 
   achievementsByCategory.push(['All', achievements]);
-  console.log({ achievementsByCategory });
 
   if (achievements.length === 0 || categories.length === 0) {
     return <></>;
@@ -43,10 +49,12 @@ const Achievements: FC = () => {
           <TabScreen key={category[0]} label={label}>
             <>
               {category[1].map((achievement) => (
-                <List.Item
-                  titleStyle={{ fontSize: 20 }}
-                  key={achievement.id}
+                <Option
+                  initialValue={false}
+                  onChange={() => {}}
                   title={achievement.name}
+                  value={achievement.id}
+                  key={achievement.id}
                 />
               ))}
             </>

@@ -8,8 +8,6 @@ import { Button } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateCheckin: FC = () => {
-  const { keycloak } = useKeycloak();
-  const { setForceLogout } = useActAuth();
   const users = db.useCollection<User>('users');
   const achievements = db.useCollection<Achievement>('achievements');
   return (
@@ -34,15 +32,6 @@ const CreateCheckin: FC = () => {
         title="Checkin Users"
         subtitle="Select one or more users to checkin"
       />
-      <Button
-        onPress={() => {
-          setForceLogout(true);
-          AsyncStorage.removeItem('currentUserId');
-          keycloak.logout();
-        }}
-      >
-        Logout
-      </Button>
     </ScreenContainer.make>
   );
 };

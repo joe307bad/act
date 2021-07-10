@@ -1,18 +1,19 @@
-import React, { FC } from 'react';
+import React, { FC, ReactElement } from 'react';
 import { Headline } from 'react-native-paper';
 import {
   createStackNavigator,
   StackHeaderProps
 } from '@react-navigation/stack';
-import { Appbar } from 'react-native-paper';
+import { Appbar, useTheme } from 'react-native-paper';
 import CreateCheckin from './screens/CreateCheckin';
 import Achievements from './screens/Achievements';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Stack = createStackNavigator();
 
-const NavBar: (props: StackHeaderProps) => React.ReactNode = ({
-  scene
-}) => {
+const NavBar: (
+  props: StackHeaderProps & { theme: ReactNativePaper.Theme }
+) => ReactElement = ({ scene, previous, navigation }) => {
   const { options } = scene.descriptor;
   const title =
     options.headerTitle !== undefined
@@ -22,22 +23,32 @@ const NavBar: (props: StackHeaderProps) => React.ReactNode = ({
       : scene.route.name;
   return (
     <Appbar.Header>
+      {previous ? (
+        <Appbar.BackAction onPress={navigation.goBack} />
+      ) : null}
       <Appbar.Content
         title={
           <Headline style={{ color: 'white' }}>{title}</Headline>
         }
+      />
+      <MaterialCommunityIcons
+        onPress={() => (navigation as any).openDrawer()}
+        name="menu"
+        color={'white'}
+        size={30}
       />
     </Appbar.Header>
   );
 };
 
 const Entry = () => {
+  const theme = useTheme();
   return (
     <Stack.Navigator
       initialRouteName="CreateCheckin"
       headerMode="float"
       screenOptions={{
-        header: NavBar
+        header: (props) => <NavBar {...props} theme={theme} />
       }}
     >
       <Stack.Screen

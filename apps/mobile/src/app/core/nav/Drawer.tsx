@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React, { FC } from 'react';
 import { View } from 'react-native';
-import { List, useTheme } from 'react-native-paper';
+import { List, useTheme, Button } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   createDrawerNavigator,
@@ -9,14 +9,21 @@ import {
   DrawerContentOptions
 } from '@react-navigation/drawer';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
-import db from '@act/data/rn';
-import { Box } from '@mobily/stacks';
+import db, { useActAuth } from '@act/data/rn';
+import { Box, Stack } from '@mobily/stacks';
+import { useKeycloak } from '@react-keycloak/native';
+import KeycloakReactNativeClient from '@react-keycloak/native/lib/typescript/src/keycloak/client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 MaterialCommunityIcons.loadFont();
 
 const DrawerList: FC<
-  DrawerContentComponentProps<DrawerContentOptions>
-> = ({ navigation }) => {
+  DrawerContentComponentProps<DrawerContentOptions> & {
+    theme: ReactNativePaper.Theme;
+    keycloak: KeycloakReactNativeClient;
+    setForceLogout: (forceLogout: boolean) => void;
+  }
+> = ({ navigation, theme, keycloak, setForceLogout }) => {
   return (
     <>
       <List.Item
@@ -25,7 +32,7 @@ const DrawerList: FC<
         }}
         style={{
           borderBottomWidth: 1,
-          borderBottomColor: 'blue'
+          borderBottomColor: theme.colors.primary
         }}
         titleStyle={{ fontSize: 25 }}
         title={'Create Checkin'}
@@ -38,7 +45,7 @@ const DrawerList: FC<
           >
             <MaterialCommunityIcons
               name="checkbox-marked-circle-outline"
-              color={'blue'}
+              color={theme.colors.primary}
               size={40}
             />
           </View>
@@ -50,7 +57,7 @@ const DrawerList: FC<
         }}
         style={{
           borderBottomWidth: 1,
-          borderBottomColor: 'blue'
+          borderBottomColor: theme.colors.primary
         }}
         titleStyle={{ fontSize: 25 }}
         title={'Achievements'}
@@ -63,31 +70,57 @@ const DrawerList: FC<
           >
             <MaterialCommunityIcons
               name="star-circle-outline"
-              color={'blue'}
+              color={theme.colors.primary}
               size={40}
             />
           </View>
         )}
       />
-      <Box padding={2}>
-        <AwesomeButtonMedium onPress={() => db.sync()}>
-          Sync
-        </AwesomeButtonMedium>
-      </Box>
+      <Stack space={2} padding={5}>
+        <Box>
+          <AwesomeButtonMedium onPress={() => db.sync()}>
+            Sync
+          </AwesomeButtonMedium>
+        </Box>
+        <Box>
+          <Button
+            onPress={() => {
+              setForceLogout(true);
+              AsyncStorage.removeItem('currentUserId');
+              keycloak.logout();
+            }}
+          >
+            Logout
+          </Button>
+        </Box>
+      </Stack>
     </>
   );
 };
 
 const D = createDrawerNavigator();
 
-const Drawer = ({ children }) => (
-  <D.Navigator
-    openByDefault
-    overlayColor="transparent"
-    drawerContent={DrawerList}
-  >
-    {children}
-  </D.Navigator>
-);
+const Drawer = ({ children }) => {
+  const theme = useTheme();
+  const { keycloak } = useKeycloak();
+  const { setForceLogout } = useActAuth();
+  return (
+    <D.Navigator
+      openByDefault
+      overlayColor="transparent"
+      drawerPosition="right"
+      drawerContent={(props) => (
+        <DrawerList
+          {...props}
+          theme={theme}
+          keycloak={keycloak}
+          setForceLogout={setForceLogout}
+        />
+      )}
+    >
+      {children}
+    </D.Navigator>
+  );
+};
 
 export default Drawer;
