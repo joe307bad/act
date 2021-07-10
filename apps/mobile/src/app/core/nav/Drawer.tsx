@@ -8,6 +8,9 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions
 } from '@react-navigation/drawer';
+import { AwesomeButtonMedium } from '../../AwesomeButton';
+import db from '@act/data/rn';
+import { Box } from '@mobily/stacks';
 
 MaterialCommunityIcons.loadFont();
 
@@ -66,6 +69,11 @@ const DrawerList: FC<
           </View>
         )}
       />
+      <Box padding={2}>
+        <AwesomeButtonMedium onPress={() => db.sync()}>
+          Sync
+        </AwesomeButtonMedium>
+      </Box>
     </>
   );
 };

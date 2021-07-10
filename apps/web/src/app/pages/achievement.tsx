@@ -74,6 +74,12 @@ const columns: GridColDef[] = [
     width: 200
   },
   {
+    field: 'points',
+    editable: true,
+    headerName: 'Points',
+    width: 200
+  },
+  {
     field: 'created_at',
     headerName: 'Created',
     width: 200

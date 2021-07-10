@@ -36,6 +36,8 @@
     "lodash": "*",
     "@react-navigation/native": "*",
     "@react-navigation/drawer": "*",
-    "react-native-reanimated": "*"
+    "react-native-reanimated": "*",
+    "react-native-paper-tabs": "*",
+    "react-native-pager-view": "*"
   }
 }

@@ -14903,6 +14903,16 @@ react-native-keycloak@^1.0.0:
     query-string "^5.0.1"
     uuid "^3.1.0"
 
+react-native-pager-view@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.2.1.tgz#ad69a6035edd998771daf302830f73602e5204a9"
+  integrity sha512-6aqsVr6Z4MjYP57lMwNEurlOPah0Lw34L6x+/nI6SxY+wyqZI+uaEB7sWS5EIcgQ9cGKMo925LnVWd6Xilu33A==
+
+react-native-paper-tabs@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-paper-tabs/-/react-native-paper-tabs-0.4.2.tgz#366cbe232c70b2bdaa2e09e22c039f78520b9095"
+  integrity sha512-VCpdBuaB/bqI6eVLNxnGLlBiOC4krgwS4O4ZrmXPOpedmuAQwcFJN/Arw62zpTdv3NjbC3U+X6/GMtzYJInm8g==
+
 react-native-paper@^4.8.1:
   version "4.8.1"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.8.1.tgz#ade4e552e2aaecfc3096c8aebda37bd99facf63f"
