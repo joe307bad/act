@@ -33,6 +33,6 @@ export class UsersService extends BaseService<User> {
       keycloakId: decodedToken.sub
     });
 
-    return newUserId;
+    return newUserId.id;
   }
 }

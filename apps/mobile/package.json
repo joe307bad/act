@@ -38,6 +38,7 @@
     "@react-navigation/drawer": "*",
     "react-native-reanimated": "*",
     "react-native-paper-tabs": "*",
-    "react-native-pager-view": "*"
+    "react-native-pager-view": "*",
+    "react-native-tab-view": "*"
   }
 }

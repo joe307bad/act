@@ -28,6 +28,7 @@ const Achievements: FC = () => {
       data={achievementsByCategory}
       categories={categories}
       optionTitleProperty={'name'}
+      selectable={false}
     />
   );
 };

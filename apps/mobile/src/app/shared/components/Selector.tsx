@@ -25,15 +25,22 @@ import {
   TabbedSelectorProps as TSP
 } from './TabbedSelector';
 
-type SelectedOption = { id: string; display: string };
+export type SelectedOption = { id: string; display: string };
 
 export const Option: FC<{
   value: string;
   title: string;
   subtitle?: string;
-  onChange: (v: boolean) => void;
-  initialValue: boolean;
-}> = ({ title, subtitle, onChange, initialValue }) => {
+  onChange?: (v: boolean) => void;
+  initialValue?: boolean;
+  disableSelection: boolean;
+}> = ({
+  title,
+  subtitle,
+  onChange,
+  initialValue,
+  disableSelection
+}) => {
   const [checked, setChecked] = useState(initialValue);
   const theme = useTheme();
 
@@ -49,19 +56,23 @@ export const Option: FC<{
       descriptionStyle={{ fontFamily: 'sans-serif' }}
       title={title}
       description={subtitle}
-      left={(props) => (
-        <View
-          style={{
-            justifyContent: 'center'
-          }}
-        >
-          <Checkbox
-            color={theme.colors.primary}
-            status={checked ? 'checked' : 'unchecked'}
-            onPress={onPress}
-          />
-        </View>
-      )}
+      {...(!disableSelection
+        ? {
+            left: (props) => (
+              <View
+                style={{
+                  justifyContent: 'center'
+                }}
+              >
+                <Checkbox
+                  color={theme.colors.primary}
+                  status={checked ? 'checked' : 'unchecked'}
+                  onPress={onPress}
+                />
+              </View>
+            )
+          }
+        : {})}
     />
   );
 };
@@ -142,41 +153,13 @@ const SelectedChip = ({ title, onDelete }) => {
   );
 };
 
-type AllProps = Partial<{
-  type: TType;
-  name: string;
-  points: number;
-}>;
-type TType = 'string' | 'number';
-export function Image(props: {
-  type: 'string';
-  name: string;
-}): React.ReactElement;
-export function Image(props: {
-  type: 'number';
-  points: number;
-}): React.ReactElement;
-export function Image(props: AllProps) {
-  if (props.type === 'number') {
-    const b = props.name;
-  }
-  // Imagine there is some logic to handle these props
-  return <div>placeholder</div>;
-}
-
-const b = () => {
-  <>
-    <Image type={'number'} points={3} />
-    <Image type={'string'} name={'eef'} />
-  </>;
-};
-
 type CommonSelectorProps = Partial<{
   single: string;
   plural: string;
   title: string;
   subtitle: string;
   icon: string;
+  fullHeight?: boolean;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -208,7 +191,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
     icon,
     optionSubtitleProperty,
     optionTitleProperty,
-    categories = []
+    categories = [],
+    fullHeight
   } = props;
 
   const [selectorModalVisible, setSelectorModalVisible] =
@@ -231,7 +215,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
         }}
         onDismiss={() => setSelectorModalVisible(false)}
         visible={selectorModalVisible}
-        fullHeight={categories.length > 0}
+        fullHeight={fullHeight}
       >
         {categories.length === 0 && (
           <OptionList
@@ -244,6 +228,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
         )}
         {categories.length > 0 && (
           <TabbedSelector
+            onChange={setPendingSelected}
+            initialSelected={selected}
             data={data}
             categories={categories}
             optionSubtitleProperty={optionSubtitleProperty}

@@ -129,6 +129,17 @@ module Root = {
     let screens = Js.Dict.fromList(list{("CreateCheckin", "CreateCheckin/:id")})
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
     let {status} = ActData.useActAuth()
+    let textStatus = switch status {
+    | Authenticated => "Authenticated"
+    | _ => "Not Authenticated"
+    }
+    // Alert.alert(
+    //   ~title=textStatus,
+    //   ~message=textStatus,
+    //   ~buttons=[],
+    //   ~options=Alert.options(~cancelable=true, ~onDismiss=_ => Js.log("Dismissed."), ()),
+    //   (),
+    // )
     <StacksProvider>
       <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
         <Paper.PaperProvider theme>

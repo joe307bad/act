@@ -106,7 +106,6 @@ const Drawer = ({ children }) => {
   const { setForceLogout } = useActAuth();
   return (
     <D.Navigator
-      openByDefault
       overlayColor="transparent"
       drawerPosition="right"
       drawerContent={(props) => (
