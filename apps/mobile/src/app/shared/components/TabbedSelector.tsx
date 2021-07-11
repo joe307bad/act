@@ -45,7 +45,7 @@ export const TabbedSelector: <
     selectable && onChange(selected);
   }, [selected]);
   return (
-    <TabViewExample />
+    <TabViewExample selectable={selectable} />
     // <Tabs>
     //   {data.map((category) => {
     //     const label = (() => {
@@ -98,6 +98,7 @@ export const TabbedSelector: <
 };
 
 const All = () => {
+  const selectable = React.useContext(SelectableContext);
   const achievements = db.useCollection<Achievement>('achievements', [
     'name'
   ]);
@@ -105,7 +106,7 @@ const All = () => {
     <>
       {achievements.map((d, i) => (
         <Option
-          disableSelection={true}
+          disableSelection={!selectable}
           title={d.name}
           value={d.id}
           key={d.id}
@@ -116,6 +117,7 @@ const All = () => {
 };
 
 const NoCategory = () => {
+  const selectable = React.useContext(SelectableContext);
   const achievements = db
     .useCollection<Achievement>('achievements', [
       'name',
@@ -126,7 +128,7 @@ const NoCategory = () => {
     <>
       {achievements.map((d, i) => (
         <Option
-          disableSelection={true}
+          disableSelection={!selectable}
           title={d.name}
           value={d.id}
           key={d.id}
@@ -154,7 +156,10 @@ const TabBar = (props) => (
     }}
   />
 );
-function TabViewExample() {
+
+const SelectableContext = React.createContext(false);
+
+function TabViewExample({ selectable }) {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
 
@@ -165,12 +170,16 @@ function TabViewExample() {
   ]);
 
   return (
-    <TabView
-      renderTabBar={(props) => <TabBar {...props} colors={colors} />}
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: layout.width }}
-    />
+    <SelectableContext.Provider value={selectable}>
+      <TabView
+        renderTabBar={(props) => (
+          <TabBar {...props} colors={colors} />
+        )}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+      />
+    </SelectableContext.Provider>
   );
 }

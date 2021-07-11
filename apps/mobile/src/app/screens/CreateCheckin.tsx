@@ -36,6 +36,7 @@ const CreateCheckin: FC = () => {
         title="Checkin Achievements"
         subtitle="Select one or more achievements to checkin"
         fullHeight={true}
+        selectable={true}
       />
       <Selector<User>
         data={users}
@@ -46,6 +47,7 @@ const CreateCheckin: FC = () => {
         optionSubtitleProperty="username"
         title="Checkin Users"
         subtitle="Select one or more users to checkin"
+        selectable={true}
       />
     </ScreenContainer.make>
   );

@@ -83,6 +83,7 @@ type OptionListProps<T extends BaseModel> = {
   initialSelected: Map<string, SelectedOption>;
   optionTitleProperty: keyof T;
   optionSubtitleProperty: keyof T;
+  selectable: boolean;
 };
 const OptionList: <T extends BaseModel>(
   p: PropsWithChildren<OptionListProps<T>>
@@ -91,7 +92,8 @@ const OptionList: <T extends BaseModel>(
   onChange,
   initialSelected,
   optionSubtitleProperty,
-  optionTitleProperty
+  optionTitleProperty,
+  selectable
 }) => {
   const [selected, setSelected] =
     useState<Map<string, SelectedOption>>(initialSelected);
@@ -104,6 +106,7 @@ const OptionList: <T extends BaseModel>(
     <Surface style={{ elevation: 2 }}>
       {data.map((d) => (
         <Option
+          disableSelection={!selectable}
           key={d.id}
           value={d.id}
           title={d[snakeCase(optionTitleProperty as string)]}
@@ -160,6 +163,7 @@ type CommonSelectorProps = Partial<{
   subtitle: string;
   icon: string;
   fullHeight?: boolean;
+  selectable?: boolean;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -192,7 +196,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
     optionSubtitleProperty,
     optionTitleProperty,
     categories = [],
-    fullHeight
+    fullHeight,
+    selectable
   } = props;
 
   const [selectorModalVisible, setSelectorModalVisible] =
@@ -224,6 +229,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
             initialSelected={selected}
             optionSubtitleProperty={optionSubtitleProperty as keyof T}
             optionTitleProperty={optionTitleProperty as keyof T}
+            selectable={selectable}
           />
         )}
         {categories.length > 0 && (
@@ -233,6 +239,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
             data={data}
             categories={categories}
             optionSubtitleProperty={optionSubtitleProperty}
+            selectable={selectable}
             optionTitleProperty={optionTitleProperty}
           />
         )}
