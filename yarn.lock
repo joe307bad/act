@@ -13327,11 +13327,6 @@ object.values@^1.1.4:
     define-properties "^1.1.3"
     es-abstract "^1.18.2"
 
-observable-hooks@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/observable-hooks/-/observable-hooks-4.0.3.tgz#1113d04787fc971481b10cdbdf73c863f90b612f"
-  integrity sha512-cT0dqaj7xlKVzp3FyJYq+zE8os3eRgv2LoxKwv0JcU6X+ZLHD4ACfXC+IER+8uqLX4erVXzcmMkyVhCaxCy9gQ==
-
 obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"

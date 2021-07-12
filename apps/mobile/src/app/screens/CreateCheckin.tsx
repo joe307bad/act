@@ -27,7 +27,7 @@ const CreateCheckin: FC = () => {
   return (
     <ScreenContainer.make>
       <Selector<Achievement, AchievementCategory>
-        data={achievementsByCategory}
+        data={achievements}
         categories={categories}
         single="Achievement"
         plural="Achievements"

@@ -1,24 +1,24 @@
 import { Achievement, BaseModel } from '@act/data/core';
 import { snakeCase } from 'change-case';
 import React, {
+  createContext,
   PropsWithChildren,
   ReactElement,
+  useContext,
   useEffect,
   useState
 } from 'react';
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { Option, SelectedOption } from './Selector';
-import { View, useWindowDimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
 import {
   TabView,
   SceneMap,
   TabBar as TB
 } from 'react-native-tab-view';
 import { useTheme } from 'react-native-paper';
-import db from '@act/data/rn';
 
 export type TabbedSelectorProps<T, C> = {
-  data: [string, T[]][];
+  data: T[];
   categories: C[];
   optionTitleProperty: string;
   optionSubtitleProperty?: string;
@@ -26,8 +26,20 @@ export type TabbedSelectorProps<T, C> = {
   initialSelected?: Map<string, SelectedOption>;
   selectable?: boolean;
 };
-
 export type Category = { name: string } & BaseModel;
+
+type Item = { selected: boolean; display: string };
+type ItemMap = Map<string, Item>;
+
+const ItemsContext =
+  createContext<
+    [
+      items: ItemMap,
+      setItems: React.Dispatch<React.SetStateAction<ItemMap>>
+    ]
+  >(undefined);
+const SelectableContext = createContext(false);
+
 export const TabbedSelector: <
   T extends BaseModel,
   C extends Category
@@ -36,80 +48,89 @@ export const TabbedSelector: <
 ) => ReactElement = ({
   onChange,
   initialSelected,
-  selectable = false
+  selectable = false,
+  data,
+  optionTitleProperty
 }) => {
-  const [selected, setSelected] =
-    useState<Map<string, SelectedOption>>(initialSelected);
+  const layout = useWindowDimensions();
+  const { colors } = useTheme();
+  const [items, setItems] = useState<ItemMap>(
+    initialSelected.size === 0
+      ? new Map()
+      : new Map(
+          Array.from(initialSelected).map((is) => [
+            is[0],
+            { selected: true, display: is[1].display }
+          ])
+        )
+  );
+
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: 'all', title: 'All' },
+    { key: 'noCategory', title: 'No Category' }
+  ]);
 
   useEffect(() => {
-    selectable && onChange(selected);
-  }, [selected]);
+    setItems(
+      new Map(
+        data.map((a) => [
+          a.id,
+          {
+            selected: items.get(a.id)?.selected || false,
+            display: a[optionTitleProperty]
+          }
+        ])
+      )
+    );
+  }, [data]);
+
+  useEffect(() => {
+    if (selectable) {
+      onChange(
+        new Map(
+          Array.from(items)
+            .filter((i) => i[1].selected)
+            .map((i) => [i[0], { id: i[0], display: i[1].display }])
+        )
+      );
+    }
+  }, [items]);
   return (
-    <TabViewExample selectable={selectable} />
-    // <Tabs>
-    //   {data.map((category) => {
-    //     const label = (() => {
-    //       if (category[0] === 'null') {
-    //         return 'No Category';
-    //       }
-
-    //       if (category[0] === 'All') {
-    //         return 'All';
-    //       }
-
-    //       return categories.find((c) => c.id === category[0]).name;
-    //     })();
-    //     return (
-    //       <TabScreen key={category[0]} label={label}>
-    //         <>
-    //           {category[1].map((d) => (
-    // <Option
-    //   initialValue={
-    //     selectable ? initialSelected.has(d.id) : false
-    //   }
-    //   disableSelection={!selectable}
-    //   onChange={(v) =>
-    //     setSelected((p) => {
-    //       const newSelected = new Map(p);
-    //       const exists = newSelected.has(d.id);
-    //       if (exists) {
-    //         newSelected.delete(d.id);
-    //         return newSelected;
-    //       }
-    //       newSelected.set(d.id, {
-    //         id: d.id,
-    //         display:
-    //           d[snakeCase(optionTitleProperty as string)]
-    //       });
-    //       return newSelected;
-    //     })
-    //   }
-    //   title={d[optionTitleProperty]}
-    //   value={d.id}
-    //   key={d.id}
-    // />
-    //           ))}
-    //         </>
-    //       </TabScreen>
-    //     );
-    //   })}
-    // </Tabs>
+    // TODO combine both providers used here
+    <ItemsContext.Provider value={[items, setItems]}>
+      <SelectableContext.Provider value={selectable}>
+        <TabView
+          renderTabBar={(props) => (
+            <TabBar {...props} colors={colors} />
+          )}
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+        />
+      </SelectableContext.Provider>
+    </ItemsContext.Provider>
   );
 };
 
 const All = () => {
-  const selectable = React.useContext(SelectableContext);
-  const achievements = db.useCollection<Achievement>('achievements', [
-    'name'
-  ]);
+  const selectable = useContext(SelectableContext);
+  const [items, setItems] = useContext(ItemsContext);
   return (
     <>
-      {achievements.map((d, i) => (
+      {Array.from(items).map((d, i) => (
         <Option
+          onChange={(v) => {
+            const newMap = new Map(items);
+            newMap.set(d[0], { ...d[1], selected: v });
+            setItems(newMap);
+          }}
           disableSelection={!selectable}
-          title={d.name}
-          value={d.id}
-          key={d.id}
+          selected={d[1].selected}
+          title={d[1].display}
+          value={d[0]}
+          key={d[0]}
         />
       ))}
     </>
@@ -117,21 +138,22 @@ const All = () => {
 };
 
 const NoCategory = () => {
-  const selectable = React.useContext(SelectableContext);
-  const achievements = db
-    .useCollection<Achievement>('achievements', [
-      'name',
-      'category_id'
-    ])
-    .filter((a) => !a.category_id);
+  const selectable = useContext(SelectableContext);
+  const [items, setItems] = useContext(ItemsContext);
   return (
     <>
-      {achievements.map((d, i) => (
+      {Array.from(items).map((d, i) => (
         <Option
+          onChange={(v) => {
+            const newMap = new Map(items);
+            newMap.set(d[0], { ...d[1], selected: v });
+            setItems(newMap);
+          }}
           disableSelection={!selectable}
-          title={d.name}
-          value={d.id}
-          key={d.id}
+          selected={d[1].selected}
+          title={d[1].display}
+          value={d[0]}
+          key={d[0]}
         />
       ))}
     </>
@@ -156,30 +178,3 @@ const TabBar = (props) => (
     }}
   />
 );
-
-const SelectableContext = React.createContext(false);
-
-function TabViewExample({ selectable }) {
-  const layout = useWindowDimensions();
-  const { colors } = useTheme();
-
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: 'all', title: 'All' },
-    { key: 'noCategory', title: 'No Category' }
-  ]);
-
-  return (
-    <SelectableContext.Provider value={selectable}>
-      <TabView
-        renderTabBar={(props) => (
-          <TabBar {...props} colors={colors} />
-        )}
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
-      />
-    </SelectableContext.Provider>
-  );
-}

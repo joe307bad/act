@@ -34,19 +34,31 @@ export const Option: FC<{
   onChange?: (v: boolean) => void;
   initialValue?: boolean;
   disableSelection: boolean;
+  selected?: boolean;
 }> = ({
   title,
   subtitle,
   onChange,
   initialValue,
-  disableSelection
+  disableSelection,
+  selected
 }) => {
-  const [checked, setChecked] = useState(initialValue);
+  const [checked, setChecked] = useState(
+    typeof selected !== 'undefined' ? selected : initialValue
+  );
   const theme = useTheme();
+
+  const isChecked = (() => {
+    if (typeof selected !== 'undefined') {
+      return selected;
+    }
+
+    return checked;
+  })();
 
   const onPress = () => {
     setChecked((p) => !p);
-    onChange?.(!checked);
+    onChange?.(!isChecked);
   };
 
   return (
@@ -66,7 +78,7 @@ export const Option: FC<{
               >
                 <Checkbox
                   color={theme.colors.primary}
-                  status={checked ? 'checked' : 'unchecked'}
+                  status={isChecked ? 'checked' : 'unchecked'}
                   onPress={onPress}
                 />
               </View>

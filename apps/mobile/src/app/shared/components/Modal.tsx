@@ -1,5 +1,4 @@
 import { Column, Columns, FillView, Row, Rows } from '@mobily/stacks';
-import { reduce } from 'lodash';
 import React, { FC } from 'react';
 import {
   Modal as PaperModal,
