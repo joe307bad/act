@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import db from '@act/data/rn';
 import { Achievement, AchievementCategory } from '@act/data/core';
-import { TabbedSelector } from '../shared/components/TabbedSelector';
+import { TabbedList } from '../shared/components/TabbedList';
 
 const Achievements: FC = () => {
   const achievements = db.useCollection<Achievement>('achievements', [
@@ -14,7 +14,7 @@ const Achievements: FC = () => {
   );
 
   return (
-    <TabbedSelector<Achievement, AchievementCategory>
+    <TabbedList<Achievement, AchievementCategory>
       data={achievements}
       categories={categories}
       optionTitleProperty={'name'}

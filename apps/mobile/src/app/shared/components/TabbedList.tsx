@@ -1,5 +1,4 @@
-import { Achievement, BaseModel } from '@act/data/core';
-import { snakeCase } from 'change-case';
+import { BaseModel } from '@act/data/core';
 import React, {
   createContext,
   PropsWithChildren,
@@ -10,14 +9,10 @@ import React, {
 } from 'react';
 import { Option, SelectedOption } from './Selector';
 import { useWindowDimensions } from 'react-native';
-import {
-  TabView,
-  SceneMap,
-  TabBar as TB
-} from 'react-native-tab-view';
+import { TabView, TabBar as TB } from 'react-native-tab-view';
 import { useTheme } from 'react-native-paper';
 
-export type TabbedSelectorProps<T, C> = {
+export type TabbedListProps<T, C> = {
   data: T[];
   categories: C[];
   optionTitleProperty: string;
@@ -28,7 +23,11 @@ export type TabbedSelectorProps<T, C> = {
 };
 export type Category = { name: string } & BaseModel;
 
-type Item = { selected: boolean; display: string };
+type Item = {
+  selected: boolean;
+  display: string;
+  categoryId: string;
+};
 type ItemMap = Map<string, Item>;
 
 const ItemsContext =
@@ -40,36 +39,43 @@ const ItemsContext =
   >(undefined);
 const SelectableContext = createContext(false);
 
-export const TabbedSelector: <
-  T extends BaseModel,
-  C extends Category
->(
-  p: PropsWithChildren<TabbedSelectorProps<T, C>>
+export const TabbedList: <T extends BaseModel, C extends Category>(
+  p: PropsWithChildren<TabbedListProps<T, C>>
 ) => ReactElement = ({
   onChange,
   initialSelected,
   selectable = false,
   data,
-  optionTitleProperty
+  optionTitleProperty,
+  categories
 }) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
   const [items, setItems] = useState<ItemMap>(
-    initialSelected.size === 0
+    !initialSelected?.size
       ? new Map()
       : new Map(
           Array.from(initialSelected).map((is) => [
             is[0],
-            { selected: true, display: is[1].display }
+            {
+              selected: true,
+              display: is[1].display,
+              categoryId: is[1].categoryId
+            }
           ])
         )
   );
 
   const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: 'all', title: 'All' },
-    { key: 'noCategory', title: 'No Category' }
-  ]);
+  const [routes, setRoutes] = useState([]);
+
+  useEffect(() => {
+    setRoutes([
+      { key: 'all', title: 'All' },
+      ...categories.map((c) => ({ key: c.id, title: c.name })),
+      { key: 'noCategory', title: 'No Category' }
+    ]);
+  }, [categories]);
 
   useEffect(() => {
     setItems(
@@ -78,7 +84,8 @@ export const TabbedSelector: <
           a.id,
           {
             selected: items.get(a.id)?.selected || false,
-            display: a[optionTitleProperty]
+            display: a[optionTitleProperty],
+            categoryId: a.category_id
           }
         ])
       )
@@ -91,7 +98,14 @@ export const TabbedSelector: <
         new Map(
           Array.from(items)
             .filter((i) => i[1].selected)
-            .map((i) => [i[0], { id: i[0], display: i[1].display }])
+            .map((i) => [
+              i[0],
+              {
+                id: i[0],
+                display: i[1].display,
+                categoryId: i[1].categoryId
+              }
+            ])
         )
       );
     }
@@ -114,59 +128,51 @@ export const TabbedSelector: <
   );
 };
 
-const All = () => {
+const ItemList = ({ categoryId }) => {
   const selectable = useContext(SelectableContext);
   const [items, setItems] = useContext(ItemsContext);
+
+  const conditions = (() => {
+    if (categoryId === 'noCategory') {
+      return (i) => !i[1].categoryId;
+    }
+
+    if (categoryId === 'all') {
+      return () => true;
+    }
+
+    return (i) => i[1].categoryId === categoryId;
+  })();
+
   return (
     <>
-      {Array.from(items).map((d, i) => (
-        <Option
-          onChange={(v) => {
-            const newMap = new Map(items);
-            newMap.set(d[0], { ...d[1], selected: v });
-            setItems(newMap);
-          }}
-          disableSelection={!selectable}
-          selected={d[1].selected}
-          title={d[1].display}
-          value={d[0]}
-          key={d[0]}
-        />
-      ))}
+      {Array.from(items)
+        .filter(conditions)
+        .map((d, i) => (
+          <Option
+            onChange={(v) => {
+              const newMap = new Map(items);
+              newMap.set(d[0], { ...d[1], selected: v });
+              setItems(newMap);
+            }}
+            disableSelection={!selectable}
+            selected={d[1].selected}
+            title={d[1].display}
+            value={d[0]}
+            key={d[0]}
+          />
+        ))}
     </>
   );
 };
 
-const NoCategory = () => {
-  const selectable = useContext(SelectableContext);
-  const [items, setItems] = useContext(ItemsContext);
-  return (
-    <>
-      {Array.from(items).map((d, i) => (
-        <Option
-          onChange={(v) => {
-            const newMap = new Map(items);
-            newMap.set(d[0], { ...d[1], selected: v });
-            setItems(newMap);
-          }}
-          disableSelection={!selectable}
-          selected={d[1].selected}
-          title={d[1].display}
-          value={d[0]}
-          key={d[0]}
-        />
-      ))}
-    </>
-  );
-};
-
-const renderScene = SceneMap({
-  all: All,
-  noCategory: NoCategory
-});
+const renderScene = ({ route, jumpTo }) => (
+  <ItemList categoryId={route.key} />
+);
 
 const TabBar = (props) => (
   <TB
+    scrollEnabled={true}
     {...props}
     indicatorStyle={{ backgroundColor: 'white' }}
     style={{

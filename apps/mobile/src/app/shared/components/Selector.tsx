@@ -17,15 +17,19 @@ import {
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Modal from './Modal';
-import { Achievement, BaseModel } from '@act/data/core';
+import { BaseModel } from '@act/data/core';
 import { snakeCase } from 'change-case';
 import {
   Category,
-  TabbedSelector,
-  TabbedSelectorProps as TSP
-} from './TabbedSelector';
+  TabbedList,
+  TabbedListProps as TLP
+} from './TabbedList';
 
-export type SelectedOption = { id: string; display: string };
+export type SelectedOption = {
+  id: string;
+  display: string;
+  categoryId: string;
+};
 
 export const Option: FC<{
   value: string;
@@ -95,7 +99,7 @@ type OptionListProps<T extends BaseModel> = {
   initialSelected: Map<string, SelectedOption>;
   optionTitleProperty: keyof T;
   optionSubtitleProperty: keyof T;
-  selectable: boolean;
+  selectable?: boolean;
 };
 const OptionList: <T extends BaseModel>(
   p: PropsWithChildren<OptionListProps<T>>
@@ -105,7 +109,7 @@ const OptionList: <T extends BaseModel>(
   initialSelected,
   optionSubtitleProperty,
   optionTitleProperty,
-  selectable
+  selectable = true
 }) => {
   const [selected, setSelected] =
     useState<Map<string, SelectedOption>>(initialSelected);
@@ -134,7 +138,8 @@ const OptionList: <T extends BaseModel>(
               }
               newSelected.set(d.id, {
                 id: d.id,
-                display: d[snakeCase(optionTitleProperty as string)]
+                display: d[snakeCase(optionTitleProperty as string)],
+                categoryId: d.category_id
               });
               return newSelected;
             })
@@ -179,7 +184,7 @@ type CommonSelectorProps = Partial<{
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
-  CommonSelectorProps & TSP<T, C>;
+  CommonSelectorProps & TLP<T, C>;
 
 type RegularSelectorProps<T> = CommonSelectorProps & {
   data: T[];
@@ -241,17 +246,16 @@ function Selector<T extends BaseModel, C extends Category = null>(
             initialSelected={selected}
             optionSubtitleProperty={optionSubtitleProperty as keyof T}
             optionTitleProperty={optionTitleProperty as keyof T}
-            selectable={selectable}
           />
         )}
         {categories.length > 0 && (
-          <TabbedSelector
+          <TabbedList
             onChange={setPendingSelected}
             initialSelected={selected}
             data={data}
             categories={categories}
             optionSubtitleProperty={optionSubtitleProperty}
-            selectable={selectable}
+            selectable={true}
             optionTitleProperty={optionTitleProperty}
           />
         )}
