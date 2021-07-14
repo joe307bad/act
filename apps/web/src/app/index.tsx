@@ -20,6 +20,7 @@ import EventIcon from '@material-ui/icons/Event';
 import AddIcon from '@material-ui/icons/Add';
 import Category from '@material-ui/icons/Category';
 import People from '@material-ui/icons/People';
+import CheckCircle from '@material-ui/icons/CheckCircle';
 import Button from '@material-ui/core/Button';
 import db from '@act/data/web';
 import {
@@ -35,6 +36,7 @@ import Events from './pages/events';
 import AchievementCategories from './pages/achievement-categories';
 import Achievements from './pages/achievement';
 import Users from './pages/users';
+import Checkins from './pages/checkins';
 
 const drawerWidth = 240;
 
@@ -74,7 +76,8 @@ enum PAGE {
   COMMUNITIES = '/communities',
   EVENTS = '/events',
   ACHIEVEMENT = '/achievements',
-  USERS = '/users'
+  USERS = '/users',
+  CHECKINS = '/checkins'
 }
 
 const ToolBarAndSideBar = () => {
@@ -112,6 +115,13 @@ const ToolBarAndSideBar = () => {
           title: 'Users',
           insertText: 'Add User',
           insertFn: () => db.models.users.insert('New User')
+        };
+      case PAGE.CHECKINS:
+        return {
+          title: 'Checkins',
+          insertText: 'Add Checkin',
+          insertFn: () =>
+            db.models.checkins.insertCheckinWithAchievements()
         };
       default:
         return {} as CurrentPage;
@@ -216,6 +226,17 @@ const ToolBarAndSideBar = () => {
             </ListItemIcon>
             <ListItemText primary={'Users'} />
           </ListItem>
+          <ListItem
+            component={Link}
+            to={PAGE.CHECKINS}
+            button
+            className={isActive(PAGE.CHECKINS)}
+          >
+            <ListItemIcon>
+              <CheckCircle className={isActive(PAGE.CHECKINS)} />
+            </ListItemIcon>
+            <ListItemText primary={'Checkins'} />
+          </ListItem>
         </List>
         <Divider />
       </Drawer>
@@ -233,22 +254,25 @@ const App = () => {
         <ToolBarAndSideBar />
         <Switch>
           <Route exact path="/">
-            <Redirect to="/communities" />
+            <Redirect to={PAGE.COMMUNITIES} />
           </Route>
-          <Route path="/communities">
+          <Route path={PAGE.COMMUNITIES}>
             <Communities />
           </Route>
-          <Route path="/events">
+          <Route path={PAGE.EVENTS}>
             <Events />
           </Route>
-          <Route path="/achievement-categories">
+          <Route path={PAGE.ACHIEVEMENT_CATEGORIES}>
             <AchievementCategories />
           </Route>
-          <Route path="/achievements">
+          <Route path={PAGE.ACHIEVEMENT}>
             <Achievements />
           </Route>
-          <Route path="/users">
+          <Route path={PAGE.USERS}>
             <Users />
+          </Route>
+          <Route path={PAGE.CHECKINS}>
+            <Checkins />
           </Route>
         </Switch>
       </Router>

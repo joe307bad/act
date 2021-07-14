@@ -9,6 +9,9 @@ import {
   Event,
   User
 } from './schema';
+import { Checkin } from './schema/checkin';
+import { CheckinAchievement } from './schema/checkin-achievement';
+import { CheckinUser } from './schema/checkin-users';
 
 @singleton()
 export class ActContext {
@@ -22,7 +25,10 @@ export class ActContext {
         Event,
         Achievement,
         AchievementCategory,
-        User
+        User,
+        Checkin,
+        CheckinAchievement,
+        CheckinUser
       ],
       actionsEnabled: true
     });

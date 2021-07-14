@@ -1,11 +1,10 @@
-import { appSchema, Model, tableSchema } from '@nozbe/watermelondb';
+import { appSchema, tableSchema } from '@nozbe/watermelondb';
+import { ColumnSchema } from '@nozbe/watermelondb/Schema';
 import {
-  ColumnSchema,
-  TableSchema
-} from '@nozbe/watermelondb/Schema';
-import {
+  addColumns,
   createTable,
-  schemaMigrations
+  schemaMigrations,
+  removeColumns
 } from '@nozbe/watermelondb/Schema/migrations';
 
 export * from './deleted';
@@ -25,14 +24,16 @@ const baseColumns = (schema: ColumnSchema[]): ColumnSchema[] => [
 
 export const schemaAndMigrations = {
   schema: appSchema({
-    version: 6,
+    version: 7,
     tables: [
       tableSchema({
         name: 'users',
         columns: baseColumns([
           { name: 'full_name', type: 'string' },
           { name: 'username', type: 'string' },
-          { name: 'keycloak_id', type: 'string' }
+          { name: 'keycloak_id', type: 'string' },
+          { name: 'bio', type: 'string' },
+          { name: 'photo', type: 'string' }
         ])
       }),
       tableSchema({
@@ -41,7 +42,8 @@ export const schemaAndMigrations = {
           { name: 'name', type: 'string' },
           { name: 'points', type: 'number' },
           { name: 'photo', type: 'string', isOptional: true },
-          { name: 'category_id', type: 'string', isOptional: true }
+          { name: 'category_id', type: 'string', isOptional: true },
+          { name: 'description', type: 'string', isOptional: true }
         ])
       }),
       tableSchema({
@@ -63,6 +65,28 @@ export const schemaAndMigrations = {
       tableSchema({
         name: 'deleted',
         columns: baseColumns([{ name: 'deleted_id', type: 'string' }])
+      }),
+      tableSchema({
+        name: 'checkins',
+        columns: baseColumns([
+          { name: 'name', type: 'string' },
+          { name: 'photo', type: 'string' },
+          { name: 'note', type: 'string' }
+        ])
+      }),
+      tableSchema({
+        name: 'checkin_achievements',
+        columns: baseColumns([
+          { name: 'checkin_id', type: 'string' },
+          { name: 'achievement_id', type: 'string' }
+        ])
+      }),
+      tableSchema({
+        name: 'checkin_users',
+        columns: baseColumns([
+          { name: 'checkin_id', type: 'string' },
+          { name: 'user_id', type: 'string' }
+        ])
       })
     ]
   }),
@@ -137,6 +161,50 @@ export const schemaAndMigrations = {
               { name: 'username', type: 'string' },
               { name: 'keycloak_id', type: 'string' }
             ])
+          })
+        ]
+      },
+      {
+        toVersion: 7,
+        steps: [
+          createTable({
+            name: 'checkins',
+            columns: baseColumns([
+              { name: 'name', type: 'string' },
+              { name: 'photo', type: 'string' },
+              { name: 'note', type: 'string' }
+            ])
+          }),
+          createTable({
+            name: 'checkin_achievements',
+            columns: baseColumns([
+              { name: 'checkin_id', type: 'string' },
+              { name: 'achievement_id', type: 'string' }
+            ])
+          }),
+          createTable({
+            name: 'checkin_users',
+            columns: baseColumns([
+              { name: 'checkin_id', type: 'string' },
+              { name: 'user_id', type: 'string' }
+            ])
+          }),
+          addColumns({
+            table: 'users',
+            columns: [
+              { name: 'bio', type: 'string' },
+              { name: 'photo', type: 'string' }
+            ]
+          }),
+          addColumns({
+            table: 'achievements',
+            columns: [
+              {
+                name: 'description',
+                type: 'string',
+                isOptional: true
+              }
+            ]
           })
         ]
       }

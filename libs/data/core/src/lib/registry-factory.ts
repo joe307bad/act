@@ -8,6 +8,7 @@ import { EventsService } from './services/events';
 import { AchievementCategoriesService } from './services/achievement-categories';
 import { AchievementsService } from './services/achievements';
 import { UsersService } from './services/users';
+import { CheckinsService } from './services/checkins';
 
 export const registryFactory = (adapter) => {
   container.register('ContextService', ContextService);
@@ -18,6 +19,7 @@ export const registryFactory = (adapter) => {
     AchievementCategoriesService
   );
   container.register('EventsService', EventsService);
+  container.register('CheckinsService', CheckinsService);
 
   container.register('ActContext', {
     useFactory: instanceCachingFactory<ActContext>(() => {
@@ -36,7 +38,8 @@ export const registryFactory = (adapter) => {
       events: new EventsService(),
       achievementCategories: new AchievementCategoriesService(),
       achievements: new AchievementsService(),
-      users: new UsersService()
+      users: new UsersService(),
+      checkins: new CheckinsService()
     }
   };
 };
