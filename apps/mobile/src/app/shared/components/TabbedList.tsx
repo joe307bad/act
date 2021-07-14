@@ -1,9 +1,7 @@
 import { BaseModel } from '@act/data/core';
 import React, {
-  createContext,
   PropsWithChildren,
   ReactElement,
-  useContext,
   useEffect,
   useState
 } from 'react';
@@ -29,15 +27,6 @@ type Item = {
   categoryId: string;
 };
 type ItemMap = Map<string, Item>;
-
-const ItemsContext =
-  createContext<
-    [
-      items: ItemMap,
-      setItems: React.Dispatch<React.SetStateAction<ItemMap>>
-    ]
-  >(undefined);
-const SelectableContext = createContext(false);
 
 export const TabbedList: <T extends BaseModel, C extends Category>(
   p: PropsWithChildren<TabbedListProps<T, C>>
@@ -110,77 +99,60 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
       );
     }
   }, [items]);
+
   return (
-    // TODO combine both providers used here
-    <ItemsContext.Provider value={[items, setItems]}>
-      <SelectableContext.Provider value={selectable}>
-        <TabView
-          renderTabBar={(props) => (
-            <TabBar {...props} colors={colors} />
-          )}
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: layout.width }}
+    <TabView
+      renderTabBar={(props) => (
+        <TB
+          scrollEnabled={true}
+          {...props}
+          indicatorStyle={{ backgroundColor: 'white' }}
+          style={{
+            backgroundColor: colors.primary
+          }}
+          labelStyle={{
+            fontSize: 20,
+            fontFamily: 'Bebas-Regular'
+          }}
         />
-      </SelectableContext.Provider>
-    </ItemsContext.Provider>
+      )}
+      navigationState={{ index, routes }}
+      renderScene={({ route }) => {
+        const conditions = (() => {
+          if (route.key === 'noCategory') {
+            return (i) => !i[1].categoryId;
+          }
+
+          if (route.key === 'all') {
+            return () => true;
+          }
+
+          return (i) => i[1].categoryId === route.key;
+        })();
+
+        return (
+          <>
+            {Array.from(items)
+              .filter(conditions)
+              .map((d, i) => (
+                <Option
+                  onChange={(v) => {
+                    const newMap = new Map(items);
+                    newMap.set(d[0], { ...d[1], selected: v });
+                    setItems(newMap);
+                  }}
+                  disableSelection={!selectable}
+                  selected={d[1].selected}
+                  title={d[1].display}
+                  value={d[0]}
+                  key={d[0]}
+                />
+              ))}
+          </>
+        );
+      }}
+      onIndexChange={setIndex}
+      initialLayout={{ width: layout.width }}
+    />
   );
 };
-
-const ItemList = ({ categoryId }) => {
-  const selectable = useContext(SelectableContext);
-  const [items, setItems] = useContext(ItemsContext);
-
-  const conditions = (() => {
-    if (categoryId === 'noCategory') {
-      return (i) => !i[1].categoryId;
-    }
-
-    if (categoryId === 'all') {
-      return () => true;
-    }
-
-    return (i) => i[1].categoryId === categoryId;
-  })();
-
-  return (
-    <>
-      {Array.from(items)
-        .filter(conditions)
-        .map((d, i) => (
-          <Option
-            onChange={(v) => {
-              const newMap = new Map(items);
-              newMap.set(d[0], { ...d[1], selected: v });
-              setItems(newMap);
-            }}
-            disableSelection={!selectable}
-            selected={d[1].selected}
-            title={d[1].display}
-            value={d[0]}
-            key={d[0]}
-          />
-        ))}
-    </>
-  );
-};
-
-const renderScene = ({ route, jumpTo }) => (
-  <ItemList categoryId={route.key} />
-);
-
-const TabBar = (props) => (
-  <TB
-    scrollEnabled={true}
-    {...props}
-    indicatorStyle={{ backgroundColor: 'white' }}
-    style={{
-      backgroundColor: props.colors.primary
-    }}
-    labelStyle={{
-      fontSize: 20,
-      fontFamily: 'Bebas-Regular'
-    }}
-  />
-);

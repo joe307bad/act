@@ -6,6 +6,7 @@ import React, {
   useEffect
 } from 'react';
 import { View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import {
   Avatar,
   Card,
@@ -13,6 +14,7 @@ import {
   Chip,
   List,
   Surface,
+  TextInput,
   useTheme
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
@@ -24,6 +26,8 @@ import {
   TabbedList,
   TabbedListProps as TLP
 } from './TabbedList';
+
+import DropDown from 'react-native-paper-dropdown';
 
 export type SelectedOption = {
   id: string;
@@ -51,6 +55,7 @@ export const Option: FC<{
     typeof selected !== 'undefined' ? selected : initialValue
   );
   const theme = useTheme();
+  const [selectedValue, setSelectedValue] = useState();
 
   const isChecked = (() => {
     if (typeof selected !== 'undefined') {
@@ -89,6 +94,25 @@ export const Option: FC<{
             )
           }
         : {})}
+      right={() => (
+        <Picker
+          selectedValue={selectedValue}
+          style={{ height: 50, width: 150 }}
+          onValueChange={(itemValue, itemIndex) =>
+            setSelectedValue(itemValue)
+          }
+        >
+          <Picker.Item label="1" value="1" />
+          <Picker.Item label="2" value="2" />
+          <Picker.Item label="3" value="3" />
+          <Picker.Item label="4" value="4" />
+          <Picker.Item label="5" value="5" />
+          <Picker.Item label="6" value="6" />
+          <Picker.Item label="7" value="7" />
+          <Picker.Item label="8" value="8" />
+          <Picker.Item label="9" value="9" />
+        </Picker>
+      )}
     />
   );
 };
