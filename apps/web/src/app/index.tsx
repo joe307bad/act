@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   createStyles,
   Theme,
@@ -80,7 +80,7 @@ enum PAGE {
   CHECKINS = '/checkins'
 }
 
-const ToolBarAndSideBar = () => {
+const ToolBarAndSideBar = ({ onClick }) => {
   const classes = useStyles();
   const { pathname } = useLocation();
 
@@ -120,8 +120,7 @@ const ToolBarAndSideBar = () => {
         return {
           title: 'Checkins',
           insertText: 'Add Checkin',
-          insertFn: () =>
-            db.models.checkins.insertCheckinWithAchievements()
+          insertFn: onClick
         };
       default:
         return {} as CurrentPage;
@@ -246,12 +245,15 @@ const ToolBarAndSideBar = () => {
 
 const App = () => {
   const classes = useStyles();
+  const [showCreateCheckin, setShowCreateCheckin] = useState(false);
 
   return (
     <div className={classes.root}>
       <Router>
         <CssBaseline />
-        <ToolBarAndSideBar />
+        <ToolBarAndSideBar
+          onClick={() => setShowCreateCheckin(true)}
+        />
         <Switch>
           <Route exact path="/">
             <Redirect to={PAGE.COMMUNITIES} />
@@ -272,7 +274,10 @@ const App = () => {
             <Users />
           </Route>
           <Route path={PAGE.CHECKINS}>
-            <Checkins />
+            <Checkins
+              open={showCreateCheckin}
+              onDismiss={() => setShowCreateCheckin(false)}
+            />
           </Route>
         </Switch>
       </Router>

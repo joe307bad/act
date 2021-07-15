@@ -3,8 +3,7 @@ import { ColumnSchema } from '@nozbe/watermelondb/Schema';
 import {
   addColumns,
   createTable,
-  schemaMigrations,
-  removeColumns
+  schemaMigrations
 } from '@nozbe/watermelondb/Schema/migrations';
 
 export * from './deleted';
@@ -24,7 +23,7 @@ const baseColumns = (schema: ColumnSchema[]): ColumnSchema[] => [
 
 export const schemaAndMigrations = {
   schema: appSchema({
-    version: 7,
+    version: 8,
     tables: [
       tableSchema({
         name: 'users',
@@ -205,6 +204,15 @@ export const schemaAndMigrations = {
                 isOptional: true
               }
             ]
+          })
+        ]
+      },
+      {
+        toVersion: 8,
+        steps: [
+          addColumns({
+            table: 'checkins',
+            columns: [{ name: 'approved', type: 'boolean' }]
           })
         ]
       }

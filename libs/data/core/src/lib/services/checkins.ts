@@ -20,7 +20,7 @@ export class CheckinsService extends BaseService<Checkin> {
   insertCheckinWithAchievements = async (): Promise<Checkin> => {
     return await this._db.action(async (action) => {
       const newCheckin = await this._collection.create((m: any) => {
-        m.name = 'New Checkin With Achievement';
+        //m.name = 'New Checkin With Achievement';
       });
       await this._checkinAchievementCollection.create(
         (m: CheckinAchievement) => {

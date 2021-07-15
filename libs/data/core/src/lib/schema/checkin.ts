@@ -22,6 +22,7 @@ export class Checkin extends BaseModel {
   @field('name') name: string;
   @field('photo') photo: string;
   @field('note') note: string;
+  @field('approved') approved: boolean;
 
   @lazy
   achievements = this.collections
