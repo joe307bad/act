@@ -10,6 +10,7 @@ import { IconButton, NativeSelect, Select } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import db from '@act/data/web';
 import { Achievement, AchievementCategory } from '@act/data/core';
+import { GridContainer } from '../shared/components/TableContainer';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -138,7 +139,7 @@ const Achievements = () => {
   return (
     <main className={classes.content}>
       <div className={classes.toolbar} />
-      <div style={{ height: 400, width: '100%' }}>
+      <GridContainer>
         <DataGrid
           editMode="client"
           rows={achievements}
@@ -147,7 +148,7 @@ const Achievements = () => {
           pageSize={5}
           checkboxSelection
         />
-      </div>
+      </GridContainer>
     </main>
   );
 };

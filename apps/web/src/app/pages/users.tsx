@@ -6,8 +6,9 @@ import {
 } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Paper } from '@material-ui/core';
 import db from '@act/data/web';
+import { GridContainer } from '../shared/components/TableContainer';
 
 const columns: GridColDef[] = [
   {
@@ -81,7 +82,7 @@ const Users = () => {
   return (
     <main className={classes.content}>
       <div className={classes.toolbar} />
-      <div style={{ height: 400, width: '100%' }}>
+      <GridContainer>
         <DataGrid
           editMode="client"
           rows={users}
@@ -90,7 +91,7 @@ const Users = () => {
           pageSize={5}
           checkboxSelection
         />
-      </div>
+      </GridContainer>
     </main>
   );
 };

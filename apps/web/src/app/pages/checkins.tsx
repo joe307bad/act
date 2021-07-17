@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   createStyles,
   Theme,
@@ -6,8 +6,11 @@ import {
 } from '@material-ui/core/styles';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import db from '@act/data/web';
-import { Checkin } from '@act/data/core';
+import { AchievementCategory, Checkin } from '@act/data/core';
 import { CreateCheckin } from '../shared/components/CreateCheckin';
+import { GridContainer } from '../shared/components/TableContainer';
+import { IconButton, MenuItem, Select } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const Checkins = ({ open, onDismiss }) => {
   const classes = useStyles();
@@ -35,30 +38,13 @@ const Checkins = ({ open, onDismiss }) => {
     [checkins]
   );
 
-  const [personName, setPersonName] = React.useState([]);
-  const handleChange = (event) => {
-    setPersonName(event.target.value);
-  };
-
-  const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder'
-  ];
-
   return (
-    <>
-      <CreateCheckin onDismiss={onDismiss} open={open} />
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        <div style={{ height: 1000, width: '100%' }}>
+    <main className={classes.content}>
+      <div className={classes.toolbar} />
+      <GridContainer>
+        {open ? (
+          <CreateCheckin onDismiss={onDismiss} />
+        ) : (
           <DataGrid
             editMode="client"
             rows={checkins}
@@ -67,9 +53,9 @@ const Checkins = ({ open, onDismiss }) => {
             pageSize={100}
             checkboxSelection
           />
-        </div>
-      </main>
-    </>
+        )}
+      </GridContainer>
+    </main>
   );
 };
 
@@ -84,6 +70,25 @@ const columns: GridColDef[] = [
     field: 'created_at',
     headerName: 'Created',
     width: 200
+  },
+  {
+    field: '',
+    filterable: false,
+    width: 200,
+    disableColumnMenu: true,
+    sortable: false,
+    disableClickEventBubbling: true,
+    renderCell: ({ id }) => {
+      return (
+        <IconButton
+          onClick={() => db.models.communities.delete(id)}
+          aria-label="delete"
+          color="secondary"
+        >
+          <DeleteIcon />
+        </IconButton>
+      );
+    }
   }
 ];
 
@@ -94,7 +99,6 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.default,
       padding: theme.spacing(3)
     },
-
     formControl: {
       margin: theme.spacing(1),
       minWidth: 120,

@@ -12,10 +12,12 @@ import {
   Button,
   Chip,
   createStyles,
+  FormControl,
   FormControlLabel,
+  InputLabel,
   makeStyles,
   MenuItem,
-  Modal,
+  NativeSelect,
   Paper,
   Select,
   Switch,
@@ -38,7 +40,6 @@ import PlusIcon from '@material-ui/icons/Add';
 
 type CreateCheckinProps = {
   onDismiss: () => void;
-  open: boolean;
 };
 
 type SelectedItem = {
@@ -67,6 +68,8 @@ const columns: GridColDef[] = [
     field: 'category_id',
     headerName: 'Category',
     width: 200,
+    type: 'string',
+    valueGetter: ({ value }) => value ?? '',
     renderCell: ({ value }) => {
       return (
         <span>
@@ -84,7 +87,13 @@ const columns: GridColDef[] = [
     headerName: 'Count',
     disableClickEventBubbling: true,
     renderCell: ({ id }) => {
-      return <SelectAchievementCount id={id} value={1} />;
+      const [achievementCounts] = useContext(CreatCheckinContext);
+      return (
+        <SelectAchievementCount
+          id={id}
+          value={achievementCounts.get(id.toString())}
+        />
+      );
     }
   }
 ];
@@ -113,13 +122,17 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box p={3}>{children}</Box>}
+      {value === index && (
+        <Box style={{ height: 'calc(100% - 48px)' }} p={3}>
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
 
 const SelectAchievementCount = ({ id, value }) => {
-  const [v, setValue] = useState(1);
+  const [v, setValue] = useState(value ?? 1);
   const [
     achievementCounts,
     setAchievementCounts,
@@ -199,9 +212,37 @@ const CreatCheckinContext = createContext<
   ]
 >([new Map<string, number>(), () => {}, (id, count) => {}]);
 
+const categoryOperators = [
+  {
+    label: 'Is',
+    value: 'is',
+    getApplyFilterFn: (filterItem) => {
+      if (
+        !filterItem.columnField ||
+        !filterItem.value ||
+        !filterItem.operatorValue
+      ) {
+        return null;
+      }
+
+      return (params) => {
+        switch (filterItem.value as CategoryFilterSelection) {
+          case 'ALL_CATEGORIES':
+            return true;
+          case 'NO_CATEGORY':
+            return !params.row.category_id;
+          default:
+            return params.row.category_id === filterItem.value;
+        }
+      };
+    },
+    InputComponent: CategoryFilter,
+    InputComponentProps: { type: 'string' }
+  }
+];
+
 export const CreateCheckin: FC<CreateCheckinProps> = ({
-  onDismiss,
-  open
+  onDismiss
 }) => {
   const classes = useStyles();
   let achievements: Achievement[] = db.useCollection('achievements', [
@@ -243,85 +284,100 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  if (columns.length > 0) {
+    const categoryColumn = columns.find(
+      (col) => col.field === 'category_id'
+    );
+    const newCategoryColumn = {
+      ...categoryColumn,
+      filterOperators: categoryOperators
+    };
+
+    const categoryColIndex = columns.findIndex(
+      (col) => col.field === 'category_id'
+    );
+
+    columns[categoryColIndex] = newCategoryColumn;
+  }
+
+  if (!open) {
+    return null;
+  }
+
   return (
-    <CreatCheckinContext.Provider
-      value={[
-        achievementCounts,
-        setAchievementCounts,
-        setSelectedAchievementCountById
-      ]}
+    <Paper
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+      elevation={3}
     >
-      <Modal
-        open={open}
-        onClose={onDismiss}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
+      <CreatCheckinContext.Provider
+        value={[
+          achievementCounts,
+          setAchievementCounts,
+          setSelectedAchievementCountById
+        ]}
       >
-        <div
-          style={{
-            backgroundColor: 'white',
-            top: 0,
-            position: 'absolute',
-            width: 1000,
-            left: '50%',
-            marginLeft: -500,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column'
-          }}
-        >
-          <h1 className={classes.addCheckinHeader}>Add Checkin</h1>
-          <div style={{ display: 'flex' }}>
-            <TextField
-              id="filled-basic"
-              label="Note"
-              variant="filled"
-              style={{ width: '100%', margin: 10, marginRight: 0 }}
-            />
-            <FormControlLabel
-              style={{ margin: 10, marginLeft: 0 }}
-              control={
-                <Switch
-                  checked={false}
-                  onChange={() => {}}
-                  name="checkedB"
-                  color="primary"
-                />
-              }
-              label="Approved"
-            />
-          </div>
-          <Paper style={{ margin: 20, flex: 1 }} elevation={3}>
-            <AppBar position="static">
-              <Tabs
-                value={value}
-                onChange={handleChange}
-                aria-label="simple tabs example"
-              >
-                <Tab
-                  label={`Achievements${
-                    selectedAchievements.size > 0
-                      ? ` (${selectedAchievements.size})`
-                      : ''
-                  }`}
-                />
-                <Tab
-                  label={`Users${
-                    selectedUsers.size > 0
-                      ? ` (${selectedUsers.size})`
-                      : ''
-                  }`}
-                />
-              </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-              <>
-                <HeaderWithTags
-                  title="Achievements"
-                  selected={selectedAchievements}
-                  setSelected={setSelectedAchievements}
-                  showCount={true}
-                />
+        <h2 className={classes.addCheckinHeader}>Add Checkin</h2>
+        <div style={{ display: 'flex' }}>
+          <TextField
+            id="filled-basic"
+            label="Note"
+            variant="filled"
+            style={{ width: '100%', margin: 10, marginRight: 0 }}
+          />
+          <FormControlLabel
+            style={{ margin: 10, marginLeft: 0 }}
+            control={
+              <Switch
+                checked={false}
+                onChange={() => {}}
+                name="checkedB"
+                color="primary"
+              />
+            }
+            label="Approved"
+          />
+        </div>
+        <Paper style={{ margin: 20, flex: 1 }} variant="outlined">
+          <AppBar position="static">
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="simple tabs example"
+            >
+              <Tab
+                label={`Achievements${
+                  selectedAchievements.size > 0
+                    ? ` (${selectedAchievements.size})`
+                    : ''
+                }`}
+              />
+              <Tab
+                label={`Users${
+                  selectedUsers.size > 0
+                    ? ` (${selectedUsers.size})`
+                    : ''
+                }`}
+              />
+            </Tabs>
+          </AppBar>
+          <TabPanel
+            value={value}
+            style={{ height: '100%' }}
+            index={0}
+          >
+            <>
+              <HeaderWithTags
+                title="Achievements"
+                selected={selectedAchievements}
+                setSelected={setSelectedAchievements}
+                showCount={true}
+              />
+              <div style={{ height: 'calc(100% - 75px)' }}>
                 <DataGrid
                   editMode="client"
                   rows={achievements}
@@ -354,16 +410,21 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
                   }}
                   pageSize={5}
                   checkboxSelection
-                  autoHeight={true}
                 />
-              </>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              <HeaderWithTags
-                title="Users"
-                selected={selectedUsers}
-                setSelected={setSelectedUsers}
-              />
+              </div>
+            </>
+          </TabPanel>
+          <TabPanel
+            value={value}
+            style={{ height: '100%' }}
+            index={1}
+          >
+            <HeaderWithTags
+              title="Users"
+              selected={selectedUsers}
+              setSelected={setSelectedUsers}
+            />
+            <div style={{ height: 'calc(100% - 75px)' }}>
               <DataGrid
                 editMode="client"
                 rows={users}
@@ -384,52 +445,87 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
                 }}
                 pageSize={5}
                 checkboxSelection
-                autoHeight={true}
               />
-            </TabPanel>
-          </Paper>
-          <AppBar position="static">
-            <Toolbar
-              style={{
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }}
-            >
-              <div style={{ alignSelf: 'flex-end' }}>
-                <Button
-                  variant="contained"
-                  color="default"
-                  startIcon={<AddIcon />}
-                  onClick={() => {}}
-                >
-                  Add Checkin
-                </Button>
-                <Button
-                  style={{ alignSelf: 'flex-end', marginLeft: 10 }}
-                  variant="contained"
-                  color="default"
-                  startIcon={<CancelIcon />}
-                  onClick={onDismiss}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </Toolbar>
-          </AppBar>
-        </div>
-      </Modal>
-    </CreatCheckinContext.Provider>
+            </div>
+          </TabPanel>
+        </Paper>
+        <AppBar position="static">
+          <Toolbar
+            style={{
+              flexDirection: 'column',
+              justifyContent: 'center'
+            }}
+          >
+            <div style={{ alignSelf: 'flex-end' }}>
+              <Button
+                variant="contained"
+                color="default"
+                startIcon={<AddIcon />}
+                onClick={() => {}}
+              >
+                Add Checkin
+              </Button>
+              <Button
+                style={{ alignSelf: 'flex-end', marginLeft: 10 }}
+                variant="contained"
+                color="default"
+                startIcon={<CancelIcon />}
+                onClick={onDismiss}
+              >
+                Cancel
+              </Button>
+            </div>
+          </Toolbar>
+        </AppBar>
+      </CreatCheckinContext.Provider>
+    </Paper>
   );
 };
 
+type CategoryFilterSelection =
+  | 'ALL_CATEGORIES'
+  | 'NO_CATEGORY'
+  | number;
+
+function CategoryFilter(props) {
+  const { item, applyValue } = props;
+  const [v, setValue] = useState<CategoryFilterSelection>(
+    item.value ?? 'ALL_CATEGORIES'
+  );
+
+  const handleFilterChange = (event) => {
+    const cat = event.target.value;
+    setValue(cat);
+    applyValue({ ...item, value: cat });
+  };
+
+  const achievementCategories = db.useCollection<AchievementCategory>(
+    'achievement_categories',
+    ['name']
+  );
+
+  return (
+    <FormControl>
+      <InputLabel id="demo-simple-select-label">Category</InputLabel>
+      <NativeSelect value={v} onChange={handleFilterChange}>
+        <option key={'ALL_CATEGORIES'} value={'ALL_CATEGORIES'}>
+          All Categories
+        </option>
+        <option key={'NO_CATEGORY'} value={'NO_CATEGORY'}>
+          No Category
+        </option>
+        {achievementCategories.map((ac, i) => (
+          <option key={i + 1} value={ac.id}>
+            {ac.name}
+          </option>
+        ))}
+      </NativeSelect>
+    </FormControl>
+  );
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    content: {
-      flexGrow: 1,
-      backgroundColor: theme.palette.background.default,
-      padding: theme.spacing(3)
-    },
-
     formControl: {
       margin: theme.spacing(1),
       minWidth: 120,
@@ -439,10 +535,9 @@ const useStyles = makeStyles((theme: Theme) =>
     addCheckinHeader: {
       backgroundColor: theme.palette.primary.main,
       margin: 0,
-      padding: 20,
-      color: 'white'
+      color: 'white',
+      padding: 20
     },
-
     chips: {
       display: 'flex',
       flexWrap: 'wrap'
