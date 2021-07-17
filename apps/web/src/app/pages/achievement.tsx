@@ -124,10 +124,14 @@ const Achievements = () => {
   ]);
 
   const handleEditCellChangeCommitted = React.useCallback(
-    async ({ id, field, props }) =>
-      db.models.achievements.updateWithProps(id, {
-        name: props.value
-      }),
+    async ({ id, field, props }) => {
+      if (field === 'points') {
+        props.value = Number(props.value);
+      }
+      return db.models.achievements.updateWithProps(id, {
+        [field]: props.value
+      });
+    },
     [achievements]
   );
 
