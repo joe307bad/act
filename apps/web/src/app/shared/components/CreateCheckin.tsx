@@ -8,6 +8,7 @@ import React, {
 import {
   AppBar,
   Avatar,
+  Box,
   Button,
   Chip,
   createStyles,
@@ -15,8 +16,11 @@ import {
   makeStyles,
   MenuItem,
   Modal,
+  Paper,
   Select,
   Switch,
+  Tab,
+  Tabs,
   TextField,
   Theme,
   Toolbar
@@ -97,6 +101,22 @@ const usersColumns: GridColDef[] = [
     width: 200
   }
 ];
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box p={3}>{children}</Box>}
+    </div>
+  );
+}
 
 const SelectAchievementCount = ({ id, value }) => {
   const [v, setValue] = useState(1);
@@ -218,6 +238,11 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
 
   useEffect(() => {}, [achievementCounts]);
 
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <CreatCheckinContext.Provider
       value={[
@@ -240,7 +265,7 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
             width: 1000,
             left: '50%',
             marginLeft: -500,
-            maxHeight: '100%',
+            height: '100%',
             display: 'flex',
             flexDirection: 'column'
           }}
@@ -266,50 +291,74 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
               label="Approved"
             />
           </div>
-          <div style={{ flex: 1, overflow: 'scroll' }}>
-            <div style={{ padding: 20 }}>
-              <HeaderWithTags
-                title="Achievements"
-                selected={selectedAchievements}
-                setSelected={setSelectedAchievements}
-                showCount={true}
-              />
-              <DataGrid
-                editMode="client"
-                rows={achievements}
-                columns={columns}
-                onEditCellChangeCommitted={
-                  handleEditCellChangeCommitted
-                }
-                selectionModel={Array.from(
-                  selectedAchievements.keys()
-                )}
-                onSelectionModelChange={({ selectionModel }) => {
-                  setSelectedAchievements(
-                    new Map(
-                      selectionModel.map((nsm) => {
-                        const a = achievements.find(
-                          (a) => a.id === nsm
-                        );
-                        return [
-                          nsm.toString(),
-                          {
-                            id: a.id,
-                            name: a.name,
-                            points: a.points,
-                            count: achievementCounts.get(a.id) ?? 1
-                          }
-                        ];
-                      })
-                    )
-                  );
-                }}
-                pageSize={5}
-                checkboxSelection
-                autoHeight={true}
-              />
-            </div>
-            <div style={{ padding: 20 }}>
+          <Paper style={{ margin: 20, flex: 1 }} elevation={3}>
+            <AppBar position="static">
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                aria-label="simple tabs example"
+              >
+                <Tab
+                  label={`Achievements${
+                    selectedAchievements.size > 0
+                      ? ` (${selectedAchievements.size})`
+                      : ''
+                  }`}
+                />
+                <Tab
+                  label={`Users${
+                    selectedUsers.size > 0
+                      ? ` (${selectedUsers.size})`
+                      : ''
+                  }`}
+                />
+              </Tabs>
+            </AppBar>
+            <TabPanel value={value} index={0}>
+              <>
+                <HeaderWithTags
+                  title="Achievements"
+                  selected={selectedAchievements}
+                  setSelected={setSelectedAchievements}
+                  showCount={true}
+                />
+                <DataGrid
+                  editMode="client"
+                  rows={achievements}
+                  columns={columns}
+                  onEditCellChangeCommitted={
+                    handleEditCellChangeCommitted
+                  }
+                  selectionModel={Array.from(
+                    selectedAchievements.keys()
+                  )}
+                  onSelectionModelChange={({ selectionModel }) => {
+                    setSelectedAchievements(
+                      new Map(
+                        selectionModel.map((nsm) => {
+                          const a = achievements.find(
+                            (a) => a.id === nsm
+                          );
+                          return [
+                            nsm.toString(),
+                            {
+                              id: a.id,
+                              name: a.name,
+                              points: a.points,
+                              count: achievementCounts.get(a.id) ?? 1
+                            }
+                          ];
+                        })
+                      )
+                    );
+                  }}
+                  pageSize={5}
+                  checkboxSelection
+                  autoHeight={true}
+                />
+              </>
+            </TabPanel>
+            <TabPanel value={value} index={1}>
               <HeaderWithTags
                 title="Users"
                 selected={selectedUsers}
@@ -337,8 +386,8 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
                 checkboxSelection
                 autoHeight={true}
               />
-            </div>
-          </div>
+            </TabPanel>
+          </Paper>
           <AppBar position="static">
             <Toolbar
               style={{
