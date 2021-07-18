@@ -11,7 +11,7 @@ import {
 } from './schema';
 import { Checkin } from './schema/checkin';
 import { CheckinAchievement } from './schema/checkin-achievement';
-import { CheckinUser } from './schema/checkin-users';
+import { CheckinUser } from './schema/checkin-user';
 
 @singleton()
 export class ActContext {

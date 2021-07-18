@@ -71,7 +71,8 @@ export const schemaAndMigrations = {
         columns: baseColumns([
           { name: 'name', type: 'string' },
           { name: 'photo', type: 'string' },
-          { name: 'note', type: 'string' }
+          { name: 'note', type: 'string' },
+          { name: 'approved', type: 'boolean' }
         ])
       }),
       tableSchema({

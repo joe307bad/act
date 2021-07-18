@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import {
   createStyles,
   Theme,
@@ -6,55 +6,65 @@ import {
 } from '@material-ui/core/styles';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import db from '@act/data/web';
-import { AchievementCategory, Checkin } from '@act/data/core';
-import { CreateCheckin } from '../shared/components/CreateCheckin';
+import { Checkin } from '@act/data/core';
+import { CreateCheckin } from '../checkin/CreateCheckin';
 import { GridContainer } from '../shared/components/TableContainer';
-import { IconButton, MenuItem, Select } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import * as MUI from '@material-ui/core';
+import * as Icons from '@material-ui/icons';
+import { Q } from '@nozbe/watermelondb';
 
-const Checkins = ({ open, onDismiss }) => {
+const CheckinContext =
+  createContext<
+    [
+      selectedCheckin: Checkin,
+      setSelectedCheckin: React.Dispatch<
+        React.SetStateAction<Checkin>
+      >,
+      openCheckin: () => void
+    ]
+  >(undefined);
+
+const Checkins = ({ open, openCheckin, onDismiss }) => {
   const classes = useStyles();
 
   let checkins: Checkin[] = db.useCollection('checkins', ['name']);
-
-  useEffect(() => {
-    db.get.collections
-      .get<Checkin>('checkins')
-      .query()
-      .fetch()
-      .then((cs) => {
-        console.log(
-          cs.map(async (c) => ({
-            checkin: c._raw,
-            achievements: await c.achievements.fetch()
-          }))
-        );
-      });
-  }, [checkins]);
+  const [selectedCheckin, setSelectedCheckin] =
+    useState<Checkin | undefined>();
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) =>
       db.models.checkins.update(id, props.value),
     [checkins]
   );
-
   return (
     <main className={classes.content}>
       <div className={classes.toolbar} />
-      <GridContainer>
-        {open ? (
-          <CreateCheckin onDismiss={onDismiss} />
-        ) : (
-          <DataGrid
-            editMode="client"
-            rows={checkins}
-            columns={columns}
-            onEditCellChangeCommitted={handleEditCellChangeCommitted}
-            pageSize={100}
-            checkboxSelection
-          />
-        )}
-      </GridContainer>
+      <CheckinContext.Provider
+        value={[selectedCheckin, setSelectedCheckin, openCheckin]}
+      >
+        <GridContainer>
+          {open ? (
+            <CreateCheckin
+              onDismiss={() => {
+                onDismiss();
+                setSelectedCheckin(undefined);
+              }}
+              selectedCheckin={selectedCheckin}
+            />
+          ) : (
+            <DataGrid
+              editMode="client"
+              rows={checkins}
+              columns={columns}
+              onEditCellChangeCommitted={
+                handleEditCellChangeCommitted
+              }
+              pageSize={100}
+              checkboxSelection
+            />
+          )}
+        </GridContainer>
+      </CheckinContext.Provider>
     </main>
   );
 };
@@ -79,14 +89,35 @@ const columns: GridColDef[] = [
     sortable: false,
     disableClickEventBubbling: true,
     renderCell: ({ id }) => {
+      const [_, setSelectedCheckin, openCheckin] =
+        useContext(CheckinContext);
+
+      const editCheckin = async (checkinId: string) => {
+        // const checkin = await db.get.collections
+        //   .get<Checkin>('checkins')
+        //   .query(Q.where('id', checkinId))
+        //   .fetch();
+        // setSelectedCheckin(checkin[0]);
+        // openCheckin();
+      };
+
       return (
-        <IconButton
-          onClick={() => db.models.communities.delete(id)}
-          aria-label="delete"
-          color="secondary"
-        >
-          <DeleteIcon />
-        </IconButton>
+        <>
+          <MUI.IconButton
+            onClick={() => db.models.communities.delete(id)}
+            aria-label="delete"
+            color="secondary"
+          >
+            <Icons.Delete />
+          </MUI.IconButton>
+          <MUI.IconButton
+            onClick={() => editCheckin(id.toString())}
+            aria-label="delete"
+            color="secondary"
+          >
+            <Icons.Edit />
+          </MUI.IconButton>
+        </>
       );
     }
   }
@@ -121,4 +152,5 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
+
 export default Checkins;

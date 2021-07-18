@@ -3,6 +3,7 @@ import { field, lazy } from '@nozbe/watermelondb/decorators';
 import { Associations } from '@nozbe/watermelondb/Model';
 import { Achievement } from './achievement';
 import { BaseModel } from './base-model';
+import { CheckinAchievement } from './checkin-achievement';
 import { User } from './user';
 
 export class Checkin extends BaseModel {
@@ -26,8 +27,8 @@ export class Checkin extends BaseModel {
 
   @lazy
   achievements = this.collections
-    .get<Achievement>('achievements')
-    .query(Q.on('checkin_achievements', 'checkin_id', this.id));
+    .get<CheckinAchievement>('checkin_achievements')
+    .query(Q.on('checkins', 'id', this.id));
 
   @lazy
   users = this.collections

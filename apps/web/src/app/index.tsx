@@ -277,6 +277,7 @@ const App = () => {
           <Route path={PAGE.CHECKINS}>
             <Checkins
               open={showCreateCheckin}
+              openCheckin={() => setShowCreateCheckin(true)}
               onDismiss={() => setShowCreateCheckin(false)}
             />
           </Route>
