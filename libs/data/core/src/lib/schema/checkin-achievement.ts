@@ -1,8 +1,12 @@
-import { field, relation } from '@nozbe/watermelondb/decorators';
+import { Q } from '@nozbe/watermelondb';
+import {
+  field,
+  lazy,
+  relation
+} from '@nozbe/watermelondb/decorators';
 import { Associations } from '@nozbe/watermelondb/Model';
 import { Achievement } from './achievement';
 import { BaseModel } from './base-model';
-import { Checkin } from './checkin';
 
 export class CheckinAchievement extends BaseModel {
   static table = 'checkin_achievements';
@@ -12,4 +16,7 @@ export class CheckinAchievement extends BaseModel {
   };
   @field('checkin_id') checkinId: string;
   @field('achievement_id') achievementId: string;
+
+  @relation('achievements', 'achievement_id')
+  achievement: Achievement;
 }

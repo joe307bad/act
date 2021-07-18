@@ -11,14 +11,13 @@ import { CreateCheckin } from '../checkin/CreateCheckin';
 import { GridContainer } from '../shared/components/TableContainer';
 import * as MUI from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
-import { Q } from '@nozbe/watermelondb';
 
 const CheckinContext =
   createContext<
     [
-      selectedCheckin: Checkin,
+      selectedCheckin: string,
       setSelectedCheckin: React.Dispatch<
-        React.SetStateAction<Checkin>
+        React.SetStateAction<string>
       >,
       openCheckin: () => void
     ]
@@ -29,7 +28,7 @@ const Checkins = ({ open, openCheckin, onDismiss }) => {
 
   let checkins: Checkin[] = db.useCollection('checkins', ['name']);
   const [selectedCheckin, setSelectedCheckin] =
-    useState<Checkin | undefined>();
+    useState<string | undefined>();
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) =>
@@ -93,12 +92,8 @@ const columns: GridColDef[] = [
         useContext(CheckinContext);
 
       const editCheckin = async (checkinId: string) => {
-        // const checkin = await db.get.collections
-        //   .get<Checkin>('checkins')
-        //   .query(Q.where('id', checkinId))
-        //   .fetch();
-        // setSelectedCheckin(checkin[0]);
-        // openCheckin();
+        setSelectedCheckin(checkinId);
+        openCheckin();
       };
 
       return (

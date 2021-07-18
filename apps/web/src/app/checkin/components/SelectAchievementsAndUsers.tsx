@@ -1,8 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as MUI from '@material-ui/core';
 import {
   Achievement,
   AchievementCategory,
+  Checkin,
   User
 } from '@act/data/core';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
@@ -12,6 +13,12 @@ import { CreateCheckinContext } from '../context/CreateCheckinContext';
 import { TabPanel } from '../../shared/components/TabPanel';
 import { SelectAchievementCount } from './SelectAchievementCount';
 import { categoryOperators } from '../../shared/components/CategoryFilter';
+import withObservables from '@nozbe/with-observables';
+import { switchMap, mergeMap, map, mergeAll } from 'rxjs/operators';
+import { of, from } from 'rxjs';
+import { CheckinAchievement } from 'libs/data/core/src/lib/schema/checkin-achievement';
+import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
+import { Q } from '@nozbe/watermelondb';
 
 const columns: GridColDef[] = [
   {
@@ -75,7 +82,10 @@ const usersColumns: GridColDef[] = [
   }
 ];
 
-export const SelectAchievementsAndUsers = () => {
+export const SelectAchievementsAndUsersComponent = ({
+  checkin,
+  achievements: a
+}) => {
   const achievements: Achievement[] = db.useCollection(
     'achievements',
     ['name']
@@ -87,6 +97,12 @@ export const SelectAchievementsAndUsers = () => {
   );
   const { achievements: selectedAchievements, users: selectedUsers } =
     model;
+
+  useEffect(() => {
+    model.achievements.set(
+      new Map(a.map((b) => [b.achievementId, null]))
+    );
+  }, [a]);
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) =>
@@ -220,3 +236,21 @@ export const SelectAchievementsAndUsers = () => {
     </MUI.Paper>
   );
 };
+
+export const SelectAchievementsAndUsers = withDatabase(
+  withObservables(
+    ['selectedCheckin'],
+    ({ selectedCheckin, database }) => {
+      //debugger;
+      return {
+        checkin: database.collections
+          .get('checkins')
+          .findAndObserve(selectedCheckin),
+        achievements: database.collections
+          .get('checkin_achievements')
+          .query(Q.where('checkin_id', selectedCheckin))
+          .observe()
+      };
+    }
+  )(SelectAchievementsAndUsersComponent)
+);

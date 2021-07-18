@@ -2234,10 +2234,10 @@
     rxjs "^6.5.3"
     sql-escape-string "^1.1.0"
 
-"@nozbe/with-observables@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@nozbe/with-observables/-/with-observables-1.2.0.tgz#2ef17e7f5728d9797cd34c6dbc4704e235270646"
-  integrity sha512-u3CUla8T/2mxQAYVbwcfVAgWdCBPmn9+8NKhrEjCv6foRPAibmzYUGjS5LgEFUuILdk0NJV3I7RR8jBnm+1xsQ==
+"@nozbe/with-observables@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@nozbe/with-observables/-/with-observables-1.4.0.tgz#38d91186c932d431b767302f9f31214335912c6a"
+  integrity sha512-vzc0QiYcXK/GmflBGBXTs02ayL25e1l4Cr9aYgSuYCZVqpyMfep9xp89RygNbiibAfVLbgEUa7thxlm3jw8hFw==
   dependencies:
     hoist-non-react-statics "^3.3.2"
 

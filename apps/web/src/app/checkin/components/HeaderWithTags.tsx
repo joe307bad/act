@@ -22,10 +22,10 @@ export const HeaderWithTags = ({
         {Array.from(selected).map(([id, sa]) => (
           <MUI.Chip
             avatar={
-              <MUI.Avatar>{showCount ? sa.count : null}</MUI.Avatar>
+              <MUI.Avatar>{showCount ? sa?.count : null}</MUI.Avatar>
             }
             key={id}
-            label={sa.name}
+            label={sa?.name ?? ''}
             style={{ marginRight: 10 }}
             onDelete={() => {
               const newSelected = new Map(selected);
@@ -40,7 +40,10 @@ export const HeaderWithTags = ({
           color="primary"
           icon={<Icons.Add />}
           label={Array.from(selected).reduce(
-            (acc: number, sa) => (acc += sa[1].count * sa[1].points),
+            (acc: number, sa) =>
+              sa[1] !== null
+                ? (acc += sa[1].count * sa[1].points)
+                : 1,
             0
           )}
         />

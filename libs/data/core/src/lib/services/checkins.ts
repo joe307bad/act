@@ -23,6 +23,20 @@ export class CheckinsService extends BaseService<Checkin> {
       .collections.get<CheckinUser>('checkin_users');
   }
 
+  find = (checkinId: string) => this._collection.find(checkinId);
+
+  // find = async (checkinId: string) => {
+  //   const b = await this._collection.find(checkinId);
+  //   const a = await b.achievements.fetch();
+  // const c = a.map(async (d) => {
+  //   const e = await d.achievement;
+  //   debugger;
+  //   return e;
+  // });
+  //   debugger;
+  //   return b;
+  // };
+
   insertCheckinWithAchievements = async (): Promise<Checkin> => {
     return await this._db.action(async (action) => {
       const newCheckin = await this._collection.create();
