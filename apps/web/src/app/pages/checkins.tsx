@@ -7,7 +7,7 @@ import {
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import db from '@act/data/web';
 import { Checkin } from '@act/data/core';
-import { CreateCheckin } from '../checkin/CreateCheckin';
+import { Checkin as CheckinDetails } from '../checkin';
 import { GridContainer } from '../shared/components/TableContainer';
 import * as MUI from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
@@ -43,7 +43,7 @@ const Checkins = ({ open, openCheckin, onDismiss }) => {
       >
         <GridContainer>
           {open ? (
-            <CreateCheckin
+            <CheckinDetails
               onDismiss={() => {
                 onDismiss();
                 setSelectedCheckin(undefined);

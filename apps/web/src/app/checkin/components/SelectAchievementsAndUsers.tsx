@@ -16,6 +16,8 @@ import { categoryOperators } from '../../shared/components/CategoryFilter';
 import withObservables from '@nozbe/with-observables';
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 import { Q } from '@nozbe/watermelondb';
+import { of } from 'rxjs';
+import { CheckinUserSelector } from './CheckinUserSelector';
 
 const columns: GridColDef[] = [
   {
@@ -66,28 +68,15 @@ const columns: GridColDef[] = [
   }
 ];
 
-const usersColumns: GridColDef[] = [
-  {
-    field: 'username',
-    headerName: 'Name',
-    width: 200
-  },
-  {
-    field: 'created_at',
-    headerName: 'Created',
-    width: 200
-  }
-];
-
 export const SelectAchievementsAndUsersComponent = ({
   checkin,
-  achievements: a
+  achievements: savedAchievements,
+  users: savedUsers
 }) => {
   const achievements: Achievement[] = db.useCollection(
     'achievements',
     ['name']
   );
-  const users: User[] = db.useCollection('users', ['name']);
   const [activeTab, setActiveTab] = React.useState(0);
   const { model, achievementCounts } = useContext(
     CreateCheckinContext
@@ -96,10 +85,27 @@ export const SelectAchievementsAndUsersComponent = ({
     model;
 
   useEffect(() => {
+    if (!checkin) {
+      return;
+    }
+    const newAchievementCounts: Map<string, number> =
+      savedAchievements.reduce((acc, sa) => {
+        const existingAchievement = acc.get(sa.achievementId);
+        acc.set(sa.achievementId, (existingAchievement ?? 0) + 1);
+        return acc;
+      }, new Map<string, number>());
+
     model.achievements.set(
-      new Map(a.map((b) => [b.achievementId, null]))
+      new Map(
+        Array.from(newAchievementCounts).map(([k]) => [k, null])
+      )
     );
-  }, [a]);
+    achievementCounts.set(newAchievementCounts);
+
+    selectedUsers.set(
+      new Map(savedUsers.map((su) => [su.userId, null]))
+    );
+  }, [checkin]);
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) =>
@@ -201,52 +207,35 @@ export const SelectAchievementsAndUsersComponent = ({
         style={{ height: '100%' }}
         index={1}
       >
-        <HeaderWithTags
-          title="Users"
-          selected={selectedUsers.get}
-          setSelected={selectedUsers.set}
-        />
-        <div style={{ height: 'calc(100% - 75px)' }}>
-          <DataGrid
-            editMode="client"
-            rows={users}
-            columns={usersColumns}
-            selectionModel={Array.from(selectedUsers.get.keys())}
-            onSelectionModelChange={({ selectionModel }) => {
-              selectedUsers.set(
-                new Map(
-                  selectionModel.map((nsm) => {
-                    const u = users.find((a) => a.id === nsm);
-                    return [
-                      nsm.toString(),
-                      { id: u.id, name: u.username }
-                    ];
-                  })
-                )
-              );
-            }}
-            pageSize={5}
-            checkboxSelection
-          />
-        </div>
+        <CheckinUserSelector />
       </TabPanel>
     </MUI.Paper>
   );
 };
 
 export const SelectAchievementsAndUsers: FC<{
-  selectedCheckin: string;
+  selectedCheckin?: string;
 }> = withDatabase(
   withObservables(
     ['selectedCheckin', 'database'],
     ({ selectedCheckin, database }) => {
-      //debugger;
+      if (!selectedCheckin) {
+        return {
+          checkin: of(null),
+          achievements: of(null),
+          users: of(null)
+        };
+      }
       return {
         checkin: database.collections
           .get('checkins')
           .findAndObserve(selectedCheckin),
         achievements: database.collections
           .get('checkin_achievements')
+          .query(Q.where('checkin_id', selectedCheckin))
+          .observe(),
+        users: database.collections
+          .get('checkin_users')
           .query(Q.where('checkin_id', selectedCheckin))
           .observe()
       };

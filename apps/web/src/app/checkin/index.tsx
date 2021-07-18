@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import * as MUI from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 import db from '@act/data/web';
@@ -9,12 +9,12 @@ import {
 } from './context/CreateCheckinContext';
 import DatabaseProvider from '@nozbe/watermelondb/DatabaseProvider';
 
-type CreateCheckinProps = {
+type CheckinProps = {
   onDismiss: () => void;
   selectedCheckin?: string;
 };
 
-export const CreateCheckin: FC<CreateCheckinProps> = ({
+export const Checkin: FC<CheckinProps> = ({
   onDismiss,
   selectedCheckin
 }) => {
@@ -40,7 +40,7 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
                 elevation={3}
               >
                 <h2 className={classes.addCheckinHeader}>
-                  Add Checkin
+                  {selectedCheckin ? 'Edit Checkin' : 'Add Checkin'}
                 </h2>
                 <div style={{ display: 'flex' }}>
                   <MUI.TextField
@@ -84,24 +84,37 @@ export const CreateCheckin: FC<CreateCheckinProps> = ({
                       <MUI.Button
                         variant="contained"
                         color="default"
-                        startIcon={<Icons.Add />}
+                        startIcon={
+                          selectedCheckin ? (
+                            <Icons.Save />
+                          ) : (
+                            <Icons.Add />
+                          )
+                        }
                         onClick={() => {
-                          db.models.checkins.create(
-                            {
-                              note: note.get,
-                              approved: approved.get
-                            },
-                            new Map(
-                              Array.from(achievements.get).map(
-                                ([key, value]) => [key, value.count]
-                              )
-                            ),
-                            Array.from(users.get.keys())
-                          );
+                          selectedCheckin
+                            ? (() => {})()
+                            : db.models.checkins.create(
+                                {
+                                  note: note.get,
+                                  approved: approved.get
+                                },
+                                new Map(
+                                  Array.from(achievements.get).map(
+                                    ([key, value]) => [
+                                      key,
+                                      value.count
+                                    ]
+                                  )
+                                ),
+                                Array.from(users.get.keys())
+                              );
                           onDismiss();
                         }}
                       >
-                        Add Checkin
+                        {selectedCheckin
+                          ? 'Save Checkin'
+                          : 'Add Checkin'}
                       </MUI.Button>
                       <MUI.Button
                         style={{
