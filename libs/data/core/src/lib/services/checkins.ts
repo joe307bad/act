@@ -62,14 +62,21 @@ export class CheckinsService extends BaseService<Checkin> {
       });
 
       return this._db.batch(
-        ...Array.from(achievementCounts).flatMap(([aid, count]) =>
-          Array.from({ length: count }, (e, i) =>
-            this._checkinAchievementCollection.prepareCreate(
-              (m: CheckinAchievement) => {
-                m.checkinId = newCheckin.id;
-                m.achievementId = aid;
-              }
-            )
+        ...Array.from(achievementCounts).map(([aid, count]) =>
+          this._checkinAchievementCollection.prepareCreate(
+            (m: CheckinAchievement) => {
+              m.checkinId = newCheckin.id;
+              m.achievementId = aid;
+              m.count = count;
+            }
+          )
+        ),
+        ...users.map((uid) =>
+          this._checkinUserCollection.prepareCreate(
+            (m: CheckinUser) => {
+              m.checkinId = newCheckin.id;
+              m.userId = uid;
+            }
           )
         )
       );

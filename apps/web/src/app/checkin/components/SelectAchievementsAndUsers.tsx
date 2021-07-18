@@ -88,12 +88,14 @@ export const SelectAchievementsAndUsersComponent = ({
     if (!checkin) {
       return;
     }
-    const newAchievementCounts: Map<string, number> =
-      savedAchievements.reduce((acc, sa) => {
-        const existingAchievement = acc.get(sa.achievementId);
-        acc.set(sa.achievementId, (existingAchievement ?? 0) + 1);
-        return acc;
-      }, new Map<string, number>());
+    const newAchievementCounts: Map<string, number> = new Map(
+      savedAchievements.map((sa) => [
+        sa.achievementId,
+        sa.count === 0 ? 1 : sa.count
+      ])
+    );
+
+    debugger;
 
     model.achievements.set(
       new Map(

@@ -16,6 +16,7 @@ export class CheckinAchievement extends BaseModel {
   };
   @field('checkin_id') checkinId: string;
   @field('achievement_id') achievementId: string;
+  @field('count') count: number;
 
   @relation('achievements', 'achievement_id')
   achievement: Achievement;

@@ -42,7 +42,7 @@ export const HeaderWithTags = ({
           label={Array.from(selected).reduce(
             (acc: number, sa) =>
               sa[1] !== null
-                ? (acc += sa[1].count * sa[1].points)
+                ? (acc += (sa[1].count ?? 1) * sa[1].points)
                 : 1,
             0
           )}
