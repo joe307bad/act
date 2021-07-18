@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import * as MUI from '@material-ui/core';
 import {
   Achievement,
@@ -14,9 +14,6 @@ import { TabPanel } from '../../shared/components/TabPanel';
 import { SelectAchievementCount } from './SelectAchievementCount';
 import { categoryOperators } from '../../shared/components/CategoryFilter';
 import withObservables from '@nozbe/with-observables';
-import { switchMap, mergeMap, map, mergeAll } from 'rxjs/operators';
-import { of, from } from 'rxjs';
-import { CheckinAchievement } from 'libs/data/core/src/lib/schema/checkin-achievement';
 import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 import { Q } from '@nozbe/watermelondb';
 
@@ -237,9 +234,11 @@ export const SelectAchievementsAndUsersComponent = ({
   );
 };
 
-export const SelectAchievementsAndUsers = withDatabase(
+export const SelectAchievementsAndUsers: FC<{
+  selectedCheckin: string;
+}> = withDatabase(
   withObservables(
-    ['selectedCheckin'],
+    ['selectedCheckin', 'database'],
     ({ selectedCheckin, database }) => {
       //debugger;
       return {
