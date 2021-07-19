@@ -246,14 +246,14 @@ const ToolBarAndSideBar = ({ onClick }) => {
 
 const App = () => {
   const classes = useStyles();
-  const [showCreateCheckin, setShowCreateCheckin] = useState(false);
+  const [showCheckinDetails, setShowCheckinDetails] = useState(false);
 
   return (
     <div className={classes.root}>
       <Router>
         <CssBaseline />
         <ToolBarAndSideBar
-          onClick={() => setShowCreateCheckin(true)}
+          onClick={() => setShowCheckinDetails(true)}
         />
         <Switch>
           <Route exact path="/">
@@ -276,9 +276,9 @@ const App = () => {
           </Route>
           <Route path={PAGE.CHECKINS}>
             <Checkins
-              open={showCreateCheckin}
-              openCheckin={() => setShowCreateCheckin(true)}
-              onDismiss={() => setShowCreateCheckin(false)}
+              open={showCheckinDetails}
+              openCheckin={() => setShowCheckinDetails(true)}
+              onDismiss={() => setShowCheckinDetails(false)}
             />
           </Route>
         </Switch>

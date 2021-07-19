@@ -1,15 +1,10 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import * as MUI from '@material-ui/core';
-import {
-  Achievement,
-  AchievementCategory,
-  Checkin,
-  User
-} from '@act/data/core';
+import { Achievement, AchievementCategory } from '@act/data/core';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import db from '@act/data/web';
 import { HeaderWithTags } from './HeaderWithTags';
-import { CreateCheckinContext } from '../context/CreateCheckinContext';
+import { CheckinContext } from '../context/CheckinContext';
 import { TabPanel } from '../../shared/components/TabPanel';
 import { SelectAchievementCount } from './SelectAchievementCount';
 import { categoryOperators } from '../../shared/components/CategoryFilter';
@@ -57,7 +52,7 @@ const columns: GridColDef[] = [
     headerName: 'Count',
     disableClickEventBubbling: true,
     renderCell: ({ id }) => {
-      const { achievementCounts } = useContext(CreateCheckinContext);
+      const { achievementCounts } = useContext(CheckinContext);
       return (
         <SelectAchievementCount
           id={id}
@@ -78,9 +73,8 @@ export const SelectAchievementsAndUsersComponent = ({
     ['name']
   );
   const [activeTab, setActiveTab] = React.useState(0);
-  const { model, achievementCounts } = useContext(
-    CreateCheckinContext
-  );
+  const { model, achievementCounts, removedAchievements } =
+    useContext(CheckinContext);
   const { achievements: selectedAchievements, users: selectedUsers } =
     model;
 
@@ -95,8 +89,6 @@ export const SelectAchievementsAndUsersComponent = ({
       ])
     );
 
-    debugger;
-
     model.achievements.set(
       new Map(
         Array.from(newAchievementCounts).map(([k]) => [k, null])
@@ -107,6 +99,9 @@ export const SelectAchievementsAndUsersComponent = ({
     selectedUsers.set(
       new Map(savedUsers.map((su) => [su.userId, null]))
     );
+
+    model.note.set(checkin.note);
+    model.approved.set(checkin.approved);
   }, [checkin]);
 
   const handleEditCellChangeCommitted = React.useCallback(
@@ -164,7 +159,11 @@ export const SelectAchievementsAndUsersComponent = ({
           <HeaderWithTags
             title="Achievements"
             selected={selectedAchievements.get}
-            setSelected={selectedAchievements.set}
+            setSelected={(selected, id) => {
+              selectedAchievements.set(selected);
+              removedAchievements.delete(id);
+            }}
+            onDelete={removedAchievements.add}
             showCount={true}
           />
           <div style={{ height: 'calc(100% - 75px)' }}>

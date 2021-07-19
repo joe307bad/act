@@ -6,6 +6,7 @@ export const HeaderWithTags = ({
   title,
   selected,
   setSelected,
+  onDelete = undefined,
   showCount = false
 }) => {
   return (
@@ -31,6 +32,7 @@ export const HeaderWithTags = ({
               const newSelected = new Map(selected);
               newSelected.delete(id);
               setSelected(newSelected);
+              onDelete?.(id);
             }}
           />
         ))}

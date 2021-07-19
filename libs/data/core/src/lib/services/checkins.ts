@@ -23,20 +23,6 @@ export class CheckinsService extends BaseService<Checkin> {
       .collections.get<CheckinUser>('checkin_users');
   }
 
-  find = (checkinId: string) => this._collection.find(checkinId);
-
-  // find = async (checkinId: string) => {
-  //   const b = await this._collection.find(checkinId);
-  //   const a = await b.achievements.fetch();
-  // const c = a.map(async (d) => {
-  //   const e = await d.achievement;
-  //   debugger;
-  //   return e;
-  // });
-  //   debugger;
-  //   return b;
-  // };
-
   insertCheckinWithAchievements = async (): Promise<Checkin> => {
     return await this._db.action(async (action) => {
       const newCheckin = await this._collection.create();
@@ -48,6 +34,35 @@ export class CheckinsService extends BaseService<Checkin> {
       );
     });
   };
+
+  edit = async (
+    id: string,
+    editProps: Partial<Omit<Checkin, 'achievements' | 'users'>>,
+    achievementCounts: Map<string, number>,
+    removedAchievements: Set<string>,
+    users: string[],
+    removedUsers: Set<string>
+  ) => {
+    console.log({
+      id,
+      editProps,
+      achievementCounts,
+      removedAchievements,
+      users,
+      removedUsers
+    });
+    debugger;
+    return await this._db.action(async (action) => {
+      // batch everything
+      //   - update checkin with editProps
+      //   - loop through achievementCounts, check if exists, update with new count if it exists, insert if does not exist
+      //   - loop through removedAchievements and remove
+      //   - loop through users, check if exists, if exists do nothing, if it does not exist, insert
+      //   - loop through removed users and remove
+    });
+  };
+
+  find = async (id: string) => this._collection.find(id);
 
   create = async (
     insertProps: Partial<Omit<Checkin, 'achievements' | 'users'>>,

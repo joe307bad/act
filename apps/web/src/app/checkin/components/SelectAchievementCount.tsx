@@ -1,12 +1,12 @@
 import { MenuItem, Select } from '@material-ui/core';
 import React from 'react';
 import { useContext, useState } from 'react';
-import { CreateCheckinContext } from '../context/CreateCheckinContext';
+import { CheckinContext } from '../context/CheckinContext';
 
 export const SelectAchievementCount = ({ id, value }) => {
   const [v, setValue] = useState(value ?? 1);
   const { achievementCounts, setSelectedAchievementCountById } =
-    useContext(CreateCheckinContext);
+    useContext(CheckinContext);
 
   const handleChange = (event) => {
     const count = event.target.value;

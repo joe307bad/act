@@ -4,9 +4,9 @@ import * as Icons from '@material-ui/icons';
 import db from '@act/data/web';
 import { SelectAchievementsAndUsers } from './components/SelectAchievementsAndUsers';
 import {
-  CreateCheckinContext,
-  CreateCheckinProvider
-} from './context/CreateCheckinContext';
+  CheckinContext,
+  CheckinProvider
+} from './context/CheckinContext';
 import DatabaseProvider from '@nozbe/watermelondb/DatabaseProvider';
 
 type CheckinProps = {
@@ -20,16 +20,40 @@ export const Checkin: FC<CheckinProps> = ({
 }) => {
   const classes = useStyles();
 
-  if (!open) {
-    return null;
-  }
-
   return (
     <DatabaseProvider database={db.get}>
-      <CreateCheckinProvider selectedCheckin={selectedCheckin}>
-        <CreateCheckinContext.Consumer>
-          {({ model }) => {
+      <CheckinProvider>
+        <CheckinContext.Consumer>
+          {({ model, removedUsers, removedAchievements }) => {
             const { note, approved, users, achievements } = model;
+            const achievementCounts = new Map(
+              Array.from(achievements.get).map(([key, value]) => [
+                key,
+                value?.count
+              ])
+            );
+            const onSumbit = () => {
+              selectedCheckin
+                ? db.models.checkins.edit(
+                    selectedCheckin,
+                    {
+                      note: note.get,
+                      approved: approved.get
+                    },
+                    achievementCounts,
+                    removedAchievements.get,
+                    Array.from(users.get.keys()),
+                    removedUsers.get
+                  )
+                : db.models.checkins.create(
+                    {
+                      note: note.get,
+                      approved: approved.get
+                    },
+                    achievementCounts,
+                    Array.from(users.get.keys())
+                  );
+            };
             return (
               <MUI.Paper
                 style={{
@@ -92,23 +116,7 @@ export const Checkin: FC<CheckinProps> = ({
                           )
                         }
                         onClick={() => {
-                          selectedCheckin
-                            ? (() => {})()
-                            : db.models.checkins.create(
-                                {
-                                  note: note.get,
-                                  approved: approved.get
-                                },
-                                new Map(
-                                  Array.from(achievements.get).map(
-                                    ([key, value]) => [
-                                      key,
-                                      value.count
-                                    ]
-                                  )
-                                ),
-                                Array.from(users.get.keys())
-                              );
+                          onSumbit();
                           onDismiss();
                         }}
                       >
@@ -134,8 +142,8 @@ export const Checkin: FC<CheckinProps> = ({
               </MUI.Paper>
             );
           }}
-        </CreateCheckinContext.Consumer>
-      </CreateCheckinProvider>
+        </CheckinContext.Consumer>
+      </CheckinProvider>
     </DatabaseProvider>
   );
 };

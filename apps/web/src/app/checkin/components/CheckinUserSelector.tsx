@@ -1,7 +1,7 @@
-import React, { FC, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { User } from '@act/data/core';
 import db from '@act/data/web';
-import { CreateCheckinContext } from '../context/CreateCheckinContext';
+import { CheckinContext } from '../context/CheckinContext';
 import { HeaderWithTags } from './HeaderWithTags';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 
@@ -20,7 +20,7 @@ const usersColumns: GridColDef[] = [
 
 export const CheckinUserSelector = () => {
   const users: User[] = db.useCollection('users', ['name']);
-  const { model } = useContext(CreateCheckinContext);
+  const { model, removedUsers } = useContext(CheckinContext);
   const { users: selectedUsers } = model;
 
   useEffect(() => {
@@ -42,7 +42,11 @@ export const CheckinUserSelector = () => {
       <HeaderWithTags
         title="Users"
         selected={selectedUsers.get}
-        setSelected={selectedUsers.set}
+        setSelected={(selected, id) => {
+          selectedUsers.set(selected);
+          removedUsers.delete(id);
+        }}
+        onDelete={removedUsers.add}
       />
       <div style={{ height: 'calc(100% - 75px)' }}>
         <DataGrid
