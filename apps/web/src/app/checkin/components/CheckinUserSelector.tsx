@@ -4,6 +4,7 @@ import db from '@act/data/web';
 import { CheckinContext } from '../context/CheckinContext';
 import { HeaderWithTags } from './HeaderWithTags';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
+import { difference } from 'lodash';
 
 const usersColumns: GridColDef[] = [
   {
@@ -55,12 +56,18 @@ export const CheckinUserSelector = () => {
           columns={usersColumns}
           selectionModel={Array.from(selectedUsers.get.keys())}
           onSelectionModelChange={({ selectionModel }) => {
+            const deselected = difference(
+              Array.from(selectedUsers.get.keys()),
+              selectionModel
+            );
+            if (deselected.length) {
+              removedUsers.add(deselected[0].toString());
+            }
             users.length &&
               selectedUsers.set(
                 new Map(
                   selectionModel.map((nsm) => {
                     const u = users.find((a) => a.id === nsm);
-                    debugger;
                     return [
                       nsm.toString(),
                       { id: u.id, name: u.username }

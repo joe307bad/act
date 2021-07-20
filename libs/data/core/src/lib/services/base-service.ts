@@ -57,7 +57,6 @@ export abstract class BaseService<T extends Model> {
     id,
     updateProps: { [key: string]: string }
   ) => {
-    debugger;
     await this._db.action(async () => {
       const model = await this._collection.find(id);
       await model.update((m) => {

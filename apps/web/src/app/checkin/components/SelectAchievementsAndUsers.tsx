@@ -13,6 +13,7 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 import { Q } from '@nozbe/watermelondb';
 import { of } from 'rxjs';
 import { CheckinUserSelector } from './CheckinUserSelector';
+import { difference } from 'lodash';
 
 const columns: GridColDef[] = [
   {
@@ -178,6 +179,13 @@ export const SelectAchievementsAndUsersComponent = ({
                 selectedAchievements.get.keys()
               )}
               onSelectionModelChange={({ selectionModel }) => {
+                const deselected = difference(
+                  Array.from(selectedAchievements.get.keys()),
+                  selectionModel
+                );
+                if (deselected.length) {
+                  removedAchievements.add(deselected[0].toString());
+                }
                 selectedAchievements.set(
                   new Map(
                     selectionModel.map((nsm) => {

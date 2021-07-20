@@ -99,7 +99,7 @@ const columns: GridColDef[] = [
       return (
         <>
           <MUI.IconButton
-            onClick={() => db.models.communities.delete(id)}
+            onClick={() => db.models.checkins.delete(id)}
             aria-label="delete"
             color="secondary"
           >
