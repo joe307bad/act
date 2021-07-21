@@ -21,33 +21,15 @@ const usersColumns: GridColDef[] = [
 
 export const CheckinUserSelector = () => {
   const users: User[] = db.useCollection('users', ['name']);
-  const { model, removedUsers } = useContext(CheckinContext);
+  const { model } = useContext(CheckinContext);
   const { users: selectedUsers } = model;
-
-  useEffect(() => {
-    if (!users.length) {
-      return;
-    }
-    selectedUsers.set(
-      new Map(
-        Array.from(selectedUsers.get).map(([userId]) => {
-          const user = users.find((u) => u.id === userId);
-          return [userId, { id: user.id, name: user.username }];
-        })
-      )
-    );
-  }, [users]);
 
   return (
     <>
       <HeaderWithTags
         title="Users"
         selected={selectedUsers.get}
-        setSelected={(selected, id) => {
-          selectedUsers.set(selected);
-          removedUsers.delete(id);
-        }}
-        onDelete={removedUsers.add}
+        onChange={selectedUsers.set}
       />
       <div style={{ height: 'calc(100% - 75px)' }}>
         <DataGrid
@@ -56,13 +38,6 @@ export const CheckinUserSelector = () => {
           columns={usersColumns}
           selectionModel={Array.from(selectedUsers.get.keys())}
           onSelectionModelChange={({ selectionModel }) => {
-            const deselected = difference(
-              Array.from(selectedUsers.get.keys()),
-              selectionModel
-            );
-            if (deselected.length) {
-              removedUsers.add(deselected[0].toString());
-            }
             users.length &&
               selectedUsers.set(
                 new Map(

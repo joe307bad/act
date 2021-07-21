@@ -13,7 +13,6 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 import { Q } from '@nozbe/watermelondb';
 import { of } from 'rxjs';
 import { CheckinUserSelector } from './CheckinUserSelector';
-import { difference } from 'lodash';
 
 const columns: GridColDef[] = [
   {
@@ -74,8 +73,7 @@ export const SelectAchievementsAndUsersComponent = ({
     ['name']
   );
   const [activeTab, setActiveTab] = React.useState(0);
-  const { model, achievementCounts, removedAchievements } =
-    useContext(CheckinContext);
+  const { model, achievementCounts } = useContext(CheckinContext);
   const { achievements: selectedAchievements, users: selectedUsers } =
     model;
 
@@ -160,11 +158,7 @@ export const SelectAchievementsAndUsersComponent = ({
           <HeaderWithTags
             title="Achievements"
             selected={selectedAchievements.get}
-            setSelected={(selected, id) => {
-              selectedAchievements.set(selected);
-              removedAchievements.delete(id);
-            }}
-            onDelete={removedAchievements.add}
+            onChange={selectedAchievements.set}
             showCount={true}
           />
           <div style={{ height: 'calc(100% - 75px)' }}>
@@ -179,13 +173,6 @@ export const SelectAchievementsAndUsersComponent = ({
                 selectedAchievements.get.keys()
               )}
               onSelectionModelChange={({ selectionModel }) => {
-                const deselected = difference(
-                  Array.from(selectedAchievements.get.keys()),
-                  selectionModel
-                );
-                if (deselected.length) {
-                  removedAchievements.add(deselected[0].toString());
-                }
                 selectedAchievements.set(
                   new Map(
                     selectionModel.map((nsm) => {

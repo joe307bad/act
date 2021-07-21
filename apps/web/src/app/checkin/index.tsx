@@ -24,7 +24,7 @@ export const Checkin: FC<CheckinProps> = ({
     <DatabaseProvider database={db.get}>
       <CheckinProvider>
         <CheckinContext.Consumer>
-          {({ model, removedUsers, removedAchievements }) => {
+          {({ model }) => {
             const { note, approved, users, achievements } = model;
             const achievementCounts = new Map(
               Array.from(achievements.get).map(([key, value]) => [
@@ -41,9 +41,7 @@ export const Checkin: FC<CheckinProps> = ({
                       approved: approved.get
                     },
                     achievementCounts,
-                    removedAchievements.get,
-                    Array.from(users.get.keys()),
-                    removedUsers.get
+                    users.get
                   )
                 : db.models.checkins.create(
                     {

@@ -2,13 +2,18 @@ import { Q } from '@nozbe/watermelondb';
 import Collection from '@nozbe/watermelondb/Collection';
 import { inject, autoInjectable } from 'tsyringe';
 import { ActContext } from '../context';
-import { User } from '../schema';
 import { Checkin } from '../schema/checkin';
 import { CheckinAchievement } from '../schema/checkin-achievement';
 import { CheckinUser } from '../schema/checkin-user';
 import { BaseService } from './base-service';
+import { difference } from 'lodash';
 
-type AchievementCountActions = Map<string, Checkin | undefined>;
+type SelectedItem = {
+  id: string;
+  name: string;
+  count?: number;
+  points?: number;
+};
 
 @autoInjectable()
 export class CheckinsService extends BaseService<Checkin> {
@@ -43,18 +48,9 @@ export class CheckinsService extends BaseService<Checkin> {
     id: string,
     editProps: Partial<Omit<Checkin, 'achievements' | 'users'>>,
     achievementCounts: Map<string, number>,
-    removedAchievements: Set<string>,
-    users: string[],
-    removedUsers: Set<string>
+    users: Map<string, SelectedItem>
   ) => {
-    console.log({
-      id,
-      editProps,
-      achievementCounts,
-      removedAchievements,
-      users,
-      removedUsers
-    });
+    const selectedUserIds = Array.from(users.keys());
 
     // all checkin achievements
     const checkinAchievements =
@@ -63,14 +59,18 @@ export class CheckinsService extends BaseService<Checkin> {
         .fetch();
 
     // update checkin achievements
-    const updateAchievementCounts = checkinAchievements.filter(
-      (ca) => {
-        return (
-          ca.count !== achievementCounts.get(ca.achievementId) &&
-          !removedAchievements.has(ca.achievementId)
-        );
+    const updateAchievementCounts = Array.from(
+      achievementCounts
+    ).reduce((acc, item) => {
+      const [aid, count] = item;
+      const ca = checkinAchievements.find(
+        (ca) => ca.achievementId === aid && ca.count !== count
+      );
+      if (ca) {
+        acc.push(ca);
       }
-    );
+      return acc;
+    }, []);
 
     // insert checkin achievements
     const insertAchievementCounts = Array.from(
@@ -81,11 +81,11 @@ export class CheckinsService extends BaseService<Checkin> {
     );
 
     // remove achievements
-    // TODO for some reason deslecting achievements from list doesnt work
-    // it works when deleting the  tag
-    const removeAchievements = Array.from(removedAchievements).map(
-      (ra) =>
-        checkinAchievements.find((ca) => ca.achievementId === ra)
+    const removeAchievements = difference(
+      checkinAchievements.map((u) => u.achievementId),
+      Array.from(achievementCounts.keys())
+    ).map((ru) =>
+      checkinAchievements.find((u) => u.achievementId === ru)
     );
 
     // users
@@ -94,16 +94,15 @@ export class CheckinsService extends BaseService<Checkin> {
       .fetch();
 
     // insert users
-    const insertUsers = users.filter(
+    const insertUsers = selectedUserIds.filter(
       (u) => !allUsers.some((au) => au.userId === u)
     );
 
     // remove users
-    const removeUsers = Array.from(removedUsers).map((ru) =>
-      allUsers.find((u) => u.userId === ru)
-    );
-
-    // debugger;
+    const removeUsers = difference(
+      allUsers.map((u) => u.userId),
+      selectedUserIds
+    ).map((ru) => allUsers.find((u) => u.userId === ru));
 
     return this._db.action(async (action) => {
       return this._db.batch(

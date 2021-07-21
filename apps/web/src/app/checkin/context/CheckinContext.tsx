@@ -7,10 +7,6 @@ type GetAndSet<T> = {
   get: T;
   set: React.Dispatch<React.SetStateAction<T>>;
 };
-type AddAndDelete<T> = {
-  add: (id: string) => void;
-  delete: (id: string) => void;
-};
 
 type CheckinStore = {
   model: {
@@ -19,9 +15,6 @@ type CheckinStore = {
     achievements: GetAndSet<Map<string, SelectedItem>>;
     users: GetAndSet<Map<string, SelectedItem>>;
   };
-  removedAchievements: GetAndSet<Set<string>> &
-    AddAndDelete<Set<string>>;
-  removedUsers: GetAndSet<Set<string>> & AddAndDelete<Set<string>>;
   achievementCounts: GetAndSet<Map<string, number>>;
   setSelectedAchievementCountById: (
     id: string,
@@ -48,31 +41,6 @@ export const CheckinProvider = ({ children }) => {
   const [selectedUsers, setSelectedUsers] = useState(
     new Map<string, SelectedItem>()
   );
-  const [removedAchievements, setRemovedAchievements] = useState(
-    new Set<string>()
-  );
-  const deletedRemovedAchievement = (id: string) => {
-    const newRemovedAchievements = new Set(removedAchievements);
-    newRemovedAchievements.delete(id);
-    setRemovedAchievements(newRemovedAchievements);
-  };
-  const addRemovedAchievement = (id: string) => {
-    const newRemovedAchievements = new Set(removedAchievements);
-    newRemovedAchievements.add(id);
-    setRemovedAchievements(newRemovedAchievements);
-  };
-
-  const [removedUsers, setRemovedUsers] = useState(new Set<string>());
-  const deletedRemovedUser = (id: string) => {
-    const newRemovedUsers = new Set(removedUsers);
-    newRemovedUsers.delete(id);
-    setRemovedUsers(newRemovedUsers);
-  };
-  const addRemovedUser = (id: string) => {
-    const newRemovedUsers = new Set(removedUsers);
-    newRemovedUsers.add(id);
-    setRemovedUsers(newRemovedUsers);
-  };
 
   const setSelectedAchievementCountById = (
     id: string,
@@ -97,18 +65,6 @@ export const CheckinProvider = ({ children }) => {
             get: selectedAchievements
           },
           users: { set: setSelectedUsers, get: selectedUsers }
-        },
-        removedAchievements: {
-          set: setRemovedAchievements,
-          get: removedAchievements,
-          add: addRemovedAchievement,
-          delete: deletedRemovedAchievement
-        },
-        removedUsers: {
-          set: setRemovedUsers,
-          get: removedUsers,
-          add: addRemovedUser,
-          delete: deletedRemovedUser
         },
         achievementCounts: {
           set: setAchievementCounts,

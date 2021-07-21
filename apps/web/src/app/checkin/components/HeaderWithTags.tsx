@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as MUI from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 
 export const HeaderWithTags = ({
   title,
   selected,
-  setSelected,
-  onDelete = undefined,
+  onChange,
   showCount = false
 }) => {
   return (
@@ -31,8 +30,7 @@ export const HeaderWithTags = ({
             onDelete={() => {
               const newSelected = new Map(selected);
               newSelected.delete(id);
-              setSelected(newSelected);
-              onDelete?.(id);
+              onChange(newSelected);
             }}
           />
         ))}
