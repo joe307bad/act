@@ -24,6 +24,8 @@ const DrawerList: FC<
     setForceLogout: (forceLogout: boolean) => void;
   }
 > = ({ navigation, theme, keycloak, setForceLogout }) => {
+  const auth = useActAuth();
+
   return (
     <>
       <List.Item

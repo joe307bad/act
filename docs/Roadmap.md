@@ -6,7 +6,9 @@
 
 ✅ **[MOBILE]** - On app init, run a sync to get existing users. Otherwise a user ID/keycloak ID could get out of sync with the local DB.
 
-- [ ] **[API] + [KEYCLOAK]** - Send down an admin/non-admin key in the access token
+✅ **[API] + [KEYCLOAK]** - Send down an admin/non-admin key in the access token
+
+- [ ] **[MOBILE] + [KEYCLOAK]** - Send down a display name from Keycloak (either from first name or another user attribute)
 
 #### Sync
 

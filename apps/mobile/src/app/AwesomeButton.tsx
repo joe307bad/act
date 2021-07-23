@@ -1,16 +1,19 @@
 import React from 'react';
 import ReallyAwesomeButton from 'react-native-really-awesome-button';
 import { Headline, useTheme } from 'react-native-paper';
-import { color } from 'react-native-reanimated';
 
-const AwesomeButton = ({ children, onPress }) => {
+const AwesomeButton = ({ children, onPress, disabled = false }) => {
   const { colors } = useTheme();
+
+  //ALUMINUM: '#676B6D',
+  //DARK_ALUMINUM: '#525557',
   return (
     <ReallyAwesomeButton
       stretch
-      backgroundColor={colors.primary}
+      backgroundColor={disabled ? '#676B6D' : colors.primary}
       backgroundDarker="#3809C3"
       onNativePress={onPress}
+      disabled={disabled}
     >
       <Headline style={{ color: 'white' }}>{children}</Headline>
     </ReallyAwesomeButton>
@@ -21,18 +24,20 @@ export const AwesomeButtonMedium = ({
   children,
   onPress,
   style = undefined,
-  type = 'filled'
+  type = 'filled',
+  disabled = false
 }) => {
   const { colors } = useTheme();
   const outlined = type === 'outlined';
   return (
     <ReallyAwesomeButton
       stretch
-      backgroundColor={colors.primary}
+      backgroundColor={disabled ? '#676B6D' : colors.primary}
       backgroundDarker="#3809C3"
       onNativePress={onPress}
       height={50}
       style={style}
+      disabled={disabled}
       {...(outlined
         ? {
             borderColor: colors.primary,

@@ -5,7 +5,11 @@ open ReactNavigation
 
 module AwesomeButton = {
   @module("../src/app/AwesomeButton") @react.component
-  external make: (~children: React.element, ~onPress: unit => 'a) => React.element = "default"
+  external make: (
+    ~children: React.element,
+    ~onPress: unit => 'a,
+    ~disabled: bool=?,
+  ) => React.element = "default"
 }
 module SyncStatus = {
   @module("../src/app/shared/icons/SyncStatus") @react.component
@@ -79,10 +83,14 @@ module Login = {
                   {"Authorize using Keycloak"->React.string}
                 </Paper.Text>
               </View>
-              <AwesomeButton onPress={() => keycloak.login(.)->Js.Promise.catch(result => {
+              <AwesomeButton
+                disabled={!initialSyncComplete}
+                onPress={() => keycloak.login(.)->Js.Promise.catch(result => {
                     Js.log(result)
                     Js.Promise.resolve()
-                  }, _)}> {"Authorize"->React.string} </AwesomeButton>
+                  }, _)}>
+                {"Authorize"->React.string}
+              </AwesomeButton>
             </Box>
           </Card>
         </Box>

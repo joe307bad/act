@@ -1,0 +1,36 @@
+<h1 align="center">Deployment</h1>
+
+## Keycloak
+
+### Adding username and admin client mappers
+
+Both the `username` and `admin` user attributes should be included with the access token. To add these, [this is a helpful resource](https://ravthiru.medium.com/keycloak-retrieve-custom-attributes-in-access-token-1a2d5aef0caa).
+
+#### How to add a User Attribute Client Mapper
+
+1. Clients > Mappers > Create >
+2. the Mapper Type should be User Attribute >
+3. Claim JSON type should be whatever type you want >
+4. Select Add to access token
+5. Select Save
+
+The `username` mapper can be added without adding a `username` attribute to each user.
+
+To add the `admin` attribute, these are the general steps:
+
+1. Users > View all users >
+2. Select Users who should be admins > Attributes >
+3. Add `admin` as the key and `true` as the value.
+
+### User Management
+
+#### Adding a user
+
+Adding a user in Keycloak is easy. After creating the user, also make sure these steps are included:
+
+1. Set the users initial password under user Credentials and mark the password as temporary
+1. Ensure in the user Details that Update Password is a Required User Actions
+
+#### Resetting a users password
+
+Resetting a users password is as easy as using the field under User > Credentials > Reset Password. Mark the password as Temporary and this should automatically mark Update Password as a Required USer Action under the user Details.

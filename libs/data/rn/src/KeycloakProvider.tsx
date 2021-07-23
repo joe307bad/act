@@ -1,8 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
 import k, {
   RNKeycloak,
-  ReactNativeKeycloakProvider,
-  useKeycloak
+  ReactNativeKeycloakProvider
 } from '@react-keycloak/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import db, { useCurrentUserId } from './';
@@ -19,8 +18,14 @@ export enum AuthStatus {
   Unauthenticated = 2
 }
 
+export type CurrentUser = {
+  username: string;
+  id: string;
+  admin: boolean;
+};
+
 export const AuthContext = React.createContext<{
-  currentUserId?: string;
+  currentUser?: CurrentUser;
   status?: AuthStatus;
   setForceLogout?: (forceLogout: boolean) => void;
   initialSyncComplete?: boolean;
@@ -29,15 +34,15 @@ export const AuthContext = React.createContext<{
 const KeycloakProvider: FC = ({ children }) => {
   const [initialSyncComplete, setInitialSyncComplete] =
     useState(false);
-  const [currentUserId, setCurrentUserId] = useState<string>();
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [forceLogout, setForceLogout] =
     useState<boolean | undefined>();
 
   useEffect(() => {
-    if (currentUserId) {
-      AsyncStorage.setItem('currentUserId', currentUserId);
+    if (currentUser) {
+      AsyncStorage.setItem('currentUserId', currentUser.id);
     }
-  }, [currentUserId]);
+  }, [currentUser]);
 
   useEffect(() => {
     db.sync()
@@ -55,7 +60,7 @@ const KeycloakProvider: FC = ({ children }) => {
       return AuthStatus.Unauthenticated;
     }
 
-    return !!asyncStorageUserId.result || currentUserId
+    return !!asyncStorageUserId.result || currentUser
       ? AuthStatus.Authenticated
       : AuthStatus.Unauthenticated;
   })();
@@ -68,18 +73,18 @@ const KeycloakProvider: FC = ({ children }) => {
       }}
       onEvent={async (ev) => {
         if (ev === 'onAuthSuccess') {
-          setCurrentUserId(
-            await db.models.users.insertIfDoesNotExist(
-              keycloak.idToken
-            )
+          const user = await db.models.users.insertIfDoesNotExist(
+            keycloak.idToken
           );
+
+          setCurrentUser(user);
           setForceLogout(undefined);
         }
       }}
     >
       <AuthContext.Provider
         value={{
-          currentUserId,
+          currentUser,
           status,
           setForceLogout,
           initialSyncComplete

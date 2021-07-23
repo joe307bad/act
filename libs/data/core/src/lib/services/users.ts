@@ -8,6 +8,7 @@ import { BaseService } from './base-service';
 type Token = {
   sub: string;
   username: string;
+  admin: boolean;
 };
 
 @autoInjectable()
@@ -16,23 +17,35 @@ export class UsersService extends BaseService<User> {
     super(_context, 'users');
   }
 
-  async insertIfDoesNotExist(token: string) {
-    const decodedToken = jwt_decode<Token>(token);
+  async insertIfDoesNotExist(token: string): Promise<{
+    username: string;
+    admin: boolean;
+    id: string;
+  }> {
+    const { sub, username, admin } = jwt_decode<Token>(token);
 
     const userByKeycloakId = await this._collection
-      .query(Q.where('keycloak_id', decodedToken.sub))
+      .query(Q.where('keycloak_id', sub))
       .fetch();
 
     if (userByKeycloakId.length > 0) {
-      return userByKeycloakId[0].id;
+      return {
+        username,
+        id: userByKeycloakId[0].id,
+        admin
+      };
     }
 
     const newUserId = await this.insertWithProps({
       fullName: 'New user',
-      username: decodedToken.username,
-      keycloakId: decodedToken.sub
+      username: username,
+      keycloakId: sub
     });
 
-    return newUserId.id;
+    return {
+      username,
+      id: newUserId.id,
+      admin
+    };
   }
 }
