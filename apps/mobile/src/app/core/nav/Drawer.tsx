@@ -88,6 +88,7 @@ const DrawerList: FC<
               setForceLogout(true);
               AsyncStorage.removeItem('currentUserId');
               keycloak.logout();
+              (navigation as any).closeDrawer();
             }}
           >
             Logout

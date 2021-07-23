@@ -23,9 +23,12 @@ export const AuthContext = React.createContext<{
   currentUserId?: string;
   status?: AuthStatus;
   setForceLogout?: (forceLogout: boolean) => void;
+  initialSyncComplete?: boolean;
 }>({});
 
 const KeycloakProvider: FC = ({ children }) => {
+  const [initialSyncComplete, setInitialSyncComplete] =
+    useState(false);
   const [currentUserId, setCurrentUserId] = useState<string>();
   const [forceLogout, setForceLogout] =
     useState<boolean | undefined>();
@@ -35,6 +38,12 @@ const KeycloakProvider: FC = ({ children }) => {
       AsyncStorage.setItem('currentUserId', currentUserId);
     }
   }, [currentUserId]);
+
+  useEffect(() => {
+    db.sync()
+      .then(() => setInitialSyncComplete(true))
+      .catch((e) => setInitialSyncComplete(false));
+  }, []);
 
   const asyncStorageUserId = useCurrentUserId();
   const status = (() => {
@@ -69,7 +78,12 @@ const KeycloakProvider: FC = ({ children }) => {
       }}
     >
       <AuthContext.Provider
-        value={{ currentUserId, status, setForceLogout }}
+        value={{
+          currentUserId,
+          status,
+          setForceLogout,
+          initialSyncComplete
+        }}
       >
         {children}
       </AuthContext.Provider>

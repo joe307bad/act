@@ -96,3 +96,11 @@ buck-out/
 node_modules/
 apps/mobile/re/**/*.bs.js
 apps/mobile/lib
+apps/mobile/android/.idea/libraries/Gradle__androidx_activity_activity_1_0_0_aar.xml
+apps/mobile/android/.idea/libraries/Gradle__androidx_fragment_fragment_1_1_0_aar.xml
+apps/mobile/android/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_common_2_1_0.xml
+apps/mobile/android/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_runtime_2_1_0_aar.xml
+apps/mobile/android/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmodel_2_1_0_aar.xml
+apps/mobile/android/.idea/libraries/Gradle__artifacts_react_native_reanimated_unspecified.xml
+apps/mobile/android/.idea/libraries/Gradle__org_jetbrains_kotlin_kotlin_stdlib_1_3_50.xml
+apps/mobile/android/.idea/libraries/Gradle__org_jetbrains_kotlin_kotlin_stdlib_common_1_3_50.xml

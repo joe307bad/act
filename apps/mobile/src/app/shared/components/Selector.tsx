@@ -14,7 +14,6 @@ import {
   Chip,
   List,
   Surface,
-  TextInput,
   useTheme
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
@@ -26,8 +25,6 @@ import {
   TabbedList,
   TabbedListProps as TLP
 } from './TabbedList';
-
-import DropDown from 'react-native-paper-dropdown';
 
 export type SelectedOption = {
   id: string;
