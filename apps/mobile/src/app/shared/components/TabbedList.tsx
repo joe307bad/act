@@ -18,6 +18,7 @@ export type TabbedListProps<T, C> = {
   onChange?: (selected: Map<string, SelectedOption>) => void;
   initialSelected?: Map<string, SelectedOption>;
   selectable?: boolean;
+  showCountDropdown?: boolean;
 };
 export type Category = { name: string } & BaseModel;
 
@@ -36,7 +37,8 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
   selectable = false,
   data,
   optionTitleProperty,
-  categories
+  categories,
+  showCountDropdown = false
 }) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
@@ -146,6 +148,7 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
                   title={d[1].display}
                   value={d[0]}
                   key={d[0]}
+                  showCountDropdown={showCountDropdown}
                 />
               ))}
           </>

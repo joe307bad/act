@@ -26,7 +26,6 @@ export class UsersService extends BaseService<User> {
   }> {
     const { sub, username, admin, full_name } =
       jwt_decode<Token>(token);
-    debugger;
 
     const userByKeycloakId = await this.getByKeycloakId(sub);
 

@@ -36,6 +36,7 @@ const CreateCheckin: FC = () => {
         title="Checkin Achievements"
         subtitle="Select one or more achievements to checkin"
         fullHeight={true}
+        showCountDropdown={true}
       />
       <Selector<User>
         data={users}

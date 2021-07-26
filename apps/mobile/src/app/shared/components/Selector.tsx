@@ -40,13 +40,15 @@ export const Option: FC<{
   initialValue?: boolean;
   disableSelection: boolean;
   selected?: boolean;
+  showCountDropdown?: boolean;
 }> = ({
   title,
   subtitle,
   onChange,
   initialValue,
   disableSelection,
-  selected
+  selected,
+  showCountDropdown = false
 }) => {
   const [checked, setChecked] = useState(
     typeof selected !== 'undefined' ? selected : initialValue
@@ -91,25 +93,29 @@ export const Option: FC<{
             )
           }
         : {})}
-      right={() => (
-        <Picker
-          selectedValue={selectedValue}
-          style={{ height: 50, width: 150 }}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedValue(itemValue)
-          }
-        >
-          <Picker.Item label="1" value="1" />
-          <Picker.Item label="2" value="2" />
-          <Picker.Item label="3" value="3" />
-          <Picker.Item label="4" value="4" />
-          <Picker.Item label="5" value="5" />
-          <Picker.Item label="6" value="6" />
-          <Picker.Item label="7" value="7" />
-          <Picker.Item label="8" value="8" />
-          <Picker.Item label="9" value="9" />
-        </Picker>
-      )}
+      right={
+        showCountDropdown
+          ? () => (
+              <Picker
+                selectedValue={selectedValue}
+                style={{ height: 50, width: 150 }}
+                onValueChange={(itemValue, itemIndex) =>
+                  setSelectedValue(itemValue)
+                }
+              >
+                <Picker.Item label="1" value="1" />
+                <Picker.Item label="2" value="2" />
+                <Picker.Item label="3" value="3" />
+                <Picker.Item label="4" value="4" />
+                <Picker.Item label="5" value="5" />
+                <Picker.Item label="6" value="6" />
+                <Picker.Item label="7" value="7" />
+                <Picker.Item label="8" value="8" />
+                <Picker.Item label="9" value="9" />
+              </Picker>
+            )
+          : undefined
+      }
     />
   );
 };
@@ -121,6 +127,7 @@ type OptionListProps<T extends BaseModel> = {
   optionTitleProperty: keyof T;
   optionSubtitleProperty?: keyof T;
   selectable?: boolean;
+  showCountDropdown?: boolean;
 };
 const OptionList: <T extends BaseModel>(
   p: PropsWithChildren<OptionListProps<T>>
@@ -130,7 +137,8 @@ const OptionList: <T extends BaseModel>(
   initialSelected,
   optionSubtitleProperty,
   optionTitleProperty,
-  selectable = true
+  selectable = true,
+  showCountDropdown = false
 }) => {
   const [selected, setSelected] =
     useState<Map<string, SelectedOption>>(initialSelected);
@@ -149,6 +157,7 @@ const OptionList: <T extends BaseModel>(
           title={d[snakeCase(optionTitleProperty as string)]}
           subtitle={d[snakeCase(optionSubtitleProperty as string)]}
           initialValue={initialSelected.has(d.id)}
+          showCountDropdown={showCountDropdown}
           onChange={(v) =>
             setSelected((p) => {
               const newSelected = new Map(p);
@@ -202,6 +211,7 @@ type CommonSelectorProps = Partial<{
   icon: string;
   fullHeight?: boolean;
   selectable?: boolean;
+  showCountDropdown?: boolean;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -235,7 +245,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
     optionTitleProperty,
     categories = [],
     fullHeight,
-    selectable
+    selectable,
+    showCountDropdown
   } = props;
 
   const [selectorModalVisible, setSelectorModalVisible] =
@@ -269,6 +280,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
               (optionSubtitleProperty as keyof T) || ''
             }
             optionTitleProperty={optionTitleProperty as keyof T}
+            selectable={selectable}
+            showCountDropdown={showCountDropdown}
           />
         )}
         {categories.length > 0 && (
@@ -278,8 +291,9 @@ function Selector<T extends BaseModel, C extends Category = null>(
             data={data}
             categories={categories}
             optionSubtitleProperty={optionSubtitleProperty || ''}
-            selectable={true}
+            selectable={selectable}
             optionTitleProperty={optionTitleProperty}
+            showCountDropdown={showCountDropdown}
           />
         )}
       </Modal>
