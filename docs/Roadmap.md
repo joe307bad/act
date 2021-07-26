@@ -8,7 +8,7 @@
 
 ✅ **[API] + [KEYCLOAK]** - Send down an admin/non-admin key in the access token
 
-- [ ] **[MOBILE] + [KEYCLOAK]** - Send down a display name from Keycloak (either from first name or another user attribute)
+✅ **[MOBILE] + [KEYCLOAK]** - Send down a display name from Keycloak (either from first name or another user attribute)
 
 #### Sync
 

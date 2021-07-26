@@ -9,6 +9,7 @@ type Token = {
   sub: string;
   username: string;
   admin: boolean;
+  full_name: string;
 };
 
 @autoInjectable()
@@ -21,23 +22,25 @@ export class UsersService extends BaseService<User> {
     username: string;
     admin: boolean;
     id: string;
+    fullName: string;
   }> {
-    const { sub, username, admin } = jwt_decode<Token>(token);
+    const { sub, username, admin, full_name } =
+      jwt_decode<Token>(token);
+    debugger;
 
-    const userByKeycloakId = await this._collection
-      .query(Q.where('keycloak_id', sub))
-      .fetch();
+    const userByKeycloakId = await this.getByKeycloakId(sub);
 
     if (userByKeycloakId.length > 0) {
       return {
         username,
         id: userByKeycloakId[0].id,
-        admin
+        admin,
+        fullName: full_name
       };
     }
 
     const newUserId = await this.insertWithProps({
-      fullName: 'New user',
+      fullName: full_name,
       username: username,
       keycloakId: sub
     });
@@ -45,7 +48,13 @@ export class UsersService extends BaseService<User> {
     return {
       username,
       id: newUserId.id,
-      admin
+      admin,
+      fullName: full_name
     };
   }
+
+  getByKeycloakId = (keycloakId: string): Promise<User[]> =>
+    this._collection
+      .query(Q.where('keycloak_id', keycloakId))
+      .fetch();
 }

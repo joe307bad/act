@@ -1,7 +1,12 @@
-import { NavigationContainer } from '@react-navigation/native';
 import React, { FC } from 'react';
-import { View } from 'react-native';
-import { List, useTheme, Button } from 'react-native-paper';
+import { View, Text } from 'react-native';
+import {
+  List,
+  useTheme,
+  Button,
+  Card,
+  Title
+} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   createDrawerNavigator,
@@ -28,13 +33,23 @@ const DrawerList: FC<
 
   return (
     <>
+      <Stack space={2} padding={5}>
+        <Box>
+          <Card elevation={3} style={{ padding: 10 }}>
+            <Title>{auth.currentUser?.fullName}</Title>
+            <Text>{auth.currentUser?.username}</Text>
+          </Card>
+        </Box>
+      </Stack>
       <List.Item
         onPress={() => {
           navigation.navigate('Entry', { screen: 'CreateCheckin' });
         }}
         style={{
           borderBottomWidth: 1,
-          borderBottomColor: theme.colors.primary
+          borderTopWidth: 1,
+          borderBottomColor: theme.colors.primary,
+          borderTopColor: theme.colors.primary
         }}
         titleStyle={{ fontSize: 25 }}
         title={'Create Checkin'}

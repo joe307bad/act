@@ -119,7 +119,7 @@ type OptionListProps<T extends BaseModel> = {
   onChange: (selected: Map<string, SelectedOption>) => void;
   initialSelected: Map<string, SelectedOption>;
   optionTitleProperty: keyof T;
-  optionSubtitleProperty: keyof T;
+  optionSubtitleProperty?: keyof T;
   selectable?: boolean;
 };
 const OptionList: <T extends BaseModel>(
@@ -210,7 +210,7 @@ type TabbedSelectorProps<T extends BaseModel, C extends Category> =
 type RegularSelectorProps<T> = CommonSelectorProps & {
   data: T[];
   optionTitleProperty: keyof T;
-  optionSubtitleProperty: keyof T;
+  optionSubtitleProperty?: keyof T;
 };
 
 function Selector<T extends BaseModel, C extends Category>(
@@ -264,8 +264,10 @@ function Selector<T extends BaseModel, C extends Category = null>(
           <OptionList
             onChange={setPendingSelected}
             data={data as T[]}
-            initialSelected={selected}
-            optionSubtitleProperty={optionSubtitleProperty as keyof T}
+            initialSelected={selected || new Map()}
+            optionSubtitleProperty={
+              (optionSubtitleProperty as keyof T) || ''
+            }
             optionTitleProperty={optionTitleProperty as keyof T}
           />
         )}
@@ -275,7 +277,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
             initialSelected={selected}
             data={data}
             categories={categories}
-            optionSubtitleProperty={optionSubtitleProperty}
+            optionSubtitleProperty={optionSubtitleProperty || ''}
             selectable={true}
             optionTitleProperty={optionTitleProperty}
           />

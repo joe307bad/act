@@ -19,6 +19,7 @@ export class User extends BaseModel {
   @field('keycloak_id') keycloakId: string;
   @field('photo') photo: string;
   @field('bio') bio: string;
+  @field('admin') admin: boolean;
 
   @lazy
   checkins = this.collections

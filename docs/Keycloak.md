@@ -1,10 +1,8 @@
-<h1 align="center">Deployment</h1>
-
-## Keycloak
+<h1 align="center">Keycloak</h1>
 
 ### Adding username and admin client mappers
 
-Both the `username` and `admin` user attributes should be included with the access token. To add these, [this is a helpful resource](https://ravthiru.medium.com/keycloak-retrieve-custom-attributes-in-access-token-1a2d5aef0caa).
+The `username`, `admin`, and `full_name` user attributes should be included with the access token. To add these, [this is a helpful resource](https://ravthiru.medium.com/keycloak-retrieve-custom-attributes-in-access-token-1a2d5aef0caa).
 
 #### How to add a User Attribute Client Mapper
 
@@ -14,9 +12,9 @@ Both the `username` and `admin` user attributes should be included with the acce
 4. Select Add to access token
 5. Select Save
 
-The `username` mapper can be added without adding a `username` attribute to each user.
+The `username` and `firstName` mapper can be added without adding these attributes to each user. The `firstName` mapper should be passed through to the access token as `full_name`. This is achieved by using the Token Claim Name.
 
-To add the `admin` attribute, these are the general steps:
+To add the `admin` attribute to each user, these are the general steps:
 
 1. Users > View all users >
 2. Select Users who should be admins > Attributes >

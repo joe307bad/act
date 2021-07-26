@@ -4,7 +4,7 @@ import k, {
   ReactNativeKeycloakProvider
 } from '@react-keycloak/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import db, { useCurrentUserId } from './';
+import db from './';
 
 const keycloak = new RNKeycloak({
   url: 'http://192.168.0.4:8080/auth',
@@ -22,6 +22,7 @@ export type CurrentUser = {
   username: string;
   id: string;
   admin: boolean;
+  fullName: string;
 };
 
 export const AuthContext = React.createContext<{
@@ -39,20 +40,29 @@ const KeycloakProvider: FC = ({ children }) => {
     useState<boolean | undefined>();
 
   useEffect(() => {
-    if (currentUser) {
-      AsyncStorage.setItem('currentUserId', currentUser.id);
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
     db.sync()
       .then(() => setInitialSyncComplete(true))
       .catch((e) => setInitialSyncComplete(false));
+
+    AsyncStorage.getItem('currentUserId')
+      .then((id) => {
+        !id && setForceLogout(true);
+        return db.models.users.find(id);
+      })
+      .then(
+        (user) =>
+          !!user &&
+          setCurrentUser({
+            username: user.username,
+            id: user.id,
+            admin: user.admin,
+            fullName: user.fullName
+          })
+      );
   }, []);
 
-  const asyncStorageUserId = useCurrentUserId();
   const status = (() => {
-    if (asyncStorageUserId.state === 'pending') {
+    if (typeof currentUser === 'undefined') {
       return AuthStatus.Pending;
     }
 
@@ -60,9 +70,7 @@ const KeycloakProvider: FC = ({ children }) => {
       return AuthStatus.Unauthenticated;
     }
 
-    return !!asyncStorageUserId.result || currentUser
-      ? AuthStatus.Authenticated
-      : AuthStatus.Unauthenticated;
+    return AuthStatus.Authenticated;
   })();
 
   return (
@@ -77,6 +85,7 @@ const KeycloakProvider: FC = ({ children }) => {
             keycloak.idToken
           );
 
+          AsyncStorage.setItem('currentUserId', user.id);
           setCurrentUser(user);
           setForceLogout(undefined);
         }

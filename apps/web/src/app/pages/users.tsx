@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   createStyles,
   Theme,
@@ -6,11 +6,16 @@ import {
 } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
-import { IconButton, Paper } from '@material-ui/core';
+import { IconButton, MenuItem, Select } from '@material-ui/core';
 import db from '@act/data/web';
 import { GridContainer } from '../shared/components/TableContainer';
 
 const columns: GridColDef[] = [
+  {
+    field: 'id',
+    headerName: 'ID',
+    width: 200
+  },
   {
     field: 'full_name',
     editable: true,
@@ -34,6 +39,16 @@ const columns: GridColDef[] = [
     width: 200
   },
   {
+    field: 'admin',
+    headerName: 'Admin',
+    width: 200,
+    editable: false,
+    disableClickEventBubbling: true,
+    renderCell: ({ id, value }) => {
+      return <SelectAdmin id={id} value={value} />;
+    }
+  },
+  {
     field: '',
     filterable: false,
     width: 200,
@@ -53,7 +68,36 @@ const columns: GridColDef[] = [
     }
   }
 ];
+const SelectAdmin = ({ id, value }) => {
+  const [v, setValue] = useState('false');
 
+  const actualValue = (() => {
+    if (v === 'false') {
+      return value;
+    }
+
+    return v;
+  })();
+
+  const handleChange = (event) => {
+    const newValue = event.target.value;
+    setValue(newValue);
+    db.models.users.updateWithProps(id, {
+      admin: newValue === 'true'
+    });
+  };
+
+  return (
+    <Select
+      style={{ flex: 1 }}
+      value={actualValue === 'true' ? 'true' : 'false'}
+      onChange={handleChange}
+    >
+      <MenuItem value={'false'}>False</MenuItem>
+      <MenuItem value={'true'}>True</MenuItem>
+    </Select>
+  );
+};
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     content: {

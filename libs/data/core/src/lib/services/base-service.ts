@@ -55,7 +55,7 @@ export abstract class BaseService<T extends Model> {
 
   updateWithProps = async (
     id,
-    updateProps: { [key: string]: string }
+    updateProps: { [key: string]: string | boolean }
   ) => {
     await this._db.action(async () => {
       const model = await this._collection.find(id);
@@ -87,4 +87,6 @@ export abstract class BaseService<T extends Model> {
       );
     });
   };
+
+  find = async (id) => this._collection.find(id).catch((e) => e);
 }

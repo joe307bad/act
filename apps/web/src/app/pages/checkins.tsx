@@ -12,6 +12,8 @@ import { GridContainer } from '../shared/components/TableContainer';
 import * as MUI from '@material-ui/core';
 import * as Icons from '@material-ui/icons';
 
+window.db = db;
+
 const CheckinContext =
   createContext<
     [
