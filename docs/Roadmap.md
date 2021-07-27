@@ -19,6 +19,8 @@
 - ✅ **[MOBILE]** - Text search for Achievement Selector
 - [ ] **[MOBILE]** - Info icons to see Achievement description
 - [ ] **[MOBILE]** - Fields for note, approved (non-admins default to false), and submit for creation
+    - Can we do some sort of checkin receipt upon creation?
+    - Maybe a little modal that dismisses itself after a couple seconds?
 
 #### Checkin/Feed
 
@@ -54,6 +56,7 @@
 
 ## Beyond
 
+- [ ] **[MOBILE] [WEB] [OPS]** - Live feed of checkins with web sockets
 - [ ] **[MOBILE] [WEB] [OPS]** - Photo uploads as seperate entities and attached to checkins
 - [ ] **[MOBILE]** - More advanced stats on checkins (checkins per hour, checkins per day, who has the most points in a specific time frame, etc.)
 - More listed in the READMEs of Points
