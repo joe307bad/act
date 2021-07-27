@@ -8,6 +8,7 @@ import { Appbar, useTheme } from 'react-native-paper';
 import CreateCheckin from './screens/CreateCheckin';
 import Achievements from './screens/Achievements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import db from '@act/data/rn';
 
 const Stack = createStackNavigator();
 
@@ -26,16 +27,19 @@ const NavBar: (
       {previous ? (
         <Appbar.BackAction onPress={navigation.goBack} />
       ) : null}
+
       <Appbar.Content
         title={
           <Headline style={{ color: 'white' }}>{title}</Headline>
         }
       />
-      <MaterialCommunityIcons
+      <Appbar.Action
+        icon="refresh-circle"
+        onPress={() => db.sync()}
+      />
+      <Appbar.Action
+        icon="menu"
         onPress={() => (navigation as any).openDrawer()}
-        name="menu"
-        color={'white'}
-        size={30}
       />
     </Appbar.Header>
   );

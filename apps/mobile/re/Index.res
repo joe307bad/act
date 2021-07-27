@@ -34,6 +34,10 @@ module ActData = {
   type useActAuthHook = {status: authStatus, initialSyncComplete: bool}
   @module("@act/data/rn")
   external useActAuth: unit => useActAuthHook = "useActAuth"
+
+  type db = {sync: unit => unit}
+  @module("@act/data/rn")
+  external db: db = "default"
 }
 
 module Keycloak = {
@@ -177,6 +181,13 @@ module Root = {
       <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
         <Paper.PaperProvider theme>
           <Native.NavigationContainer
+          // onStateChange={state => {
+          //   let maybeJsonState = Js.Json.stringifyAny(state)
+          //   switch maybeJsonState {
+          //   | Some(jsonState) => ActData.db.sync()
+          //   | None => Js.log("Unable to stringify navigation state")
+          //   }
+          // }}
             linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
             <ActDrawer>
               {

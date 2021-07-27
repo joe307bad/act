@@ -12,7 +12,7 @@
 
 #### Sync
 
-- [ ] **[MOBILE]** - There probably should be an auto sync somewhere triggered by something
+✅ **[MOBILE]** - There probably should be an auto sync somewhere triggered by something - Sync on create checkin, on keycloak provider mount, and sync button in toolbar
 
 #### Checkin Builder
 
@@ -36,6 +36,8 @@
 #### Leaderboard
 
 - [ ] **[MOBILE]** - List of user sorted by most points to least points
+  - This will probably invole `useCollection('checkin_achievements')` because that will give us the updated data to recalculate the leaderboard points
+  - We also want to add `totalPoints` to the `checkins` unit. Any time a checkin is updated/inserted, this property is calculcated
 - [ ] **[MOBILE]** - Ability to select user and see their checkins
 
 #### Profile

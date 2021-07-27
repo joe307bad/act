@@ -7,6 +7,7 @@ import { CheckinAchievement } from '../schema/checkin-achievement';
 import { CheckinUser } from '../schema/checkin-user';
 import { BaseService } from './base-service';
 import { difference } from 'lodash';
+import { SyncService } from './sync';
 
 type SelectedItem = {
   id: string;
@@ -20,7 +21,10 @@ export class CheckinsService extends BaseService<Checkin> {
   _checkinAchievementCollection: Collection<CheckinAchievement>;
   _checkinUserCollection: Collection<CheckinUser>;
 
-  constructor(@inject('ActContext') private _context?: ActContext) {
+  constructor(
+    @inject('ActContext') private _context?: ActContext,
+    @inject('SyncService') private _sync?: SyncService
+  ) {
     super(_context, 'checkins');
 
     this._checkinAchievementCollection = this._context
@@ -130,58 +134,62 @@ export class CheckinsService extends BaseService<Checkin> {
       selectedUserIds
     ).map((ru) => allUsers.find((u) => u.userId === ru));
 
-    return this._db.action(async (action) => {
-      return this._db.batch(
-        (await this._collection.find(id)).prepareUpdate(
-          (m: Checkin) => {
-            for (const property in editProps) {
-              m[property] = editProps[property];
+    return this._db
+      .action(async (action) =>
+        this._db.batch(
+          (await this._collection.find(id)).prepareUpdate(
+            (m: Checkin) => {
+              for (const property in editProps) {
+                m[property] = editProps[property];
+              }
             }
-          }
-        ),
-        // achievement counts
-        // update achievements counts
-        ...updateAchievementCounts.map((uac) =>
-          uac.prepareUpdate((m: CheckinAchievement) => {
-            m.count = achievementCounts.get(m.achievementId);
-          })
-        ),
-        // insert achievement counts
-        ...insertAchievementCounts.map((iac) => {
-          return this._checkinAchievementCollection.prepareCreate(
-            (m: CheckinAchievement) => {
-              m.checkinId = id;
-              m.achievementId = iac;
-              m.count = achievementCounts.get(iac);
-            }
-          );
-        }),
-        // remove achievement counts
-        ...removeAchievements.map((ra) => ra.prepareMarkAsDeleted()),
-        ...removeAchievements.map((ra) =>
-          this._deletedCollection.prepareCreate((deletedUnit) => {
-            deletedUnit.deletedId = ra.id;
-          })
-        ),
-        // users
-        // insert users
-        ...insertUsers.map((uid) =>
-          this._checkinUserCollection.prepareCreate(
-            (m: CheckinUser) => {
-              m.checkinId = id;
-              m.userId = uid;
-            }
+          ),
+          // achievement counts
+          // update achievements counts
+          ...updateAchievementCounts.map((uac) =>
+            uac.prepareUpdate((m: CheckinAchievement) => {
+              m.count = achievementCounts.get(m.achievementId);
+            })
+          ),
+          // insert achievement counts
+          ...insertAchievementCounts.map((iac) => {
+            return this._checkinAchievementCollection.prepareCreate(
+              (m: CheckinAchievement) => {
+                m.checkinId = id;
+                m.achievementId = iac;
+                m.count = achievementCounts.get(iac);
+              }
+            );
+          }),
+          // remove achievement counts
+          ...removeAchievements.map((ra) =>
+            ra.prepareMarkAsDeleted()
+          ),
+          ...removeAchievements.map((ra) =>
+            this._deletedCollection.prepareCreate((deletedUnit) => {
+              deletedUnit.deletedId = ra.id;
+            })
+          ),
+          // users
+          // insert users
+          ...insertUsers.map((uid) =>
+            this._checkinUserCollection.prepareCreate(
+              (m: CheckinUser) => {
+                m.checkinId = id;
+                m.userId = uid;
+              }
+            )
+          ),
+          // remove users
+          ...removeUsers.map((ru) => ru.prepareMarkAsDeleted()),
+          ...removeUsers.map((ru) =>
+            this._deletedCollection.prepareCreate((deletedUnit) => {
+              deletedUnit.deletedId = ru.id;
+            })
           )
-        ),
-        // remove users
-        ...removeUsers.map((ru) => ru.prepareMarkAsDeleted()),
-        ...removeUsers.map((ru) =>
-          this._deletedCollection.prepareCreate((deletedUnit) => {
-            deletedUnit.deletedId = ru.id;
-          })
         )
-      );
-    });
+      )
+      .then(() => this._sync?.sync());
   };
 
   find = async (id: string) => this._collection.find(id);
@@ -190,34 +198,34 @@ export class CheckinsService extends BaseService<Checkin> {
     insertProps: Partial<Omit<Checkin, 'achievements' | 'users'>>,
     achievementCounts: Map<string, number>,
     users: string[]
-  ) => {
-    //debugger;
-    return this._db.action(async (action) => {
+  ) =>
+    this._db.action(async (action) => {
       const newCheckin = await this._collection.create((m: any) => {
         for (const property in insertProps) {
           m[property] = insertProps[property];
         }
       });
 
-      return this._db.batch(
-        ...Array.from(achievementCounts).map(([aid, count]) =>
-          this._checkinAchievementCollection.prepareCreate(
-            (m: CheckinAchievement) => {
-              m.checkinId = newCheckin.id;
-              m.achievementId = aid;
-              m.count = count;
-            }
-          )
-        ),
-        ...users.map((uid) =>
-          this._checkinUserCollection.prepareCreate(
-            (m: CheckinUser) => {
-              m.checkinId = newCheckin.id;
-              m.userId = uid;
-            }
+      return this._db
+        .batch(
+          ...Array.from(achievementCounts).map(([aid, count]) =>
+            this._checkinAchievementCollection.prepareCreate(
+              (m: CheckinAchievement) => {
+                m.checkinId = newCheckin.id;
+                m.achievementId = aid;
+                m.count = count;
+              }
+            )
+          ),
+          ...users.map((uid) =>
+            this._checkinUserCollection.prepareCreate(
+              (m: CheckinUser) => {
+                m.checkinId = newCheckin.id;
+                m.userId = uid;
+              }
+            )
           )
         )
-      );
+        .then(() => this._sync?.sync());
     });
-  };
 }
