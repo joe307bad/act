@@ -6,8 +6,7 @@
 
 - ✅ **[MOBILE]** - On app init, run a sync to get existing users. Otherwise a user ID/keycloak ID could get out of sync with the local DB.
 - ✅ **[API] + [KEYCLOAK]** - Send down an admin/non-admin key in the access token
-- ✅ **[MOBILE] + [KEYCLOAK]** 
-  - Sending down a display name from Keycloak (either from first name or another user attribute)
+- ✅ **[MOBILE] + [KEYCLOAK]** - Sending down a display name from Keycloak (from first name)
 
 #### Sync
 
@@ -17,7 +16,8 @@
 
 - ✅ **[MOBILE]** - For non-admins, default to a single user (the current user)
 - ✅ **[MOBILE]** - Live total points count on the Achievement Selector
-- [ ] **[MOBILE]** - Text search for Achievement Selector
+- ✅ **[MOBILE]** - Text search for Achievement Selector
+- [ ] **[MOBILE]** - Info icons to see Achievement description
 - [ ] **[MOBILE]** - Fields for note, approved (non-admins default to false), and submit for creation
 
 #### Checkin/Feed
@@ -35,7 +35,7 @@
 #### Leaderboard
 
 - [ ] **[MOBILE]** - List of user sorted by most points to least points
-  - This will probably invole `useCollection('checkin_achievements')` because that will give us the updated data to recalculate the leaderboard points
+  - This will probably involve `useCollection('checkin_achievements')` because that will give us the updated data to recalculate the leaderboard points
   - We also want to add `totalPoints` to the `checkins` unit. Any time a checkin is updated/inserted, this property is calculcated
 - [ ] **[MOBILE]** - Ability to select user and see their checkins
 

@@ -3,7 +3,8 @@ import React, { FC } from 'react';
 import {
   Modal as PaperModal,
   Portal,
-  Card
+  Card,
+  Searchbar
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Chip from './Chip';
@@ -36,6 +37,9 @@ type ModalProps = {
   fullHeight: boolean;
   showPointCount?: boolean;
   pointsCount?: number;
+  showSearchBar?: boolean;
+  searchCriteria?: string;
+  onSearchChange?: React.Dispatch<React.SetStateAction<string>>;
 };
 const Modal: FC<ModalProps> = ({
   visible,
@@ -46,7 +50,10 @@ const Modal: FC<ModalProps> = ({
   subtitle,
   fullHeight,
   showPointCount,
-  pointsCount
+  pointsCount,
+  showSearchBar,
+  searchCriteria,
+  onSearchChange
 }) => (
   <Portal>
     {fullHeight ? (
@@ -63,7 +70,7 @@ const Modal: FC<ModalProps> = ({
               height: '100%'
             }}
           >
-            <Rows>
+            <Rows space={3}>
               <Row height="content">
                 <Columns alignY="center" paddingRight={5}>
                   <Column>
@@ -75,12 +82,16 @@ const Modal: FC<ModalProps> = ({
                     </Column>
                   )}
                 </Columns>
+                {showSearchBar && (
+                  <Searchbar
+                    textAlign="left"
+                    placeholder="Search"
+                    onChangeText={onSearchChange}
+                    value={searchCriteria}
+                  />
+                )}
               </Row>
-              <Row>
-                <Card.Content style={{ height: '100%' }}>
-                  {children}
-                </Card.Content>
-              </Row>
+              <Row>{children}</Row>
               <Row height="content">
                 <CardActions apply={apply} onDismiss={onDismiss} />
               </Row>

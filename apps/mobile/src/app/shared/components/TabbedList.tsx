@@ -5,7 +5,8 @@ import React, {
   useEffect,
   useState
 } from 'react';
-import { Option, SelectedOption } from './Selector';
+import { Option } from './Selector/Option';
+import { SelectedOption } from './Selector';
 import { useWindowDimensions } from 'react-native';
 import { TabView, TabBar as TB } from 'react-native-tab-view';
 import { useTheme } from 'react-native-paper';
@@ -19,6 +20,7 @@ export type TabbedListProps<T, C> = {
   initialSelected?: Map<string, SelectedOption>;
   selectable?: boolean;
   showCountDropdown?: boolean;
+  hiddenOptions?: Set<string>;
 };
 export type Category = { name: string } & BaseModel;
 
@@ -40,7 +42,8 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
   data,
   optionTitleProperty,
   categories,
-  showCountDropdown = false
+  showCountDropdown = false,
+  hiddenOptions
 }) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
@@ -82,7 +85,7 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
             display: a[optionTitleProperty],
             categoryId: a.category_id,
             points: a.points,
-            count: initialSelected.get(a.id)?.count || 1
+            count: initialSelected?.get(a.id)?.count || 1
           }
         ])
       )
@@ -144,29 +147,31 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
           <>
             {Array.from(items)
               .filter(conditions)
-              .map((d, i) => (
-                <Option
-                  onChange={(v, c) => {
-                    const newMap = new Map(items);
-                    newMap.set(d[0], {
-                      ...d[1],
-                      selected: v,
-                      count: c
-                    });
-                    setItems(newMap);
-                  }}
-                  count={
-                    items.get(d[0])?.count ||
-                    initialSelected.get(d[0])?.count
-                  }
-                  disableSelection={!selectable}
-                  selected={d[1].selected}
-                  title={d[1].display}
-                  value={d[0]}
-                  key={d[0]}
-                  showCountDropdown={showCountDropdown}
-                />
-              ))}
+              .map((d, i) =>
+                hiddenOptions?.has(d[0]) ? null : (
+                  <Option
+                    onChange={(v, c) => {
+                      const newMap = new Map(items);
+                      newMap.set(d[0], {
+                        ...d[1],
+                        selected: v,
+                        count: c
+                      });
+                      setItems(newMap);
+                    }}
+                    count={
+                      items.get(d[0])?.count ||
+                      initialSelected.get(d[0])?.count
+                    }
+                    disableSelection={!selectable}
+                    selected={d[1].selected}
+                    title={d[1].display}
+                    value={d[0]}
+                    key={d[0]}
+                    showCountDropdown={showCountDropdown}
+                  />
+                )
+              )}
           </>
         );
       }}

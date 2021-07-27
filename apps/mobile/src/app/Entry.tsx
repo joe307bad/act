@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
-import { Headline } from 'react-native-paper';
+import React, { ReactElement, useState } from 'react';
+import { Headline, Searchbar } from 'react-native-paper';
 import {
   createStackNavigator,
   StackHeaderProps
@@ -14,6 +14,11 @@ const Stack = createStackNavigator();
 const NavBar: (
   props: StackHeaderProps & { theme: ReactNativePaper.Theme }
 ) => ReactElement = ({ scene, previous, navigation }) => {
+  const [showSearch, setShowSearch] = useState<boolean>(false);
+
+  // TODO this search criteria should sort the achievements list
+  const [searchCriteria, setSearchCriteria] = useState<string>('');
+
   const { options } = scene.descriptor;
   const title =
     options.headerTitle !== undefined
@@ -21,16 +26,46 @@ const NavBar: (
       : options.title !== undefined
       ? options.title
       : scene.route.name;
+
+  const [showSearchBar, showSearchIcon] = ((): [boolean, boolean] => {
+    if (scene.route.name !== 'Achievements') {
+      return [false, false];
+    }
+
+    if (showSearch) {
+      return [true, false];
+    }
+
+    return [false, true];
+  })();
+
   return (
     <Appbar.Header>
       {previous ? (
         <Appbar.BackAction onPress={navigation.goBack} />
       ) : null}
-      <Appbar.Content
-        title={
-          <Headline style={{ color: 'white' }}>{title}</Headline>
-        }
-      />
+      {showSearchBar ? (
+        <Searchbar
+          style={{ flex: 1 }}
+          textAlign="left"
+          value={searchCriteria}
+          onChangeText={setSearchCriteria}
+          onEndEditing={() => {}}
+          onIconPress={() => setShowSearch(false)}
+        />
+      ) : (
+        <Appbar.Content
+          title={
+            <Headline style={{ color: 'white' }}>{title}</Headline>
+          }
+        />
+      )}
+      {showSearchIcon && (
+        <Appbar.Action
+          icon="magnify"
+          onPress={() => setShowSearch(true)}
+        />
+      )}
       <Appbar.Action
         icon="refresh-circle"
         onPress={() => db.sync()}

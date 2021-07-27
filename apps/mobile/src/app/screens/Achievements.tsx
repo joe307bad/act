@@ -18,7 +18,6 @@ const Achievements: FC = () => {
       data={achievements}
       categories={categories}
       optionTitleProperty={'name'}
-      showCountDropdown={true}
     />
   );
 };
