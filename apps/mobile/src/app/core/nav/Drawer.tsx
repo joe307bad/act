@@ -43,7 +43,7 @@ const DrawerList: FC<
       </Stack>
       <List.Item
         onPress={() => {
-          navigation.navigate('Entry', { screen: 'CreateCheckin' });
+          navigation.navigate('Entry', { screen: 'CheckinBuilder' });
         }}
         style={{
           borderBottomWidth: 1,
@@ -52,7 +52,7 @@ const DrawerList: FC<
           borderTopColor: theme.colors.primary
         }}
         titleStyle={{ fontSize: 25 }}
-        title={'Create Checkin'}
+        title={'Checkin Builder'}
         description={'Create a checkin for one or more achievements'}
         left={(props) => (
           <View

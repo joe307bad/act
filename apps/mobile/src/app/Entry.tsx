@@ -1,13 +1,12 @@
-import React, { FC, ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { Headline } from 'react-native-paper';
 import {
   createStackNavigator,
   StackHeaderProps
 } from '@react-navigation/stack';
 import { Appbar, useTheme } from 'react-native-paper';
-import CreateCheckin from './screens/CreateCheckin';
+import CheckinBuilder from './screens/CheckinBuilder';
 import Achievements from './screens/Achievements';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import db from '@act/data/rn';
 
 const Stack = createStackNavigator();
@@ -27,7 +26,6 @@ const NavBar: (
       {previous ? (
         <Appbar.BackAction onPress={navigation.goBack} />
       ) : null}
-
       <Appbar.Content
         title={
           <Headline style={{ color: 'white' }}>{title}</Headline>
@@ -49,16 +47,16 @@ const Entry = () => {
   const theme = useTheme();
   return (
     <Stack.Navigator
-      initialRouteName="CreateCheckin"
+      initialRouteName="CheckinBuilder"
       headerMode="float"
       screenOptions={{
         header: (props) => <NavBar {...props} theme={theme} />
       }}
     >
       <Stack.Screen
-        name="CreateCheckin"
-        options={{ title: 'Create Checkin' }}
-        component={CreateCheckin}
+        name="CheckinBuilder"
+        options={{ title: 'Checkin Builder' }}
+        component={CheckinBuilder}
       />
       <Stack.Screen
         name="Achievements"

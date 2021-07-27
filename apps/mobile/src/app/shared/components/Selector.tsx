@@ -25,11 +25,12 @@ import {
   TabbedList,
   TabbedListProps as TLP
 } from './TabbedList';
+import { useActAuth } from '@act/data/rn';
 
 export type SelectedOption = {
   id: string;
   display: string;
-  categoryId: string;
+  categoryId?: string;
 };
 
 export const Option: FC<{
@@ -212,6 +213,7 @@ type CommonSelectorProps = Partial<{
   fullHeight?: boolean;
   selectable?: boolean;
   showCountDropdown?: boolean;
+  defaultSelected?: Map<string, SelectedOption>;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -246,14 +248,15 @@ function Selector<T extends BaseModel, C extends Category = null>(
     categories = [],
     fullHeight,
     selectable,
-    showCountDropdown
+    showCountDropdown,
+    defaultSelected
   } = props;
 
   const [selectorModalVisible, setSelectorModalVisible] =
     useState(false);
   const [selected, setSelected] = useState<
     Map<string, SelectedOption>
-  >(new Map());
+  >(defaultSelected || new Map());
   const [pendingSelected, setPendingSelected] = useState<
     Map<string, SelectedOption>
   >(new Map());

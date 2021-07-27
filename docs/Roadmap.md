@@ -16,7 +16,8 @@
 
 #### Checkin Builder
 
-- [ ] **[MOBILE]** - For non-admins, default to a single user (the current user)
+✅ **[MOBILE]** - For non-admins, default to a single user (the current user)
+
 - [ ] **[MOBILE]** - Live total points count on the Achievement Selector
 - [ ] **[MOBILE]** - Text search for Achievement Selector
 - [ ] **[MOBILE]** - Fields for note, approved (non-admins default to false), and submit for creation
@@ -39,6 +40,10 @@
   - This will probably invole `useCollection('checkin_achievements')` because that will give us the updated data to recalculate the leaderboard points
   - We also want to add `totalPoints` to the `checkins` unit. Any time a checkin is updated/inserted, this property is calculcated
 - [ ] **[MOBILE]** - Ability to select user and see their checkins
+
+#### Deployment
+
+- [ ] **[WEB]** - Make `db.seed` method to seed achievements and achievement categories
 
 #### Profile
 

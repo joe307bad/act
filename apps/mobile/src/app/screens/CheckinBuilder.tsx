@@ -3,13 +3,13 @@ import {
   AchievementCategory,
   User
 } from '@act/data/core';
-import db from '@act/data/rn';
+import db, { useActAuth } from '@act/data/rn';
 import Selector from '../shared/components/Selector';
 import { ScreenContainer } from '../../../re/Index.bs';
 import React, { FC } from 'react';
 import { groupBy, toPairs } from 'lodash';
 
-const CreateCheckin: FC = () => {
+const CheckinBuilder: FC = () => {
   const users = db.useCollection<User>('users');
   const achievements = db.useCollection<Achievement>('achievements', [
     'name',
@@ -22,6 +22,15 @@ const CreateCheckin: FC = () => {
   const achievementsByCategory = toPairs(
     groupBy(achievements, 'category_id')
   );
+  const { currentUser } = useActAuth();
+  const defaultSelectedUser = currentUser
+    ? new Map([
+        [
+          currentUser.id,
+          { display: currentUser.username, id: currentUser.id }
+        ]
+      ])
+    : undefined;
 
   achievementsByCategory.push(['All', achievements]);
   return (
@@ -38,18 +47,21 @@ const CreateCheckin: FC = () => {
         fullHeight={true}
         showCountDropdown={true}
       />
-      <Selector<User>
-        data={users}
-        single="User"
-        plural="Users"
-        icon="account-box-multiple-outline"
-        optionTitleProperty="fullName"
-        optionSubtitleProperty="username"
-        title="Checkin Users"
-        subtitle="Select one or more users to checkin"
-      />
+      {currentUser?.admin && (
+        <Selector<User>
+          data={users}
+          defaultSelected={defaultSelectedUser}
+          single="User"
+          plural="Users"
+          icon="account-box-multiple-outline"
+          optionTitleProperty="fullName"
+          optionSubtitleProperty="username"
+          title="Checkin Users"
+          subtitle="Select one or more users to checkin"
+        />
+      )}
     </ScreenContainer.make>
   );
 };
 
-export default CreateCheckin;
+export default CheckinBuilder;
