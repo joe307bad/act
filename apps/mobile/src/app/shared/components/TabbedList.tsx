@@ -26,6 +26,8 @@ type Item = {
   selected: boolean;
   display: string;
   categoryId: string;
+  points?: number;
+  count?: number;
 };
 type ItemMap = Map<string, Item>;
 
@@ -51,7 +53,9 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
             {
               selected: true,
               display: is[1].display,
-              categoryId: is[1].categoryId
+              categoryId: is[1].categoryId,
+              points: is[1].points,
+              count: is[1].count
             }
           ])
         )
@@ -76,7 +80,9 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
           {
             selected: items.get(a.id)?.selected || false,
             display: a[optionTitleProperty],
-            categoryId: a.category_id
+            categoryId: a.category_id,
+            points: a.points,
+            count: initialSelected.get(a.id)?.count || 1
           }
         ])
       )
@@ -94,7 +100,9 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
               {
                 id: i[0],
                 display: i[1].display,
-                categoryId: i[1].categoryId
+                categoryId: i[1].categoryId,
+                points: i[1].points,
+                count: i[1].count
               }
             ])
         )
@@ -138,11 +146,19 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
               .filter(conditions)
               .map((d, i) => (
                 <Option
-                  onChange={(v) => {
+                  onChange={(v, c) => {
                     const newMap = new Map(items);
-                    newMap.set(d[0], { ...d[1], selected: v });
+                    newMap.set(d[0], {
+                      ...d[1],
+                      selected: v,
+                      count: c
+                    });
                     setItems(newMap);
                   }}
+                  count={
+                    items.get(d[0])?.count ||
+                    initialSelected.get(d[0])?.count
+                  }
                   disableSelection={!selectable}
                   selected={d[1].selected}
                   title={d[1].display}

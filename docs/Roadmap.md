@@ -15,7 +15,7 @@
 #### Checkin Builder
 
 ✅ **[MOBILE]** - For non-admins, default to a single user (the current user)
-- [ ] **[MOBILE]** - Live total points count on the Achievement Selector
+✅ **[MOBILE]** - Live total points count on the Achievement Selector
 - [ ] **[MOBILE]** - Text search for Achievement Selector
 - [ ] **[MOBILE]** - Fields for note, approved (non-admins default to false), and submit for creation
 

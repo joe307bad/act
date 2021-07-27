@@ -11,13 +11,13 @@ import {
   Avatar,
   Card,
   Checkbox,
-  Chip,
   List,
   Surface,
   useTheme
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Modal from './Modal';
+import Chip from './Chip';
 import { BaseModel } from '@act/data/core';
 import { snakeCase } from 'change-case';
 import {
@@ -25,23 +25,25 @@ import {
   TabbedList,
   TabbedListProps as TLP
 } from './TabbedList';
-import { useActAuth } from '@act/data/rn';
 
 export type SelectedOption = {
   id: string;
   display: string;
   categoryId?: string;
+  points?: number;
+  count?: number;
 };
 
 export const Option: FC<{
   value: string;
   title: string;
   subtitle?: string;
-  onChange?: (v: boolean) => void;
+  onChange?: (v: boolean, c: number) => void;
   initialValue?: boolean;
   disableSelection: boolean;
   selected?: boolean;
   showCountDropdown?: boolean;
+  count?: number;
 }> = ({
   title,
   subtitle,
@@ -49,13 +51,14 @@ export const Option: FC<{
   initialValue,
   disableSelection,
   selected,
+  count,
   showCountDropdown = false
 }) => {
   const [checked, setChecked] = useState(
     typeof selected !== 'undefined' ? selected : initialValue
   );
   const theme = useTheme();
-  const [selectedValue, setSelectedValue] = useState();
+  const [selectedCount, setSelectedCount] = useState(count);
 
   const isChecked = (() => {
     if (typeof selected !== 'undefined') {
@@ -67,7 +70,7 @@ export const Option: FC<{
 
   const onPress = () => {
     setChecked((p) => !p);
-    onChange?.(!isChecked);
+    onChange?.(!isChecked, selectedCount);
   };
 
   return (
@@ -98,11 +101,12 @@ export const Option: FC<{
         showCountDropdown
           ? () => (
               <Picker
-                selectedValue={selectedValue}
+                selectedValue={Number(selectedCount).toString()}
                 style={{ height: 50, width: 150 }}
-                onValueChange={(itemValue, itemIndex) =>
-                  setSelectedValue(itemValue)
-                }
+                onValueChange={(itemValue, itemIndex) => {
+                  setSelectedCount(Number(itemValue));
+                  onChange?.(isChecked, Number(itemValue));
+                }}
               >
                 <Picker.Item label="1" value="1" />
                 <Picker.Item label="2" value="2" />
@@ -170,7 +174,8 @@ const OptionList: <T extends BaseModel>(
               newSelected.set(d.id, {
                 id: d.id,
                 display: d[snakeCase(optionTitleProperty as string)],
-                categoryId: d.category_id
+                categoryId: d.category_id,
+                points: d.points
               });
               return newSelected;
             })
@@ -178,29 +183,6 @@ const OptionList: <T extends BaseModel>(
         />
       ))}
     </Surface>
-  );
-};
-
-const SelectedChip = ({ title, onDelete }) => {
-  const theme = useTheme();
-  return (
-    <Chip
-      style={{
-        borderWidth: 1,
-        margin: 2,
-        borderColor: theme.colors.primary
-      }}
-      textStyle={{
-        fontFamily: 'sans-serif',
-        alignItems: 'center',
-        alignContent: 'center',
-        justifyContent: 'center'
-      }}
-      mode="outlined"
-      onClose={onDelete}
-    >
-      {title}
-    </Chip>
   );
 };
 
@@ -214,6 +196,7 @@ type CommonSelectorProps = Partial<{
   selectable?: boolean;
   showCountDropdown?: boolean;
   defaultSelected?: Map<string, SelectedOption>;
+  showPointCount?: boolean;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -249,7 +232,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
     fullHeight,
     selectable,
     showCountDropdown,
-    defaultSelected
+    defaultSelected,
+    showPointCount
   } = props;
 
   const [selectorModalVisible, setSelectorModalVisible] =
@@ -260,6 +244,28 @@ function Selector<T extends BaseModel, C extends Category = null>(
   const [pendingSelected, setPendingSelected] = useState<
     Map<string, SelectedOption>
   >(new Map());
+  const [pendingPointsCount, setPendingPointsCount] =
+    useState<number>(0);
+  const [pointsCount, setPointsCount] = useState<number>(0);
+
+  const calculatePointsTotal = (s: Map<string, SelectedOption>) =>
+    Array.from(s).reduce((acc, ps) => {
+      const [id, selectedItem] = ps;
+      return (acc +=
+        (selectedItem.count || 1) * selectedItem?.points);
+    }, 0);
+
+  useEffect(() => {
+    if (showPointCount) {
+      setPendingPointsCount(calculatePointsTotal(pendingSelected));
+    }
+  }, [pendingSelected]);
+
+  useEffect(() => {
+    if (showPointCount) {
+      setPointsCount(calculatePointsTotal(selected));
+    }
+  }, [selected]);
 
   return (
     <>
@@ -273,6 +279,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
         onDismiss={() => setSelectorModalVisible(false)}
         visible={selectorModalVisible}
         fullHeight={fullHeight}
+        showPointCount={showPointCount}
+        pointsCount={pendingPointsCount}
       >
         {categories.length === 0 && (
           <OptionList
@@ -305,20 +313,31 @@ function Selector<T extends BaseModel, C extends Category = null>(
           title={title}
           subtitle={subtitle}
           left={(props) => <Avatar.Icon {...props} icon={icon} />}
+          right={
+            showPointCount
+              ? () => (
+                  <Chip
+                    style={{ marginRight: 10 }}
+                    title={pointsCount}
+                  />
+                )
+              : undefined
+          }
         />
         <Card.Content>
           <View style={{ flexDirection: 'row' }}>
             {Array.from(selected).map((s) => (
-              <SelectedChip
+              <Chip
                 key={`selectedChip.${s[0]}`}
                 title={s[1].display}
-                onDelete={() =>
+                count={showPointCount ? s[1].count || 1 : undefined}
+                onDelete={() => {
                   setSelected((p) => {
                     const newSelected = new Map(p);
                     newSelected.delete(s[0]);
                     return newSelected;
-                  })
-                }
+                  });
+                }}
               />
             ))}
           </View>

@@ -6,6 +6,7 @@ import {
   Card
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
+import Chip from './Chip';
 
 const CardActions = ({ apply, onDismiss }) => {
   return (
@@ -33,6 +34,8 @@ type ModalProps = {
   title: string;
   subtitle: string;
   fullHeight: boolean;
+  showPointCount?: boolean;
+  pointsCount?: number;
 };
 const Modal: FC<ModalProps> = ({
   visible,
@@ -41,7 +44,9 @@ const Modal: FC<ModalProps> = ({
   onDismiss,
   title,
   subtitle,
-  fullHeight
+  fullHeight,
+  showPointCount,
+  pointsCount
 }) => (
   <Portal>
     {fullHeight ? (
@@ -60,7 +65,16 @@ const Modal: FC<ModalProps> = ({
           >
             <Rows>
               <Row height="content">
-                <Card.Title title={title} subtitle={subtitle} />
+                <Columns alignY="center" paddingRight={5}>
+                  <Column>
+                    <Card.Title title={title} subtitle={subtitle} />
+                  </Column>
+                  {showPointCount && (
+                    <Column width="content">
+                      <Chip title={pointsCount} />
+                    </Column>
+                  )}
+                </Columns>
               </Row>
               <Row>
                 <Card.Content style={{ height: '100%' }}>
