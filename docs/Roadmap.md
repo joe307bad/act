@@ -5,9 +5,7 @@
 #### User/Auth
 
 ✅ **[MOBILE]** - On app init, run a sync to get existing users. Otherwise a user ID/keycloak ID could get out of sync with the local DB.
-
 ✅ **[API] + [KEYCLOAK]** - Send down an admin/non-admin key in the access token
-
 ✅ **[MOBILE] + [KEYCLOAK]** - Send down a display name from Keycloak (either from first name or another user attribute)
 
 #### Sync
@@ -17,7 +15,6 @@
 #### Checkin Builder
 
 ✅ **[MOBILE]** - For non-admins, default to a single user (the current user)
-
 - [ ] **[MOBILE]** - Live total points count on the Achievement Selector
 - [ ] **[MOBILE]** - Text search for Achievement Selector
 - [ ] **[MOBILE]** - Fields for note, approved (non-admins default to false), and submit for creation
