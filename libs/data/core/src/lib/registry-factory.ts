@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { container, instanceCachingFactory } from 'tsyringe';
 import { CommunitiesService } from './services/communities';
 import { ContextService } from './services/context';
@@ -9,6 +10,28 @@ import { AchievementCategoriesService } from './services/achievement-categories'
 import { AchievementsService } from './services/achievements';
 import { UsersService } from './services/users';
 import { CheckinsService } from './services/checkins';
+import { SeedArgs, SeedService } from './services/seed';
+import {
+  AchievementSeed,
+  Categories
+} from './services/seed/AchievementSeed';
+import { MockFactory } from 'mockingbird-ts';
+import { isString } from 'lodash';
+
+const seedWithMock = (seed: (args: SeedArgs) => void) => ({
+  achievements: () =>
+    seed({
+      type: 'ACHIEVEMENTS',
+      units: {
+        achievements: [
+          MockFactory.create<AchievementSeed>(AchievementSeed)
+        ],
+        categories: Object.values(Categories).filter((c) =>
+          isString(c)
+        )
+      }
+    })
+});
 
 export const registryFactory = (adapter) => {
   container.register('ContextService', ContextService);
@@ -20,6 +43,7 @@ export const registryFactory = (adapter) => {
   );
   container.register('EventsService', EventsService);
   container.register('CheckinsService', CheckinsService);
+  container.register('SeedService', SeedService);
 
   container.register('ActContext', {
     useFactory: instanceCachingFactory<ActContext>(() => {
@@ -31,6 +55,7 @@ export const registryFactory = (adapter) => {
 
   return {
     sync: new SyncService().sync,
+    seedWithMock: seedWithMock(new SeedService().seed),
     get: database,
     useCollection: useCollectionFactory(database),
     models: {

@@ -26,7 +26,7 @@ export class Achievement extends BaseModel {
   @field('description') description?: string;
 
   @relation('achievement_categories', 'category_id')
-  category?: AchievementCategory;
+  category?;
 
   @lazy
   checkins = this.collections
