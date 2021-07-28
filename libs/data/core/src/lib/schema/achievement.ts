@@ -5,6 +5,7 @@ import {
   relation
 } from '@nozbe/watermelondb/decorators';
 import { Associations } from '@nozbe/watermelondb/Model';
+import Relation from '@nozbe/watermelondb/Relation';
 import { AchievementCategory } from './achievement-category';
 import { BaseModel } from './base-model';
 import { Checkin } from './checkin';
@@ -26,7 +27,7 @@ export class Achievement extends BaseModel {
   @field('description') description?: string;
 
   @relation('achievement_categories', 'category_id')
-  category?;
+  category?: Relation<AchievementCategory>;
 
   @lazy
   checkins = this.collections
