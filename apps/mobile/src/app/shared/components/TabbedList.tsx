@@ -21,6 +21,8 @@ export type TabbedListProps<T, C> = {
   selectable?: boolean;
   showCountDropdown?: boolean;
   hiddenOptions?: Set<string>;
+  showInfoButton?: boolean;
+  onInfoButtonPress?: () => void;
 };
 export type Category = { name: string } & BaseModel;
 
@@ -43,7 +45,9 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
   optionTitleProperty,
   categories,
   showCountDropdown = false,
-  hiddenOptions
+  hiddenOptions,
+  showInfoButton,
+  onInfoButtonPress
 }) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
@@ -143,6 +147,8 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
           return (i) => i[1].categoryId === route.key;
         })();
 
+        // TODO changing this to flat list may
+        // improve performance
         return (
           <ScrollView>
             {Array.from(items)
@@ -163,12 +169,15 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
                       items.get(d[0])?.count ||
                       initialSelected.get(d[0])?.count
                     }
+                    points={d[1].points}
                     disableSelection={!selectable}
                     selected={d[1].selected}
                     title={d[1].display}
                     value={d[0]}
                     key={d[0]}
                     showCountDropdown={showCountDropdown}
+                    showInfoButton={showInfoButton}
+                    onInfoButtonPress={onInfoButtonPress}
                   />
                 )
               )}

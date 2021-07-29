@@ -14938,10 +14938,25 @@ react-native-keycloak@^1.0.0:
     query-string "^5.0.1"
     uuid "^3.1.0"
 
+react-native-material-chip@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-material-chip/-/react-native-material-chip-1.0.2.tgz#30c65e0c9b8dbf9d3ab9fce9c363abe859ff8663"
+  integrity sha512-Q3P4BMoqTf9I4ApvUmvvtumiJOFlb0Qtc3wQZW1zRQU/ymWbIn4EtWdgwWzQfdmgvoFxx0mqhUzysklU1koCcw==
+
+react-native-multithreading@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-multithreading/-/react-native-multithreading-1.1.1.tgz#e1522ecd56115993d444a69c21bca49ca123bf4e"
+  integrity sha512-ceJQRZAPjH5LfrDjb5svF4F18Ne7QR7QLQUFO0huAe+9w0hd2C3PR12ATxljo+590GXCzWRt2ruR9pY3EstFAQ==
+
 react-native-pager-view@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.2.1.tgz#ad69a6035edd998771daf302830f73602e5204a9"
   integrity sha512-6aqsVr6Z4MjYP57lMwNEurlOPah0Lw34L6x+/nI6SxY+wyqZI+uaEB7sWS5EIcgQ9cGKMo925LnVWd6Xilu33A==
+
+react-native-paper-tabs@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-paper-tabs/-/react-native-paper-tabs-0.4.2.tgz#366cbe232c70b2bdaa2e09e22c039f78520b9095"
+  integrity sha512-VCpdBuaB/bqI6eVLNxnGLlBiOC4krgwS4O4ZrmXPOpedmuAQwcFJN/Arw62zpTdv3NjbC3U+X6/GMtzYJInm8g==
 
 react-native-paper@^4.8.1:
   version "4.8.1"
@@ -14965,6 +14980,11 @@ react-native-reanimated@^2.2.0:
     fbjs "^3.0.0"
     mockdate "^3.0.2"
     string-hash-64 "^1.0.3"
+
+react-native-responsive-screen@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-responsive-screen/-/react-native-responsive-screen-1.4.2.tgz#45280826d24f9accbfdf46a36cb8e6d780f76f28"
+  integrity sha512-BLYz0UUpeohrib7jbz6wDmtBD5OmiuMRko4IT8kIF63taXPod/c5iZgmWnr5qOnK8hMuKiGMvsM3sC+eHX/lEQ==
 
 react-native-safe-area-context@^3.2.0:
   version "3.2.0"

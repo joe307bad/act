@@ -48,6 +48,8 @@ type CommonSelectorProps = Partial<{
   defaultSelected?: Map<string, SelectedOption>;
   showPointCount?: boolean;
   inlineTags?: boolean;
+  showInfoButton?: boolean;
+  onInfoButtonPress?: () => void;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -85,7 +87,9 @@ function Selector<T extends BaseModel, C extends Category = null>(
     showCountDropdown,
     defaultSelected,
     showPointCount,
-    inlineTags
+    inlineTags,
+    showInfoButton,
+    onInfoButtonPress
   } = props;
 
   const theme = useTheme();
@@ -113,11 +117,13 @@ function Selector<T extends BaseModel, C extends Category = null>(
         (selectedItem.count || 1) * selectedItem?.points);
     }, 0);
 
+  const debouncedPendingSelected = useDebounce(pendingSelected, 500);
+
   useEffect(() => {
     if (showPointCount) {
       setPendingPointsCount(calculatePointsTotal(pendingSelected));
     }
-  }, [pendingSelected]);
+  }, [debouncedPendingSelected]);
 
   useEffect(() => {
     if (showPointCount) {
@@ -190,6 +196,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
             optionTitleProperty={optionTitleProperty}
             showCountDropdown={showCountDropdown}
             hiddenOptions={hiddenOptions}
+            showInfoButton={showInfoButton}
+            onInfoButtonPress={onInfoButtonPress}
           />
         )}
       </Modal>
@@ -212,8 +220,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
         <Card.Content style={{ display: 'flex' }}>
           {inlineTags ? (
             <Inline space={2}>
-              {Array.from(selected).map((s) => (
-                <Surface style={{ elevation: 3 }}>
+              {Array.from(selected).map((s, i) => (
+                <Surface key={i} style={{ elevation: 3 }}>
                   <Columns
                     space={1}
                     style={{
@@ -253,8 +261,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
             </Inline>
           ) : (
             <Stack space={2}>
-              {Array.from(selected).map((s) => (
-                <Surface style={{ elevation: 3 }}>
+              {Array.from(selected).map((s, i) => (
+                <Surface key={i} style={{ elevation: 3 }}>
                   <Columns
                     space={2}
                     style={{

@@ -43,6 +43,8 @@
     "react-native-paper-dropdown": "*",
     "@react-native-picker/picker": "*",
     "mockingbird-ts": "*",
-    "react-native-material-chip": "*"
+    "react-native-material-chip": "*",
+    "react-native-responsive-screen": "*",
+    "react-native-multithreading": "*"
   }
 }

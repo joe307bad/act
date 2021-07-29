@@ -8,6 +8,8 @@ import Selector from '../shared/components/Selector';
 import { ScreenContainer } from '../../../re/Index.bs';
 import React, { FC } from 'react';
 import { groupBy, toPairs } from 'lodash';
+import { ScrollView } from 'react-native';
+import { Stack } from '@mobily/stacks';
 
 const CheckinBuilder: FC = () => {
   const users = db.useCollection<User>('users');
@@ -36,34 +38,40 @@ const CheckinBuilder: FC = () => {
 
   return (
     <ScreenContainer.make>
-      <Selector<Achievement, AchievementCategory>
-        data={achievements}
-        categories={categories}
-        single="Achievement"
-        plural="Achievements"
-        icon="checkbox-multiple-marked-circle-outline"
-        optionTitleProperty="name"
-        title="Checkin Achievements"
-        subtitle="Select one or more achievements to checkin"
-        fullHeight={true}
-        showCountDropdown={true}
-        showPointCount={true}
-        selectable={true}
-      />
-      {currentUser?.admin && (
-        <Selector<User>
-          data={users}
-          defaultSelected={defaultSelectedUser}
-          single="User"
-          plural="Users"
-          icon="account-box-multiple-outline"
-          optionTitleProperty="fullName"
-          optionSubtitleProperty="username"
-          title="Checkin Users"
-          subtitle="Select one or more users to checkin"
-          inlineTags={true}
-        />
-      )}
+      <ScrollView>
+        <Stack space={2}>
+          <Selector<Achievement, AchievementCategory>
+            data={achievements}
+            categories={categories}
+            single="Achievement"
+            plural="Achievements"
+            icon="checkbox-multiple-marked-circle-outline"
+            optionTitleProperty="name"
+            title="Checkin Achievements"
+            subtitle="Select one or more achievements to checkin"
+            fullHeight={true}
+            showCountDropdown={true}
+            showPointCount={true}
+            selectable={true}
+            showInfoButton={true}
+            onInfoButtonPress={() => {}}
+          />
+          {currentUser?.admin && (
+            <Selector<User>
+              data={users}
+              defaultSelected={defaultSelectedUser}
+              single="User"
+              plural="Users"
+              icon="account-box-multiple-outline"
+              optionTitleProperty="fullName"
+              optionSubtitleProperty="username"
+              title="Checkin Users"
+              subtitle="Select one or more users to checkin"
+              inlineTags={true}
+            />
+          )}
+        </Stack>
+      </ScrollView>
     </ScreenContainer.make>
   );
 };
