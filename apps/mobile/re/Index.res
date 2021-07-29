@@ -177,7 +177,7 @@ module Root = {
     let screens = Js.Dict.fromList(list{("CreateCheckin", "CreateCheckin/:id")})
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
     let {status} = ActData.useActAuth()
-    <StacksProvider debug={false}>
+    <StacksProvider debug={true}>
       <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
         <Paper.PaperProvider theme>
           <Native.NavigationContainer

@@ -32,7 +32,7 @@ export abstract class BaseService<T extends Model> {
   };
 
   insertWithProps = async (insertProps: {
-    [key: string]: string;
+    [key: string]: string | boolean;
   }): Promise<T> => {
     return await this._db.action(
       async () =>

@@ -41,7 +41,8 @@ export class UsersService extends BaseService<User> {
     const newUserId = await this.insertWithProps({
       fullName: full_name,
       username: username,
-      keycloakId: sub
+      keycloakId: sub,
+      admin: admin
     });
 
     return {

@@ -4,8 +4,8 @@ import React, {
   ReactElement,
   useEffect
 } from 'react';
-import { View } from 'react-native';
-import { Avatar, Card } from 'react-native-paper';
+import { Pressable, Text, View, ViewBase } from 'react-native';
+import { Avatar, Card, Surface, useTheme } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../../AwesomeButton';
 import Modal from '../Modal';
 import Chip from '../Chip';
@@ -18,6 +18,15 @@ import {
 import { OptionList } from './OptionList';
 import { useDebounce } from '../../hooks/useDebounce';
 import { isEmpty } from 'lodash';
+import {
+  Column,
+  Columns,
+  Inline,
+  Stack,
+  Tiles
+} from '@mobily/stacks';
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export type SelectedOption = {
   id: string;
@@ -38,6 +47,7 @@ type CommonSelectorProps = Partial<{
   showCountDropdown?: boolean;
   defaultSelected?: Map<string, SelectedOption>;
   showPointCount?: boolean;
+  inlineTags?: boolean;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -74,9 +84,11 @@ function Selector<T extends BaseModel, C extends Category = null>(
     selectable,
     showCountDropdown,
     defaultSelected,
-    showPointCount
+    showPointCount,
+    inlineTags
   } = props;
 
+  const theme = useTheme();
   const [selectorModalVisible, setSelectorModalVisible] =
     useState(false);
   const [selected, setSelected] = useState<
@@ -191,29 +203,111 @@ function Selector<T extends BaseModel, C extends Category = null>(
               ? () => (
                   <Chip
                     style={{ marginRight: 10 }}
-                    title={pointsCount}
+                    title={pointsCount.toLocaleString()}
                   />
                 )
               : undefined
           }
         />
-        <Card.Content>
-          <View style={{ flexDirection: 'row' }}>
-            {Array.from(selected).map((s) => (
-              <Chip
-                key={`selectedChip.${s[0]}`}
-                title={s[1].display}
-                count={showPointCount ? s[1].count || 1 : undefined}
-                onDelete={() => {
-                  setSelected((p) => {
-                    const newSelected = new Map(p);
-                    newSelected.delete(s[0]);
-                    return newSelected;
-                  });
-                }}
-              />
-            ))}
-          </View>
+        <Card.Content style={{ display: 'flex' }}>
+          {inlineTags ? (
+            <Inline space={2}>
+              {Array.from(selected).map((s) => (
+                <Surface style={{ elevation: 3 }}>
+                  <Columns
+                    space={1}
+                    style={{
+                      padding: 5
+                    }}
+                  >
+                    <Column width="content">
+                      <Text>{s[1].display}</Text>
+                    </Column>
+                    <Column
+                      width="content"
+                      height="fluid"
+                      style={{
+                        justifyContent: 'center',
+                        paddingRight: 5
+                      }}
+                    >
+                      <Pressable
+                        onPress={() => {
+                          setSelected((p) => {
+                            const newSelected = new Map(p);
+                            newSelected.delete(s[0]);
+                            return newSelected;
+                          });
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name="close-circle"
+                          color={theme.colors.primary}
+                          size={20}
+                        />
+                      </Pressable>
+                    </Column>
+                  </Columns>
+                </Surface>
+              ))}
+            </Inline>
+          ) : (
+            <Stack space={2}>
+              {Array.from(selected).map((s) => (
+                <Surface style={{ elevation: 3 }}>
+                  <Columns
+                    space={2}
+                    style={{
+                      padding: 4
+                    }}
+                  >
+                    {showPointCount && (
+                      <Column
+                        width="content"
+                        height="fluid"
+                        style={{
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name={`numeric-${s[1].count}-box`}
+                          color={theme.colors.primary}
+                          size={25}
+                        />
+                      </Column>
+                    )}
+                    <Column>
+                      <Text numberOfLines={3}>{s[1].display}</Text>
+                    </Column>
+                    <Column
+                      width="content"
+                      height="fluid"
+                      style={{
+                        justifyContent: 'center',
+                        paddingRight: 5
+                      }}
+                    >
+                      <Pressable
+                        onPress={() => {
+                          setSelected((p) => {
+                            const newSelected = new Map(p);
+                            newSelected.delete(s[0]);
+                            return newSelected;
+                          });
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name="close-circle"
+                          color={theme.colors.primary}
+                          size={20}
+                        />
+                      </Pressable>
+                    </Column>
+                  </Columns>
+                </Surface>
+              ))}
+            </Stack>
+          )}
         </Card.Content>
         <Card.Actions>
           <AwesomeButtonMedium

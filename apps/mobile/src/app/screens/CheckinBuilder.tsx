@@ -33,6 +33,7 @@ const CheckinBuilder: FC = () => {
     : undefined;
 
   achievementsByCategory.push(['All', achievements]);
+
   return (
     <ScreenContainer.make>
       <Selector<Achievement, AchievementCategory>
@@ -40,7 +41,7 @@ const CheckinBuilder: FC = () => {
         categories={categories}
         single="Achievement"
         plural="Achievements"
-        icon="account-box-multiple-outline"
+        icon="checkbox-multiple-marked-circle-outline"
         optionTitleProperty="name"
         title="Checkin Achievements"
         subtitle="Select one or more achievements to checkin"
@@ -60,6 +61,7 @@ const CheckinBuilder: FC = () => {
           optionSubtitleProperty="username"
           title="Checkin Users"
           subtitle="Select one or more users to checkin"
+          inlineTags={true}
         />
       )}
     </ScreenContainer.make>

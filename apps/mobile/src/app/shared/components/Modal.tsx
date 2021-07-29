@@ -78,7 +78,7 @@ const Modal: FC<ModalProps> = ({
                   </Column>
                   {showPointCount && (
                     <Column width="content">
-                      <Chip title={pointsCount} />
+                      <Chip title={pointsCount.toLocaleString()} />
                     </Column>
                   )}
                 </Columns>

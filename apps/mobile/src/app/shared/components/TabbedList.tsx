@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { Option } from './Selector/Option';
 import { SelectedOption } from './Selector';
-import { useWindowDimensions } from 'react-native';
+import { useWindowDimensions, ScrollView } from 'react-native';
 import { TabView, TabBar as TB } from 'react-native-tab-view';
 import { useTheme } from 'react-native-paper';
 
@@ -144,7 +144,7 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
         })();
 
         return (
-          <>
+          <ScrollView>
             {Array.from(items)
               .filter(conditions)
               .map((d, i) =>
@@ -172,7 +172,7 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
                   />
                 )
               )}
-          </>
+          </ScrollView>
         );
       }}
       onIndexChange={setIndex}

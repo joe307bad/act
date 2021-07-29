@@ -74,7 +74,6 @@
     "react-native-keycloak": "^1.0.0",
     "react-native-pager-view": "^5.2.1",
     "react-native-paper": "^4.8.1",
-    "react-native-paper-tabs": "^0.4.2",
     "react-native-really-awesome-button": "github:joe307bad/react-native-really-awesome-button",
     "react-native-reanimated": "^2.2.0",
     "react-native-safe-area-context": "^3.2.0",
