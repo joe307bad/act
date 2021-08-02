@@ -1,5 +1,7 @@
-import { BaseModel } from '@act/data/core';
+import { Achievement, BaseModel } from '@act/data/core';
 import React, {
+  FC,
+  memo,
   PropsWithChildren,
   ReactElement,
   useEffect,
@@ -7,7 +9,11 @@ import React, {
 } from 'react';
 import { Option } from './Selector/Option';
 import { SelectedOption } from './Selector';
-import { useWindowDimensions, ScrollView } from 'react-native';
+import {
+  useWindowDimensions,
+  FlatList,
+  GestureResponderEvent
+} from 'react-native';
 import { TabView, TabBar as TB } from 'react-native-tab-view';
 import { useTheme } from 'react-native-paper';
 
@@ -16,7 +22,10 @@ export type TabbedListProps<T, C> = {
   categories: C[];
   optionTitleProperty: string;
   optionSubtitleProperty?: string;
-  onChange?: (selected: Map<string, SelectedOption>) => void;
+  onChange?: (
+    selected: Map<string, Achievement>,
+    itemsCounts: Map<string, number>
+  ) => void;
   initialSelected?: Map<string, SelectedOption>;
   selectable?: boolean;
   showCountDropdown?: boolean;
@@ -26,23 +35,16 @@ export type TabbedListProps<T, C> = {
 };
 export type Category = { name: string } & BaseModel;
 
-type Item = {
-  selected: boolean;
-  display: string;
-  categoryId: string;
-  points?: number;
-  count?: number;
-};
-type ItemMap = Map<string, Item>;
-
-export const TabbedList: <T extends BaseModel, C extends Category>(
+export const TabbedListComponent: <
+  T extends BaseModel,
+  C extends Category
+>(
   p: PropsWithChildren<TabbedListProps<T, C>>
 ) => ReactElement = ({
   onChange,
-  initialSelected,
+  initialSelected = new Map(),
   selectable = false,
   data,
-  optionTitleProperty,
   categories,
   showCountDropdown = false,
   hiddenOptions,
@@ -51,21 +53,11 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
 }) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
-  const [items, setItems] = useState<ItemMap>(
-    !initialSelected?.size
-      ? new Map()
-      : new Map(
-          Array.from(initialSelected).map((is) => [
-            is[0],
-            {
-              selected: true,
-              display: is[1].display,
-              categoryId: is[1].categoryId,
-              points: is[1].points,
-              count: is[1].count
-            }
-          ])
-        )
+  const [items, setItems] = useState<Map<string, Achievement>>(
+    new Map()
+  );
+  const [itemsCounts, setItemsCounts] = useState<Map<string, number>>(
+    new Map()
   );
 
   const [index, setIndex] = useState(0);
@@ -82,38 +74,30 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
   useEffect(() => {
     setItems(
       new Map(
-        data.map((a) => [
+        Array.from(initialSelected.entries()).map(([id, a]) => [
           a.id,
           {
-            selected: items.get(a.id)?.selected || false,
-            display: a[optionTitleProperty],
-            categoryId: a.category_id,
+            id: a.id,
             points: a.points,
-            count: initialSelected?.get(a.id)?.count || 1
-          }
+            name: a.display
+          } as Achievement
         ])
       )
     );
-  }, [data]);
+
+    setItemsCounts(
+      new Map(
+        Array.from(initialSelected.entries()).map(([id, a]) => [
+          a.id,
+          a.count
+        ])
+      )
+    );
+  }, []);
 
   useEffect(() => {
     if (selectable) {
-      onChange(
-        new Map(
-          Array.from(items)
-            .filter((i) => i[1].selected)
-            .map((i) => [
-              i[0],
-              {
-                id: i[0],
-                display: i[1].display,
-                categoryId: i[1].categoryId,
-                points: i[1].points,
-                count: i[1].count
-              }
-            ])
-        )
-      );
+      onChange(items, itemsCounts);
     }
   }, [items]);
 
@@ -134,54 +118,60 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
         />
       )}
       navigationState={{ index, routes }}
+      lazy={true}
       renderScene={({ route }) => {
         const conditions = (() => {
           if (route.key === 'noCategory') {
-            return (i) => !i[1].categoryId;
+            return (i) => !i.category_id;
           }
 
           if (route.key === 'all') {
             return () => true;
           }
 
-          return (i) => i[1].categoryId === route.key;
+          return (i) => i.category_id === route.key;
         })();
 
-        // TODO changing this to flat list may
-        // improve performance
+        const renderItem: FC<{ item: Achievement }> = ({ item }) => {
+          const { id, points, name } = item;
+          return hiddenOptions?.has(id) ? null : (
+            <Option
+              onPress={(e: GestureResponderEvent, count?: number) => {
+                if (count) {
+                  const newCounts = new Map(itemsCounts);
+                  newCounts.set(id, count);
+                  setItemsCounts(newCounts);
+                }
+
+                const exists = items.has(id);
+                const newItems = new Map(items);
+                if (exists && !count) {
+                  newItems.delete(id);
+                } else {
+                  newItems.set(id, item);
+                }
+                setItems(newItems);
+              }}
+              count={itemsCounts.get(id)}
+              points={points}
+              disableSelection={!selectable}
+              checked={items.has(id)}
+              title={name}
+              value={id}
+              key={id}
+              showCountDropdown={showCountDropdown}
+              showInfoButton={showInfoButton}
+              onInfoButtonPress={onInfoButtonPress}
+            />
+          );
+        };
+
         return (
-          <ScrollView>
-            {Array.from(items)
-              .filter(conditions)
-              .map((d, i) =>
-                hiddenOptions?.has(d[0]) ? null : (
-                  <Option
-                    onChange={(v, c) => {
-                      const newMap = new Map(items);
-                      newMap.set(d[0], {
-                        ...d[1],
-                        selected: v,
-                        count: c
-                      });
-                      setItems(newMap);
-                    }}
-                    count={
-                      items.get(d[0])?.count ||
-                      initialSelected.get(d[0])?.count
-                    }
-                    points={d[1].points}
-                    disableSelection={!selectable}
-                    selected={d[1].selected}
-                    title={d[1].display}
-                    value={d[0]}
-                    key={d[0]}
-                    showCountDropdown={showCountDropdown}
-                    showInfoButton={showInfoButton}
-                    onInfoButtonPress={onInfoButtonPress}
-                  />
-                )
-              )}
-          </ScrollView>
+          <FlatList
+            data={Array.from(data).filter(conditions)}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
         );
       }}
       onIndexChange={setIndex}
@@ -189,3 +179,5 @@ export const TabbedList: <T extends BaseModel, C extends Category>(
     />
   );
 };
+
+export const TabbedList = memo(TabbedListComponent);

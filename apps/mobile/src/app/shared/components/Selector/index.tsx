@@ -4,12 +4,12 @@ import React, {
   ReactElement,
   useEffect
 } from 'react';
-import { Pressable, Text, View, ViewBase } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import { Avatar, Card, Surface, useTheme } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../../AwesomeButton';
 import Modal from '../Modal';
 import Chip from '../Chip';
-import { BaseModel } from '@act/data/core';
+import { Achievement, BaseModel } from '@act/data/core';
 import {
   Category,
   TabbedList,
@@ -18,13 +18,7 @@ import {
 import { OptionList } from './OptionList';
 import { useDebounce } from '../../hooks/useDebounce';
 import { isEmpty } from 'lodash';
-import {
-  Column,
-  Columns,
-  Inline,
-  Stack,
-  Tiles
-} from '@mobily/stacks';
+import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -154,6 +148,43 @@ function Selector<T extends BaseModel, C extends Category = null>(
   const listType =
     categories.length === 0 ? 'OPTION_LIST' : 'TABBED_LIST';
 
+  const onTabbedListChange = (
+    selectedAchievements: Map<string, Achievement>,
+    itemsCount: Map<string, number>
+  ) => {
+    setPendingSelected(
+      new Map(
+        Array.from(selectedAchievements).map(([id, a]) => {
+          return [
+            id,
+            {
+              id,
+              display: a.name,
+              points: a.points,
+              count: itemsCount.get(id) ?? 1
+            }
+          ];
+        })
+      )
+    );
+  };
+
+  const onOptionsListChange = (selectedOptions: Map<string, any>) => {
+    setPendingSelected(
+      new Map(
+        Array.from(selectedOptions).map(([id, a]) => {
+          return [
+            id,
+            {
+              id,
+              display: a.name
+            }
+          ];
+        })
+      )
+    );
+  };
+
   return (
     <>
       <Modal
@@ -174,7 +205,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
       >
         {listType === 'OPTION_LIST' && (
           <OptionList
-            onChange={setPendingSelected}
+            onChange={onOptionsListChange}
             data={data as T[]}
             initialSelected={selected || new Map()}
             optionSubtitleProperty={
@@ -187,7 +218,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
         )}
         {listType === 'TABBED_LIST' && (
           <TabbedList
-            onChange={setPendingSelected}
+            onChange={onTabbedListChange}
             initialSelected={selected}
             data={data}
             categories={categories}

@@ -23,7 +23,7 @@ export class SyncService {
             Object.keys(schemaAndMigrations.schema.tables)
           )}`;
           const response = await fetch(
-            `http://192.168.0.4:3333/api/sync?${urlParams}`
+            `http://10.0.0.121:3333/api/sync?${urlParams}`
           );
           if (!response.ok) {
             throw new Error(await response.text());
@@ -34,7 +34,7 @@ export class SyncService {
         },
         pushChanges: async ({ changes, lastPulledAt }) => {
           const response = await fetch(
-            `http://192.168.0.4:3333/api/sync?last_pulled_at=${lastPulledAt}`,
+            `http://10.0.0.121:3333/api/sync?last_pulled_at=${lastPulledAt}`,
             {
               method: 'POST',
               headers: {

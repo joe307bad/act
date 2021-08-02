@@ -40,7 +40,6 @@
     "react-native-paper-tabs": "*",
     "react-native-pager-view": "*",
     "react-native-tab-view": "*",
-    "react-native-paper-dropdown": "*",
     "@react-native-picker/picker": "*",
     "mockingbird-ts": "*",
     "react-native-material-chip": "*",

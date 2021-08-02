@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import db from './';
 
 const keycloak = new RNKeycloak({
-  url: 'http://192.168.0.4:8080/auth',
+  url: 'http://10.0.0.121:8080/auth',
   realm: 'master',
   clientId: 'account'
 });

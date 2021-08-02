@@ -1,7 +1,7 @@
 import { Column, Columns } from '@mobily/stacks';
 import React from 'react';
 import { Chip as C, useTheme } from 'react-native-paper';
-import { Dimensions, Text, View } from 'react-native';
+import { Text } from 'react-native';
 
 const Chip = ({
   title,
