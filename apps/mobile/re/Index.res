@@ -54,6 +54,8 @@ module ScreenContainer = {
     <Box
       flex=[#fluid]
       padding=[2.]
+      paddingTop=[0.]
+      paddingBottom=[0.]
       alignY=[center ? #center : #top]
       style={Style.style(~backgroundColor=colors.background, ())}>
       <Stacks.Stack space=[2.]> {children} </Stacks.Stack>

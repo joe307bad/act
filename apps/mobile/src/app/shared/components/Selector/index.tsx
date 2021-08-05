@@ -103,6 +103,10 @@ function Selector<T extends BaseModel, C extends Category = null>(
     new Set<string>()
   );
   const debouncedSearchCriteria = useDebounce(searchCriteria, 500);
+  const [selectedInfo, setSelectedInfo] = useState<{
+    name?: string;
+    description?: string;
+  }>({});
 
   const calculatePointsTotal = (s: Map<string, SelectedOption>) =>
     Array.from(s).reduce((acc, ps) => {
@@ -202,6 +206,9 @@ function Selector<T extends BaseModel, C extends Category = null>(
         showSearchBar={listType === 'TABBED_LIST'}
         searchCriteria={searchCriteria}
         onSearchChange={setSearchCriteria}
+        selectedItemTitle={selectedInfo.name}
+        selectedItemDescription={selectedInfo.description}
+        closeSelectedItemInfo={() => setSelectedInfo({})}
       >
         {listType === 'OPTION_LIST' && (
           <OptionList
@@ -228,7 +235,9 @@ function Selector<T extends BaseModel, C extends Category = null>(
             showCountDropdown={showCountDropdown}
             hiddenOptions={hiddenOptions}
             showInfoButton={showInfoButton}
-            onInfoButtonPress={onInfoButtonPress}
+            setSelectedInfo={(name, description) =>
+              setSelectedInfo({ name, description })
+            }
           />
         )}
       </Modal>

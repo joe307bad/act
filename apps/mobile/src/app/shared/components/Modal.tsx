@@ -1,10 +1,13 @@
 import { Column, Columns, FillView, Row, Rows } from '@mobily/stacks';
 import React, { FC } from 'react';
+import { Text } from 'react-native';
 import {
   Modal as PaperModal,
   Portal,
   Card,
-  Searchbar
+  Searchbar,
+  Title,
+  TouchableRipple
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Chip from './Chip';
@@ -40,6 +43,9 @@ type ModalProps = {
   showSearchBar?: boolean;
   searchCriteria?: string;
   onSearchChange?: React.Dispatch<React.SetStateAction<string>>;
+  selectedItemDescription?: string;
+  selectedItemTitle?: string;
+  closeSelectedItemInfo?: () => void;
 };
 const Modal: FC<ModalProps> = ({
   visible,
@@ -53,7 +59,10 @@ const Modal: FC<ModalProps> = ({
   pointsCount,
   showSearchBar,
   searchCriteria,
-  onSearchChange
+  onSearchChange,
+  selectedItemDescription,
+  selectedItemTitle,
+  closeSelectedItemInfo
 }) => (
   <Portal>
     {fullHeight ? (
@@ -70,8 +79,11 @@ const Modal: FC<ModalProps> = ({
               height: '100%'
             }}
           >
-            <Rows space={3}>
-              <Row height="content">
+            <Rows>
+              <Row
+                height="content"
+                paddingBottom={showSearchBar ? 2 : null}
+              >
                 <Columns alignY="center" paddingRight={5}>
                   <Column>
                     <Card.Title title={title} subtitle={subtitle} />
@@ -92,6 +104,20 @@ const Modal: FC<ModalProps> = ({
                 )}
               </Row>
               <Row>{children}</Row>
+              {selectedItemTitle && (
+                <Row
+                  height="content"
+                  paddingRight={2}
+                  paddingLeft={2}
+                >
+                  <TouchableRipple onPress={closeSelectedItemInfo}>
+                    <>
+                      <Title>{selectedItemTitle}</Title>
+                      <Text>{selectedItemDescription}</Text>
+                    </>
+                  </TouchableRipple>
+                </Row>
+              )}
               <Row height="content">
                 <CardActions apply={apply} onDismiss={onDismiss} />
               </Row>

@@ -31,7 +31,7 @@ export type TabbedListProps<T, C> = {
   showCountDropdown?: boolean;
   hiddenOptions?: Set<string>;
   showInfoButton?: boolean;
-  onInfoButtonPress?: () => void;
+  setSelectedInfo?: (title: string, description: string) => void;
 };
 export type Category = { name: string } & BaseModel;
 
@@ -49,7 +49,7 @@ export const TabbedListComponent: <
   showCountDropdown = false,
   hiddenOptions,
   showInfoButton,
-  onInfoButtonPress
+  setSelectedInfo
 }) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
@@ -101,6 +101,40 @@ export const TabbedListComponent: <
     }
   }, [items]);
 
+  const renderItem: FC<{ item: Achievement }> = ({ item }) => {
+    const { id, points, name, description } = item;
+    return hiddenOptions?.has(id) ? null : (
+      <Option
+        onPress={(e: GestureResponderEvent, count?: number) => {
+          if (count) {
+            const newCounts = new Map(itemsCounts);
+            newCounts.set(id, count);
+            setItemsCounts(newCounts);
+          }
+
+          const exists = items.has(id);
+          const newItems = new Map(items);
+          if (exists && !count) {
+            newItems.delete(id);
+          } else {
+            newItems.set(id, item);
+          }
+          setItems(newItems);
+        }}
+        count={itemsCounts.get(id)}
+        points={points}
+        disableSelection={!selectable}
+        checked={items.has(id)}
+        title={name}
+        value={id}
+        key={id}
+        showCountDropdown={showCountDropdown}
+        showInfoButton={showInfoButton}
+        onInfoButtonPress={() => setSelectedInfo(name, description)}
+      />
+    );
+  };
+
   return (
     <TabView
       renderTabBar={(props) => (
@@ -131,40 +165,6 @@ export const TabbedListComponent: <
 
           return (i) => i.category_id === route.key;
         })();
-
-        const renderItem: FC<{ item: Achievement }> = ({ item }) => {
-          const { id, points, name } = item;
-          return hiddenOptions?.has(id) ? null : (
-            <Option
-              onPress={(e: GestureResponderEvent, count?: number) => {
-                if (count) {
-                  const newCounts = new Map(itemsCounts);
-                  newCounts.set(id, count);
-                  setItemsCounts(newCounts);
-                }
-
-                const exists = items.has(id);
-                const newItems = new Map(items);
-                if (exists && !count) {
-                  newItems.delete(id);
-                } else {
-                  newItems.set(id, item);
-                }
-                setItems(newItems);
-              }}
-              count={itemsCounts.get(id)}
-              points={points}
-              disableSelection={!selectable}
-              checked={items.has(id)}
-              title={name}
-              value={id}
-              key={id}
-              showCountDropdown={showCountDropdown}
-              showInfoButton={showInfoButton}
-              onInfoButtonPress={onInfoButtonPress}
-            />
-          );
-        };
 
         return (
           <FlatList
