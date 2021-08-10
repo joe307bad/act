@@ -24,7 +24,7 @@ export const Option: FC<{
   showInfoButton?: boolean;
   onInfoButtonPress?: () => void;
   points?: number;
-  onPress: (e: GestureResponderEvent, count?: number) => void;
+  onPress?: (e: GestureResponderEvent, count?: number) => void;
 }> = ({
   title,
   disableSelection,
@@ -43,12 +43,11 @@ export const Option: FC<{
       <Columns alignY="center">
         {!disableSelection && (
           <Column width="content">
-            <TouchableRipple onPress={onPress}>
-              <Checkbox
-                color={theme.colors.primary}
-                status={checked ? 'checked' : 'unchecked'}
-              />
-            </TouchableRipple>
+            <Checkbox
+              onPress={() => onPress?.({} as any, null)}
+              color={theme.colors.primary}
+              status={checked ? 'checked' : 'unchecked'}
+            />
           </Column>
         )}
         <Column

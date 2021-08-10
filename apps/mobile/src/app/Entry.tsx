@@ -1,5 +1,9 @@
 import React, { ReactElement, useState } from 'react';
-import { Headline, Searchbar } from 'react-native-paper';
+import {
+  configureFonts,
+  Headline,
+  Searchbar
+} from 'react-native-paper';
 import {
   createStackNavigator,
   StackHeaderProps
@@ -8,8 +12,53 @@ import { Appbar, useTheme } from 'react-native-paper';
 import CheckinBuilder from './screens/CheckinBuilder';
 import Achievements from './screens/Achievements';
 import db from '@act/data/rn';
+import { Provider } from 'react-native-paper';
 
 const Stack = createStackNavigator();
+
+var fontFamily = 'Bebas-Regular';
+var fonts = configureFonts({
+  default: {
+    regular: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    thin: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    medium: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    light: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    }
+  }
+});
+var animation = {
+  scale: 1
+};
+var colors = {
+  primary: '#470FF4',
+  accent: '#87FF65',
+  background: '#eae8ff',
+  surface: 'white',
+  error: '#c83e4d',
+  text: 'black',
+  disabled: '#adacb5',
+  placeholder: '#470FF4',
+  backdrop: 'rgba(0, 0, 0, 0.33)'
+};
+
+var theme = {
+  roundness: 0,
+  dark: true,
+  colors: colors,
+  fonts: fonts,
+  animation: animation
+};
 
 const NavBar: (
   props: StackHeaderProps & { theme: ReactNativePaper.Theme }
@@ -78,7 +127,7 @@ const NavBar: (
   );
 };
 
-const Entry = () => {
+const EntryStack = () => {
   const theme = useTheme();
   return (
     <Stack.Navigator
@@ -99,6 +148,14 @@ const Entry = () => {
         component={Achievements}
       />
     </Stack.Navigator>
+  );
+};
+
+const Entry = () => {
+  return (
+    <Provider theme={theme}>
+      <EntryStack />
+    </Provider>
   );
 };
 
