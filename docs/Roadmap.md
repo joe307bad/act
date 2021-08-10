@@ -52,6 +52,7 @@
 
 #### Distribution
 
+- [ ] **[MOBILE]** - Get working on iOS lol
 - [ ] **[MOBILE]** - Bitrise pipeline that provides public links for Android/iOS downloads
 - [ ] **[OPS]** - Reslient and automated API + Keycloak + DB deployment
 
@@ -61,3 +62,7 @@
 - [ ] **[MOBILE] [WEB] [OPS]** - Photo uploads as seperate entities and attached to checkins
 - [ ] **[MOBILE]** - More advanced stats on checkins (checkins per hour, checkins per day, who has the most points in a specific time frame, etc.)
 - More listed in the READMEs of Points
+
+## Tech Debt
+
+- [ ] **[MOBILE]** - TabbedList/Selector is convoluted because of optimization experimentation. TabbedList/Selector should be AchievementList specific and not overly generalized.
