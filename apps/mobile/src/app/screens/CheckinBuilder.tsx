@@ -1,25 +1,20 @@
 import {
   Achievement,
   AchievementCategory,
+  Checkin,
   User
 } from '@act/data/core';
 import db, { useActAuth } from '@act/data/rn';
 import Selector from '../shared/components/Selector';
-import { ScreenContainer } from '../../../re/Index.bs';
 import React, { FC, useState } from 'react';
 import { groupBy, toPairs } from 'lodash';
 import { ScrollView } from 'react-native';
 import { Row, Rows, Stack } from '@mobily/stacks';
-import {
-  Avatar,
-  Card,
-  TextInput,
-  useTheme
-} from 'react-native-paper';
+import { Avatar, Card, TextInput } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../AwesomeButton';
+import { CreateCheckin } from '@act/data/core';
 
 const CheckinBuilder: FC = () => {
-  const [note, setNote] = useState<string>('');
   const users = db.useCollection<User>('users');
   const achievements = db.useCollection<Achievement>('achievements', [
     'name',
@@ -43,7 +38,8 @@ const CheckinBuilder: FC = () => {
     : undefined;
 
   achievementsByCategory.push(['All', achievements]);
-  const theme = useTheme();
+
+  const [checkin, setCheckin] = useState<CreateCheckin>();
 
   return (
     <Rows space={2}>
@@ -65,7 +61,7 @@ const CheckinBuilder: FC = () => {
                 <TextInput
                   textAlign="left"
                   label="Checkin Note"
-                  value={note}
+                  value={checkin?.insertProps?.note}
                   mode="outlined"
                   theme={{
                     fonts: {
@@ -74,7 +70,12 @@ const CheckinBuilder: FC = () => {
                       }
                     }
                   }}
-                  onChangeText={setNote}
+                  onChangeText={(text) =>
+                    setCheckin({
+                      ...checkin,
+                      insertProps: { note: text }
+                    })
+                  }
                 />
               </Card.Content>
             </Card>
@@ -93,6 +94,9 @@ const CheckinBuilder: FC = () => {
               selectable={true}
               showInfoButton={true}
               onInfoButtonPress={() => {}}
+              onSelectorChange={(
+                achievementCounts: Map<string, number>
+              ) => setCheckin({ ...checkin, achievementCounts })}
             />
             {currentUser?.admin && (
               <Selector<User>
@@ -106,13 +110,25 @@ const CheckinBuilder: FC = () => {
                 title="Checkin Users"
                 subtitle="Select one or more users to checkin"
                 inlineTags={true}
+                onSelectorChange={(selectedItems: Set<string>) => {
+                  debugger;
+                  setCheckin({
+                    ...checkin,
+                    users: Array.from(selectedItems)
+                  });
+                }}
               />
             )}
           </Stack>
         </ScrollView>
       </Row>
       <Row padding={1} height="content">
-        <AwesomeButtonMedium onPress={() => {}}>
+        <AwesomeButtonMedium
+          onPress={() => {
+            const c = checkin;
+            debugger;
+          }}
+        >
           Create Checkin
         </AwesomeButtonMedium>
       </Row>

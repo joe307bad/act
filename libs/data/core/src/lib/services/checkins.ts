@@ -16,6 +16,13 @@ type SelectedItem = {
   points?: number;
 };
 
+export type CreateCheckin = {
+  insertProps: Partial<Omit<Checkin, 'achievements' | 'users'>>;
+  achievementCounts: Map<string, number>;
+  users: string[];
+  isAdmin?: boolean;
+};
+
 @autoInjectable()
 export class CheckinsService extends BaseService<Checkin> {
   _checkinAchievementCollection: Collection<CheckinAchievement>;
@@ -74,12 +81,13 @@ export class CheckinsService extends BaseService<Checkin> {
     // });
   };
 
-  edit = async (
-    id: string,
-    editProps: Partial<Omit<Checkin, 'achievements' | 'users'>>,
-    achievementCounts: Map<string, number>,
-    users: Map<string, SelectedItem>
-  ) => {
+  edit = async (args: {
+    id: string;
+    editProps: Partial<Omit<Checkin, 'achievements' | 'users'>>;
+    achievementCounts: Map<string, number>;
+    users: Map<string, SelectedItem>;
+  }) => {
+    const { id, editProps, achievementCounts, users } = args;
     const selectedUserIds = Array.from(users.keys());
 
     // all checkin achievements
@@ -194,17 +202,22 @@ export class CheckinsService extends BaseService<Checkin> {
 
   find = async (id: string) => this._collection.find(id);
 
-  create = async (
-    insertProps: Partial<Omit<Checkin, 'achievements' | 'users'>>,
-    achievementCounts: Map<string, number>,
-    users: string[]
-  ) =>
+  create = async (args: CreateCheckin) =>
     this._db.action(async (action) => {
-      const newCheckin = await this._collection.create((m: any) => {
-        for (const property in insertProps) {
-          m[property] = insertProps[property];
+      const {
+        insertProps,
+        achievementCounts,
+        users,
+        isAdmin = false
+      } = args;
+      const newCheckin = await this._collection.create(
+        (m: Checkin) => {
+          for (const property in insertProps) {
+            m[property] = insertProps[property];
+          }
+          m.approved = isAdmin;
         }
-      });
+      );
 
       return this._db
         .batch(

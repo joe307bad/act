@@ -21,6 +21,7 @@ import { isEmpty } from 'lodash';
 import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { onChange } from 'react-native-reanimated';
 
 export type SelectedOption = {
   id: string;
@@ -44,6 +45,9 @@ type CommonSelectorProps = Partial<{
   inlineTags?: boolean;
   showInfoButton?: boolean;
   onInfoButtonPress?: () => void;
+  onSelectorChange?: (
+    selectedItems: Set<string> | Map<string, number>
+  ) => void;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -83,7 +87,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
     showPointCount,
     inlineTags,
     showInfoButton,
-    onInfoButtonPress
+    onSelectorChange
   } = props;
 
   const theme = useTheme();
@@ -127,6 +131,23 @@ function Selector<T extends BaseModel, C extends Category = null>(
     if (showPointCount) {
       setPointsCount(calculatePointsTotal(selected));
     }
+    listType === 'TABBED_LIST' &&
+      onSelectorChange(
+        new Map(
+          Array.from(selected).map(([id, selectedOption]) => [
+            id,
+            selectedOption.count
+          ])
+        )
+      );
+    listType === 'OPTION_LIST' &&
+      onSelectorChange(
+        new Set(
+          Array.from(selected).map(
+            ([id, selectedOption]) => selectedOption.id
+          )
+        )
+      );
   }, [selected]);
 
   useEffect(() => {

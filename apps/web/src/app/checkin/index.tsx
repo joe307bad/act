@@ -34,23 +34,23 @@ export const Checkin: FC<CheckinProps> = ({
             );
             const onSumbit = () => {
               selectedCheckin
-                ? db.models.checkins.edit(
-                    selectedCheckin,
-                    {
+                ? db.models.checkins.edit({
+                    id: selectedCheckin,
+                    editProps: {
                       note: note.get,
                       approved: approved.get
                     },
                     achievementCounts,
-                    users.get
-                  )
-                : db.models.checkins.create(
-                    {
+                    users: users.get
+                  })
+                : db.models.checkins.create({
+                    insertProps: {
                       note: note.get,
                       approved: approved.get
                     },
                     achievementCounts,
-                    Array.from(users.get.keys())
-                  );
+                    users: Array.from(users.get.keys())
+                  });
             };
             return (
               <MUI.Paper
