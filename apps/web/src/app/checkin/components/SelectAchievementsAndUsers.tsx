@@ -1,6 +1,10 @@
 import React, { FC, useContext, useEffect } from 'react';
 import * as MUI from '@material-ui/core';
-import { Achievement, AchievementCategory } from '@act/data/core';
+import {
+  Achievement,
+  AchievementCategory,
+  User
+} from '@act/data/core';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import db from '@act/data/web';
 import { HeaderWithTags } from './HeaderWithTags';
@@ -72,6 +76,7 @@ export const SelectAchievementsAndUsersComponent = ({
     'achievements',
     ['name']
   );
+  const users: User[] = db.useCollection('users', ['full_name']);
   const [activeTab, setActiveTab] = React.useState(0);
   const { model, achievementCounts } = useContext(CheckinContext);
   const { achievements: selectedAchievements, users: selectedUsers } =
@@ -96,7 +101,7 @@ export const SelectAchievementsAndUsersComponent = ({
     achievementCounts.set(newAchievementCounts);
 
     selectedUsers.set(
-      new Map(savedUsers.map((su) => [su.userId, null]))
+      new Map(savedUsers.map((su) => [su.userId, su.name]))
     );
 
     model.note.set(checkin.note);
@@ -203,7 +208,7 @@ export const SelectAchievementsAndUsersComponent = ({
         style={{ height: '100%' }}
         index={1}
       >
-        <CheckinUserSelector />
+        <CheckinUserSelector existingUsers={users} />
       </TabPanel>
     </MUI.Paper>
   );

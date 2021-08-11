@@ -17,9 +17,9 @@ type SelectedItem = {
 };
 
 export type CreateCheckin = {
-  insertProps: Partial<Omit<Checkin, 'achievements' | 'users'>>;
-  achievementCounts: Map<string, number>;
-  users: string[];
+  insertProps?: Partial<Omit<Checkin, 'achievements' | 'users'>>;
+  achievementCounts?: Map<string, number>;
+  users?: string[];
   isAdmin?: boolean;
 };
 
@@ -210,35 +210,41 @@ export class CheckinsService extends BaseService<Checkin> {
         users,
         isAdmin = false
       } = args;
+
       const newCheckin = await this._collection.create(
         (m: Checkin) => {
-          for (const property in insertProps) {
-            m[property] = insertProps[property];
+          if (insertProps) {
+            for (const property in insertProps) {
+              m[property] = insertProps[property];
+            }
           }
           m.approved = isAdmin;
         }
       );
 
-      return this._db
-        .batch(
-          ...Array.from(achievementCounts).map(([aid, count]) =>
-            this._checkinAchievementCollection.prepareCreate(
-              (m: CheckinAchievement) => {
-                m.checkinId = newCheckin.id;
-                m.achievementId = aid;
-                m.count = count;
-              }
+      return this._db.batch(
+        ...(achievementCounts
+          ? Array.from(achievementCounts).map(([aid, count]) =>
+              this._checkinAchievementCollection.prepareCreate(
+                (m: CheckinAchievement) => {
+                  m.checkinId = newCheckin.id;
+                  m.achievementId = aid;
+                  m.count = count;
+                }
+              )
             )
-          ),
-          ...users.map((uid) =>
-            this._checkinUserCollection.prepareCreate(
-              (m: CheckinUser) => {
-                m.checkinId = newCheckin.id;
-                m.userId = uid;
-              }
+          : []),
+        ...(users
+          ? users.map((uid) =>
+              this._checkinUserCollection.prepareCreate(
+                (m: CheckinUser) => {
+                  m.checkinId = newCheckin.id;
+                  m.userId = uid;
+                }
+              )
             )
-          )
-        )
-        .then(() => this._sync?.sync());
+          : [])
+      );
+      //.then(() => this._sync?.sync());
     });
 }

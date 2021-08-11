@@ -44,6 +44,11 @@
     "mockingbird-ts": "*",
     "react-native-material-chip": "*",
     "react-native-responsive-screen": "*",
-    "react-native-multithreading": "*"
+    "react-native-multithreading": "*",
+    "react-native-progress": "*",
+    "react-native-svg": "*",
+    "use-interval": "*",
+    "react-native-confetti": "*",
+    "lottie-react-native": "*"
   }
 }

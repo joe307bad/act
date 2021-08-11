@@ -12,7 +12,7 @@ const AwesomeButton = ({ children, onPress, disabled = false }) => {
       stretch
       backgroundColor={disabled ? '#676B6D' : colors.primary}
       backgroundDarker="#3809C3"
-      onNativePress={onPress}
+      onNativePress={() => !disabled && onPress()}
       disabled={disabled}
     >
       <Headline style={{ color: 'white' }}>{children}</Headline>
@@ -34,7 +34,7 @@ export const AwesomeButtonMedium = ({
       stretch
       backgroundColor={disabled ? '#676B6D' : colors.primary}
       backgroundDarker="#3809C3"
-      onNativePress={onPress}
+      onNativePress={() => !disabled && onPress()}
       height={50}
       style={style}
       disabled={disabled}

@@ -8,6 +8,7 @@ target 'Mobile' do
   config = use_native_modules!
   puts config
   use_react_native!(:path => config[:reactNativePath])
+  pod 'React-jsi', :path => '../../../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
 
   use_flipper!
   post_install do |installer|

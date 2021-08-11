@@ -19,8 +19,7 @@ const usersColumns: GridColDef[] = [
   }
 ];
 
-export const CheckinUserSelector = () => {
-  const users: User[] = db.useCollection('users', ['name']);
+export const CheckinUserSelector = ({ existingUsers }) => {
   const { model } = useContext(CheckinContext);
   const { users: selectedUsers } = model;
 
@@ -34,15 +33,15 @@ export const CheckinUserSelector = () => {
       <div style={{ height: 'calc(100% - 75px)' }}>
         <DataGrid
           editMode="client"
-          rows={users}
+          rows={existingUsers}
           columns={usersColumns}
           selectionModel={Array.from(selectedUsers.get.keys())}
           onSelectionModelChange={({ selectionModel }) => {
-            users.length &&
+            existingUsers.length &&
               selectedUsers.set(
                 new Map(
                   selectionModel.map((nsm) => {
-                    const u = users.find((a) => a.id === nsm);
+                    const u = existingUsers.find((a) => a.id === nsm);
                     return [
                       nsm.toString(),
                       { id: u.id, name: u.username }
