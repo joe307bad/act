@@ -19,9 +19,7 @@
 - ✅ **[MOBILE]** - Text search for Achievement Selector
 - ✅ **[MOBILE]** - Info icons to see Achievement description
 - ✅ **[MOBILE]** - Field for note
-- [ ] **[MOBILE]** - Field for approved (non-admins default to false), and submit for creation
-    - Can we do some sort of checkin receipt upon creation?
-    - Maybe a little modal that dismisses itself after a couple seconds?
+- ✅ **[MOBILE]** - Field for approved (non-admins default to false), submit for creation, and checkin success modal
 
 #### Checkin/Feed
 

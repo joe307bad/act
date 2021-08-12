@@ -1,12 +1,11 @@
 import {
   Achievement,
   AchievementCategory,
-  Checkin,
   User
 } from '@act/data/core';
 import db, { useActAuth } from '@act/data/rn';
 import Selector from '../shared/components/Selector';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { groupBy, toPairs } from 'lodash';
 import { ScrollView } from 'react-native';
 import { Row, Rows, Stack } from '@mobily/stacks';
@@ -41,6 +40,18 @@ const CheckinBuilder: FC = () => {
   achievementsByCategory.push(['All', achievements]);
 
   const [checkin, setCheckin] = useState<CreateCheckin>();
+  const [checkinCreated, setCheckinCreated] = useState(false);
+  const [numberOfAchievements, setNumberOfAchievements] = useState(0);
+
+  useEffect(() => {
+    checkin?.achievementCounts &&
+      setNumberOfAchievements(
+        Array.from(checkin?.achievementCounts).reduce((acc, item) => {
+          const [id, count] = item;
+          return acc + count;
+        }, 0)
+      );
+  }, [checkin?.achievementCounts]);
 
   return (
     <>
@@ -63,7 +74,7 @@ const CheckinBuilder: FC = () => {
                   <TextInput
                     textAlign="left"
                     label="Checkin Note"
-                    value={checkin?.insertProps?.note}
+                    value={checkin?.insertProps?.note || ''}
                     mode="outlined"
                     theme={{
                       fonts: {
@@ -83,6 +94,7 @@ const CheckinBuilder: FC = () => {
               </Card>
               <Selector<Achievement, AchievementCategory>
                 data={achievements}
+                value={checkin?.achievementCounts}
                 categories={categories}
                 single="Achievement"
                 plural="Achievements"
@@ -97,12 +109,20 @@ const CheckinBuilder: FC = () => {
                 showInfoButton={true}
                 onInfoButtonPress={() => {}}
                 onSelectorChange={(
-                  achievementCounts: Map<string, number>
-                ) => setCheckin({ ...checkin, achievementCounts })}
+                  achievementCounts: Map<string, number>,
+                  points: number
+                ) =>
+                  setCheckin({
+                    ...checkin,
+                    achievementCounts,
+                    points
+                  })
+                }
               />
               {currentUser?.admin && (
                 <Selector<User>
                   data={users}
+                  value={checkin?.users}
                   defaultSelected={defaultSelectedUser}
                   single="User"
                   plural="Users"
@@ -125,13 +145,42 @@ const CheckinBuilder: FC = () => {
         </Row>
         <Row padding={1} height="content">
           <AwesomeButtonMedium
-            onPress={() => db.models.checkins.create(checkin)}
+            onPress={async () => {
+              const newCheckinCreated =
+                await db.models.checkins.create(checkin);
+              setCheckin({
+                ...checkin,
+                created: newCheckinCreated
+              });
+              setCheckinCreated(true);
+            }}
           >
             Create Checkin
           </AwesomeButtonMedium>
         </Row>
       </Rows>
-      <CheckinSuccess />
+      <CheckinSuccess
+        visible={checkinCreated}
+        onDismiss={() => {
+          setCheckinCreated(false);
+          setCheckin({
+            ...checkin,
+            achievementCounts: new Map(),
+            users: defaultSelectedUser
+              ? Array.from(defaultSelectedUser.values()).map(
+                  (u) => u.id
+                )
+              : [],
+            points: 0,
+            insertProps: undefined
+          });
+        }}
+        numberOfAchievements={numberOfAchievements || 0}
+        points={checkin?.points || 0}
+        timestamp={checkin?.created}
+        note={checkin?.insertProps?.note}
+        userCount={checkin?.users?.length}
+      />
     </>
   );
 };

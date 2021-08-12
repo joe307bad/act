@@ -21,7 +21,6 @@ import { isEmpty } from 'lodash';
 import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { onChange } from 'react-native-reanimated';
 
 export type SelectedOption = {
   id: string;
@@ -46,8 +45,10 @@ type CommonSelectorProps = Partial<{
   showInfoButton?: boolean;
   onInfoButtonPress?: () => void;
   onSelectorChange?: (
-    selectedItems: Set<string> | Map<string, number>
+    selectedItems: Set<string> | Map<string, number>,
+    points?: number
   ) => void;
+  value?: any;
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
@@ -87,7 +88,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
     showPointCount,
     inlineTags,
     showInfoButton,
-    onSelectorChange
+    onSelectorChange,
+    value
   } = props;
 
   const theme = useTheme();
@@ -111,6 +113,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
     name?: string;
     description?: string;
   }>({});
+  const [resetting, setResetting] = useState(false);
 
   const calculatePointsTotal = (s: Map<string, SelectedOption>) =>
     Array.from(s).reduce((acc, ps) => {
@@ -128,18 +131,25 @@ function Selector<T extends BaseModel, C extends Category = null>(
   }, [debouncedPendingSelected]);
 
   useEffect(() => {
-    if (showPointCount) {
-      setPointsCount(calculatePointsTotal(selected));
+    if (resetting) {
+      setResetting(false);
+      return;
     }
-    listType === 'TABBED_LIST' &&
-      onSelectorChange(
-        new Map(
-          Array.from(selected).map(([id, selectedOption]) => [
-            id,
-            selectedOption.count
-          ])
-        )
-      );
+
+    if (showPointCount) {
+      const points = calculatePointsTotal(selected);
+      setPointsCount(points);
+      listType === 'TABBED_LIST' &&
+        onSelectorChange(
+          new Map(
+            Array.from(selected).map(([id, selectedOption]) => [
+              id,
+              selectedOption.count
+            ])
+          ),
+          points
+        );
+    }
     listType === 'OPTION_LIST' &&
       onSelectorChange(
         new Set(
@@ -149,6 +159,24 @@ function Selector<T extends BaseModel, C extends Category = null>(
         )
       );
   }, [selected]);
+
+  useEffect(() => {
+    if (typeof value !== 'undefined') {
+      if (listType === 'TABBED_LIST' && value?.size === 0) {
+        setResetting(true);
+        setPointsCount(0);
+        setPendingPointsCount(0);
+        setSelected(new Map());
+      }
+      if (
+        listType === 'OPTION_LIST' &&
+        value?.length === defaultSelected?.size
+      ) {
+        setResetting(true);
+        setSelected(defaultSelected || new Map());
+      }
+    }
+  }, [value]);
 
   useEffect(() => {
     if (isEmpty(debouncedSearchCriteria)) {

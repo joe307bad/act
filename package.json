@@ -57,6 +57,7 @@
     "bs-fetch": "0.6.2",
     "change-case": "^4.1.2",
     "core-js": "^3.6.5",
+    "date-fns": "^2.23.0",
     "document-register-element": "1.13.1",
     "faker": "^5.5.3",
     "gentype": "^4.0.0",

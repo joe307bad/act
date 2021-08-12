@@ -1,5 +1,5 @@
 import { Column, Columns, FillView, Row, Rows } from '@mobily/stacks';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC } from 'react';
 import { Text } from 'react-native';
 import {
   Modal as PaperModal,
@@ -11,20 +11,25 @@ import {
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Chip from './Chip';
-import Confetti from 'react-native-confetti';
 
-const CardActions = ({ apply, onDismiss }) => {
+const CardActions = ({
+  apply,
+  onDismiss,
+  dismissText = undefined
+}) => {
   return (
     <Card.Actions>
       <Columns space={2}>
-        <Column>
-          <AwesomeButtonMedium onPress={apply}>
-            Apply
-          </AwesomeButtonMedium>
-        </Column>
+        {apply && (
+          <Column>
+            <AwesomeButtonMedium onPress={apply}>
+              Apply
+            </AwesomeButtonMedium>
+          </Column>
+        )}
         <Column>
           <AwesomeButtonMedium type="outlined" onPress={onDismiss}>
-            Cancel
+            {dismissText || 'Cancel'}
           </AwesomeButtonMedium>
         </Column>
       </Columns>
@@ -34,10 +39,10 @@ const CardActions = ({ apply, onDismiss }) => {
 
 type ModalProps = {
   visible: boolean;
-  apply: () => void;
+  apply?: () => void;
   onDismiss: () => void;
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
   fullHeight?: boolean;
   showPointCount?: boolean;
   pointsCount?: number;
@@ -47,6 +52,7 @@ type ModalProps = {
   selectedItemDescription?: string;
   selectedItemTitle?: string;
   closeSelectedItemInfo?: () => void;
+  dismissText?: string;
 };
 const Modal: FC<ModalProps> = ({
   visible,
@@ -63,7 +69,8 @@ const Modal: FC<ModalProps> = ({
   onSearchChange,
   selectedItemDescription,
   selectedItemTitle,
-  closeSelectedItemInfo
+  closeSelectedItemInfo,
+  dismissText
 }) => {
   return (
     <Portal>
@@ -82,26 +89,33 @@ const Modal: FC<ModalProps> = ({
               }}
             >
               <Rows>
-                <Row height="content">
-                  <Columns alignY="center" paddingRight={5}>
-                    <Column>
-                      <Card.Title title={title} subtitle={subtitle} />
-                    </Column>
-                    {showPointCount && (
-                      <Column width="content">
-                        <Chip title={pointsCount.toLocaleString()} />
+                {title && subtitle && (
+                  <Row height="content">
+                    <Columns alignY="center" paddingRight={5}>
+                      <Column>
+                        <Card.Title
+                          title={title}
+                          subtitle={subtitle}
+                        />
                       </Column>
+                      {showPointCount && (
+                        <Column width="content">
+                          <Chip
+                            title={pointsCount.toLocaleString()}
+                          />
+                        </Column>
+                      )}
+                    </Columns>
+                    {showSearchBar && (
+                      <Searchbar
+                        textAlign="left"
+                        placeholder="Search"
+                        onChangeText={onSearchChange}
+                        value={searchCriteria}
+                      />
                     )}
-                  </Columns>
-                  {showSearchBar && (
-                    <Searchbar
-                      textAlign="left"
-                      placeholder="Search"
-                      onChangeText={onSearchChange}
-                      value={searchCriteria}
-                    />
-                  )}
-                </Row>
+                  </Row>
+                )}
                 <Row>{children}</Row>
                 {selectedItemTitle && (
                   <Row
@@ -135,9 +149,21 @@ const Modal: FC<ModalProps> = ({
           }}
         >
           <Card style={{ margin: 10 }}>
-            <Card.Title title={title} subtitle={subtitle} />
-            <Card.Content>{children}</Card.Content>
-            <CardActions apply={apply} onDismiss={onDismiss} />
+            {title && subtitle && (
+              <Card.Title title={title} subtitle={subtitle} />
+            )}
+            <Rows>
+              <Row>
+                <Card.Content>{children}</Card.Content>
+              </Row>
+              <Row height="content">
+                <CardActions
+                  dismissText={dismissText}
+                  apply={apply}
+                  onDismiss={onDismiss}
+                />
+              </Row>
+            </Rows>
           </Card>
         </PaperModal>
       )}

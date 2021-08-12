@@ -1,6 +1,5 @@
 import { Achievement, BaseModel } from '@act/data/core';
 import React, {
-  Component,
   createContext,
   Dispatch,
   FC,
@@ -9,23 +8,13 @@ import React, {
   PureComponent,
   ReactElement,
   SetStateAction,
-  useContext,
   useEffect,
   useState
 } from 'react';
 import { Option } from './Selector/Option';
 import { SelectedOption } from './Selector';
-import {
-  useWindowDimensions,
-  FlatList,
-  GestureResponderEvent
-} from 'react-native';
-import {
-  TabView,
-  TabBar as TB,
-  SceneMap,
-  Route
-} from 'react-native-tab-view';
+import { useWindowDimensions, FlatList } from 'react-native';
+import { TabView, TabBar as TB } from 'react-native-tab-view';
 import { useTheme } from 'react-native-paper';
 import db from '@act/data/rn';
 
@@ -44,6 +33,7 @@ export type TabbedListProps<T, C> = {
   hiddenOptions?: Set<string>;
   showInfoButton?: boolean;
   setSelectedInfo?: (title: string, description: string) => void;
+  value?: any;
 };
 export type Category = { name: string } & BaseModel;
 

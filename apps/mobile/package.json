@@ -49,6 +49,7 @@
     "react-native-svg": "*",
     "use-interval": "*",
     "react-native-confetti": "*",
-    "lottie-react-native": "*"
+    "lottie-react-native": "*",
+    "date-fns": "*"
   }
 }

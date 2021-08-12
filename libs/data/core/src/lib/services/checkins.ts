@@ -21,6 +21,8 @@ export type CreateCheckin = {
   achievementCounts?: Map<string, number>;
   users?: string[];
   isAdmin?: boolean;
+  points?: number;
+  created?: Date;
 };
 
 @autoInjectable()
@@ -202,7 +204,7 @@ export class CheckinsService extends BaseService<Checkin> {
 
   find = async (id: string) => this._collection.find(id);
 
-  create = async (args: CreateCheckin) =>
+  create = async (args: CreateCheckin): Promise<Date> =>
     this._db.action(async (action) => {
       const {
         insertProps,
@@ -222,29 +224,30 @@ export class CheckinsService extends BaseService<Checkin> {
         }
       );
 
-      return this._db.batch(
-        ...(achievementCounts
-          ? Array.from(achievementCounts).map(([aid, count]) =>
-              this._checkinAchievementCollection.prepareCreate(
-                (m: CheckinAchievement) => {
-                  m.checkinId = newCheckin.id;
-                  m.achievementId = aid;
-                  m.count = count;
-                }
+      return this._db
+        .batch(
+          ...(achievementCounts
+            ? Array.from(achievementCounts).map(([aid, count]) =>
+                this._checkinAchievementCollection.prepareCreate(
+                  (m: CheckinAchievement) => {
+                    m.checkinId = newCheckin.id;
+                    m.achievementId = aid;
+                    m.count = count;
+                  }
+                )
               )
-            )
-          : []),
-        ...(users
-          ? users.map((uid) =>
-              this._checkinUserCollection.prepareCreate(
-                (m: CheckinUser) => {
-                  m.checkinId = newCheckin.id;
-                  m.userId = uid;
-                }
+            : []),
+          ...(users
+            ? users.map((uid) =>
+                this._checkinUserCollection.prepareCreate(
+                  (m: CheckinUser) => {
+                    m.checkinId = newCheckin.id;
+                    m.userId = uid;
+                  }
+                )
               )
-            )
-          : [])
-      );
-      //.then(() => this._sync?.sync());
+            : [])
+        )
+        .then(() => newCheckin.createdAt);
     });
 }
