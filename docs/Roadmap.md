@@ -21,6 +21,11 @@
 - ✅ **[MOBILE]** - Field for note
 - ✅ **[MOBILE]** - Field for approved (non-admins default to false), submit for creation, and checkin success modal
 
+#### Leaderboard
+
+- ✅ **[MOBILE]** - List of user sorted by most points to least points
+- [ ] **[MOBILE]** - Ability to select user and see their checkins
+
 #### Checkin/Feed
 
 - [ ] **[MOBILE] + [WEB]** - View a users checkins (most likely from the leaderboard on mobile)
@@ -33,13 +38,6 @@
 - [ ] **[MOBILE]** - List of achievements in tabbed category view, ability to select 1 and checkin to it
 - [ ] **[MOBILE]** - Ability to search list of achievements
 
-#### Leaderboard
-
-- [ ] **[MOBILE]** - List of user sorted by most points to least points
-  - This will probably involve `useCollection('checkin_achievements')` because that will give us the updated data to recalculate the leaderboard points
-  - We also want to add `totalPoints` to the `checkins` unit. Any time a checkin is updated/inserted, this property is calculcated
-- [ ] **[MOBILE]** - Ability to select user and see their checkins
-
 #### Deployment
 
 - [ ] **[WEB]** - Make `db.seed` method to seed achievements and achievement categories
@@ -50,6 +48,7 @@
 
 #### Distribution
 
+- [ ] **[MOBILE]** - Bugsnag
 - [ ] **[MOBILE]** - Get working on iOS lol
 - [ ] **[MOBILE]** - Bitrise pipeline that provides public links for Android/iOS downloads
 - [ ] **[OPS]** - Reslient and automated API + Keycloak + DB deployment

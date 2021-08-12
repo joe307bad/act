@@ -69,6 +69,11 @@ const SelectCategory = ({ id, value }) => {
 
 const columns: GridColDef[] = [
   {
+    field: 'id',
+    headerName: 'Id',
+    width: 200
+  },
+  {
     field: 'name',
     editable: true,
     headerName: 'Name',

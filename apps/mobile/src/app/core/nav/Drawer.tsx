@@ -93,6 +93,31 @@ const DrawerList: FC<
           </View>
         )}
       />
+      <List.Item
+        onPress={() => {
+          navigation.navigate('Entry', { screen: 'Leaderboard' });
+        }}
+        style={{
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.primary
+        }}
+        titleStyle={{ fontSize: 25 }}
+        title={'Leaderboard'}
+        description={'View users sorted by most points'}
+        left={(props) => (
+          <View
+            style={{
+              justifyContent: 'center'
+            }}
+          >
+            <MaterialCommunityIcons
+              name="format-list-numbered"
+              color={theme.colors.primary}
+              size={40}
+            />
+          </View>
+        )}
+      />
       <Stack space={2} padding={5}>
         <Box>
           <AwesomeButtonMedium onPress={() => db.sync()}>

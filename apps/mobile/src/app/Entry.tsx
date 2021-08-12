@@ -13,6 +13,8 @@ import CheckinBuilder from './screens/CheckinBuilder';
 import Achievements from './screens/Achievements';
 import db from '@act/data/rn';
 import { Provider } from 'react-native-paper';
+import Leaderboard from './screens/Leaderboard';
+import { StacksProvider } from '@mobily/stacks';
 
 const Stack = createStackNavigator();
 
@@ -54,7 +56,7 @@ var colors = {
 
 var theme = {
   roundness: 0,
-  dark: true,
+  dark: false,
   colors: colors,
   fonts: fonts,
   animation: animation
@@ -131,7 +133,7 @@ const EntryStack = () => {
   const theme = useTheme();
   return (
     <Stack.Navigator
-      initialRouteName="CheckinBuilder"
+      initialRouteName="Leaderboard"
       headerMode="float"
       screenOptions={{
         header: (props) => <NavBar {...props} theme={theme} />
@@ -147,15 +149,22 @@ const EntryStack = () => {
         options={{ title: 'Achievements' }}
         component={Achievements}
       />
+      <Stack.Screen
+        name="Leaderboard"
+        options={{ title: 'Leaderboard' }}
+        component={Leaderboard}
+      />
     </Stack.Navigator>
   );
 };
 
 const Entry = () => {
   return (
-    <Provider theme={theme}>
-      <EntryStack />
-    </Provider>
+    <StacksProvider debug={false}>
+      <Provider theme={theme}>
+        <EntryStack />
+      </Provider>
+    </StacksProvider>
   );
 };
 

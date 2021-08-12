@@ -39,13 +39,15 @@ export const HeaderWithTags = ({
         <MUI.Chip
           color="primary"
           icon={<Icons.Add />}
-          label={Array.from(selected).reduce(
-            (acc: number, sa) =>
-              sa[1] !== null
-                ? (acc += (sa[1].count ?? 1) * sa[1].points)
-                : 1,
-            0
-          )}
+          label={Array.from(selected)
+            .reduce(
+              (acc: number, sa) =>
+                sa[1] !== null
+                  ? (acc += (sa[1].count ?? 1) * sa[1].points)
+                  : 1,
+              0
+            )
+            .toLocaleString()}
         />
       )}
     </div>

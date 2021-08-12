@@ -72,6 +72,11 @@ const Checkins = ({ open, openCheckin, onDismiss }) => {
 
 const columns: GridColDef[] = [
   {
+    field: 'id',
+    headerName: 'Id',
+    width: 200
+  },
+  {
     field: 'name',
     editable: true,
     headerName: 'Name',

@@ -50,6 +50,7 @@
     "use-interval": "*",
     "react-native-confetti": "*",
     "lottie-react-native": "*",
-    "date-fns": "*"
+    "date-fns": "*",
+    "recompose": "*"
   }
 }

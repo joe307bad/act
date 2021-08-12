@@ -53,7 +53,7 @@ export const CheckinSuccess = ({
           </Row>
           <Row paddingTop={5}>
             <Headline style={{ fontSize: 30, textAlign: 'center' }}>
-              Checkin Sucessfull!
+              Checkin Successful!
             </Headline>
           </Row>
           <Row>

@@ -13,6 +13,7 @@ export * from './achievement';
 export * from './achievement-category';
 export * from './user';
 export * from './checkin';
+export * from './checkin-user';
 export * from './base-model';
 
 const baseColumns = (schema: ColumnSchema[]): ColumnSchema[] => [
