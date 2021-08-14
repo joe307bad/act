@@ -34,6 +34,7 @@ export type TabbedListProps<T, C> = {
   showInfoButton?: boolean;
   setSelectedInfo?: (title: string, description: string) => void;
   value?: any;
+  onOptionSelect?: (achievement: Achievement) => void;
 };
 export type Category = { name: string } & BaseModel;
 
@@ -47,6 +48,7 @@ type TTabbedListOptionContext = {
   showInfoButton: boolean;
   setSelectedInfo: (title: string, description: string) => void;
   hiddenOptions: Set<string>;
+  onOptionSelect: (achievement: Achievement) => void;
 };
 const TabbedListOptionContext =
   createContext<TTabbedListOptionContext>({
@@ -58,7 +60,8 @@ const TabbedListOptionContext =
     showCountDropdown: false,
     showInfoButton: false,
     setSelectedInfo: (title: string, description: string) => {},
-    hiddenOptions: new Set()
+    hiddenOptions: new Set(),
+    onOptionSelect: (achievement: Achievement) => {}
   });
 
 const RenderItem: FC<{ item: Achievement }> = ({ item }) => {
@@ -74,7 +77,8 @@ const RenderItem: FC<{ item: Achievement }> = ({ item }) => {
         showCountDropdown,
         showInfoButton,
         setSelectedInfo,
-        hiddenOptions
+        hiddenOptions,
+        onOptionSelect
       }) =>
         hiddenOptions?.has(id) ? null : (
           <Option
@@ -91,6 +95,10 @@ const RenderItem: FC<{ item: Achievement }> = ({ item }) => {
               setSelectedInfo(name, description)
             }
             onPress={(e, count) => {
+              if (onOptionSelect) {
+                onOptionSelect(item);
+                return;
+              }
               if (count) {
                 const newCounts = new Map(itemsCounts);
                 newCounts.set(id, count);
@@ -153,7 +161,8 @@ export const TabbedListComponent: <
   showCountDropdown = false,
   hiddenOptions,
   showInfoButton,
-  setSelectedInfo
+  setSelectedInfo,
+  onOptionSelect
 }) => {
   const layout = useWindowDimensions();
   const { colors } = useTheme();
@@ -221,7 +230,8 @@ export const TabbedListComponent: <
         setSelectedInfo,
         showCountDropdown,
         showInfoButton,
-        hiddenOptions
+        hiddenOptions,
+        onOptionSelect
       }}
     >
       <TabView
@@ -237,7 +247,11 @@ export const TabbedListComponent: <
         navigationState={{ index, routes }}
         lazy={true}
         renderScene={({ route }) => (
-          <AchievementList route={route} data={data} />
+          <AchievementList
+            onOptionSelect={onOptionSelect}
+            route={route}
+            data={data}
+          />
         )}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}

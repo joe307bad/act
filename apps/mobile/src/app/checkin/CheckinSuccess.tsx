@@ -31,79 +31,75 @@ export const CheckinSuccess = ({
   }, [visible]);
 
   return (
-    <>
-      <Modal
-        dismissText="Reset"
-        onDismiss={onDismiss}
-        visible={visible}
-      >
-        <Rows>
-          <Row>
-            <View style={{ height: heightPercentageToDP(10) }}>
-              <LottieView
-                style={{
-                  marginTop: heightPercentageToDP(-1),
-                  marginBottom: heightPercentageToDP(-3),
-                  alignSelf: 'center'
-                }}
-                source={json}
-                progress={progress}
-              />
-            </View>
+    <Modal
+      dismissText="Reset"
+      onDismiss={onDismiss}
+      visible={visible}
+    >
+      <Rows>
+        <Row>
+          <View style={{ height: heightPercentageToDP(10) }}>
+            <LottieView
+              style={{
+                marginTop: heightPercentageToDP(-1),
+                marginBottom: heightPercentageToDP(-3),
+                alignSelf: 'center'
+              }}
+              source={json}
+              progress={progress}
+            />
+          </View>
+        </Row>
+        <Row paddingTop={5}>
+          <Headline style={{ fontSize: 30, textAlign: 'center' }}>
+            Checkin Successful!
+          </Headline>
+        </Row>
+        <Row>
+          <Columns>
+            <Column>
+              <Title style={{ alignSelf: 'center' }}>
+                {points.toLocaleString()}{' '}
+                {`point${points > 1 || points === 0 ? 's' : ''}`}
+              </Title>
+            </Column>
+            <Column>
+              <Title
+                numberOfLines={1}
+                style={{ alignSelf: 'center' }}
+              >
+                {numberOfAchievements}{' '}
+                {`achievement${
+                  numberOfAchievements > 1 ||
+                  numberOfAchievements === 0
+                    ? 's'
+                    : ''
+                }`}
+              </Title>
+            </Column>
+            <Column>
+              <Title style={{ alignSelf: 'center' }}>
+                {userCount}{' '}
+                {`user${userCount > 1 || userCount === 0 ? 's' : ''}`}
+              </Title>
+            </Column>
+          </Columns>
+        </Row>
+        <Row paddingBottom={note ? 0 : 5}>
+          <Headline style={{ fontSize: 30, textAlign: 'center' }}>
+            {timestamp && format(timestamp, 'EEE MMM do @ pp')}
+          </Headline>
+        </Row>
+        {note !== '' && note && (
+          <Row paddingBottom={6}>
+            <Surface style={{ elevation: 2 }}>
+              <Box padding={5}>
+                <Text>{note}</Text>
+              </Box>
+            </Surface>
           </Row>
-          <Row paddingTop={5}>
-            <Headline style={{ fontSize: 30, textAlign: 'center' }}>
-              Checkin Successful!
-            </Headline>
-          </Row>
-          <Row>
-            <Columns>
-              <Column>
-                <Title style={{ alignSelf: 'center' }}>
-                  {points.toLocaleString()}{' '}
-                  {`point${points > 1 || points === 0 ? 's' : ''}`}
-                </Title>
-              </Column>
-              <Column>
-                <Title
-                  numberOfLines={1}
-                  style={{ alignSelf: 'center' }}
-                >
-                  {numberOfAchievements}{' '}
-                  {`achievement${
-                    numberOfAchievements > 1 ||
-                    numberOfAchievements === 0
-                      ? 's'
-                      : ''
-                  }`}
-                </Title>
-              </Column>
-              <Column>
-                <Title style={{ alignSelf: 'center' }}>
-                  {userCount}{' '}
-                  {`user${
-                    userCount > 1 || userCount === 0 ? 's' : ''
-                  }`}
-                </Title>
-              </Column>
-            </Columns>
-          </Row>
-          <Row paddingBottom={note ? 0 : 5}>
-            <Headline style={{ fontSize: 30, textAlign: 'center' }}>
-              {timestamp && format(timestamp, 'EEE MMM do @ pp')}
-            </Headline>
-          </Row>
-          {note && (
-            <Row paddingBottom={6}>
-              <Surface style={{ elevation: 2 }}>
-                <Box padding={5}>
-                  <Text>{note}</Text>
-                </Box>
-              </Surface>
-            </Row>
-          )}
-        </Rows>
-      </Modal>
-    </>
+        )}
+      </Rows>
+    </Modal>
   );
 };

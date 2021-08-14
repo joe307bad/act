@@ -42,7 +42,8 @@ const CheckinBuilder: FC = () => {
   const [checkin, setCheckin] = useState<CreateCheckin>({
     users: Array.from(defaultSelectedUser.values()).map(
       ({ id }) => id
-    )
+    ),
+    isAdmin: currentUser.admin
   });
   const [checkinCreated, setCheckinCreated] = useState(false);
   const [numberOfAchievements, setNumberOfAchievements] = useState(0);

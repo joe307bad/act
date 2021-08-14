@@ -24,6 +24,7 @@
 #### Leaderboard
 
 - ✅ **[MOBILE]** - List of user sorted by most points to least points
+- [ ] **[MOBILE]** - Filter out checkins that have yet to be Approved
 - [ ] **[MOBILE]** - Ability to select user and see their checkins
 
 #### Checkin/Feed
@@ -35,7 +36,7 @@
 
 #### Achievements
 
-- [ ] **[MOBILE]** - List of achievements in tabbed category view, ability to select 1 and checkin to it
+- ✅ **[MOBILE]** - List of achievements in tabbed category view, ability to select 1 and checkin to it
 - [ ] **[MOBILE]** - Ability to search list of achievements
 
 #### Deployment

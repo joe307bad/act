@@ -127,7 +127,6 @@ const Leaderboard: FC<{
   const [sortedUsers, setSortedUsers] = useState<SortedUser[]>([]);
 
   useEffect(() => {
-    debugger;
     setSortedUsers(
       users
         .map((u) => {

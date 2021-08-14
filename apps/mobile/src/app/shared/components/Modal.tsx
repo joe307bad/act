@@ -15,7 +15,8 @@ import Chip from './Chip';
 const CardActions = ({
   apply,
   onDismiss,
-  dismissText = undefined
+  dismissText = undefined,
+  applyText = undefined
 }) => {
   return (
     <Card.Actions>
@@ -23,7 +24,7 @@ const CardActions = ({
         {apply && (
           <Column>
             <AwesomeButtonMedium onPress={apply}>
-              Apply
+              {applyText || 'Apply'}
             </AwesomeButtonMedium>
           </Column>
         )}
@@ -53,6 +54,8 @@ type ModalProps = {
   selectedItemTitle?: string;
   closeSelectedItemInfo?: () => void;
   dismissText?: string;
+  applyText?: string;
+  showEntireHeadline?: boolean;
 };
 const Modal: FC<ModalProps> = ({
   visible,
@@ -70,7 +73,9 @@ const Modal: FC<ModalProps> = ({
   selectedItemDescription,
   selectedItemTitle,
   closeSelectedItemInfo,
-  dismissText
+  dismissText,
+  applyText,
+  showEntireHeadline
 }) => {
   return (
     <Portal>
@@ -89,7 +94,7 @@ const Modal: FC<ModalProps> = ({
               }}
             >
               <Rows>
-                {title && subtitle && (
+                {title && (
                   <Row height="content">
                     <Columns alignY="center" paddingRight={5}>
                       <Column>
@@ -149,8 +154,24 @@ const Modal: FC<ModalProps> = ({
           }}
         >
           <Card style={{ margin: 10 }}>
-            {title && subtitle && (
-              <Card.Title title={title} subtitle={subtitle} />
+            {title && (
+              <Columns alignY="center" paddingRight={5}>
+                <Column
+                  paddingRight={2}
+                  paddingTop={showEntireHeadline ? 2 : 0}
+                >
+                  <Card.Title
+                    title={title}
+                    subtitle={subtitle}
+                    titleNumberOfLines={showEntireHeadline ? 99 : 1}
+                  />
+                </Column>
+                {showPointCount && (
+                  <Column width="content">
+                    <Chip title={pointsCount.toLocaleString()} />
+                  </Column>
+                )}
+              </Columns>
             )}
             <Rows>
               <Row>
@@ -158,6 +179,7 @@ const Modal: FC<ModalProps> = ({
               </Row>
               <Row height="content">
                 <CardActions
+                  applyText={applyText}
                   dismissText={dismissText}
                   apply={apply}
                   onDismiss={onDismiss}
