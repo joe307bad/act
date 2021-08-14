@@ -24,7 +24,7 @@
 #### Leaderboard
 
 - ✅ **[MOBILE]** - List of user sorted by most points to least points
-- [ ] **[MOBILE]** - Filter out checkins that have yet to be Approved
+- ✅ **[MOBILE]** - Filter out checkins that have yet to be Approved
 - [ ] **[MOBILE]** - Ability to select user and see their checkins
 
 #### Checkin/Feed

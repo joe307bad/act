@@ -213,10 +213,17 @@ export default withObservables([''], () => ({
   checkins: db.get
     .get<Checkin>('checkins')
     .query()
-    .observe()
+    .observeWithColumns(['approved'])
     .pipe(
       map((cs) => {
-        return new Set(cs.map((c) => c.id));
+        return new Set(
+          cs.reduce((acc, c) => {
+            if (!c.approved) {
+              return acc;
+            }
+            return acc.add(c.id);
+          }, new Set())
+        );
       })
     ),
   userCheckins: db.get
