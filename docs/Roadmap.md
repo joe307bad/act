@@ -56,6 +56,7 @@
 
 ## Beyond
 
+- [ ] **[MOBILE] [WEB] [API]** - Access control layer/RBAC
 - [ ] **[MOBILE] [WEB] [OPS]** - Live feed of checkins with web sockets
 - [ ] **[MOBILE] [WEB] [OPS]** - Photo uploads as seperate entities and attached to checkins
 - [ ] **[MOBILE]** - More advanced stats on checkins (checkins per hour, checkins per day, who has the most points in a specific time frame, etc.)
