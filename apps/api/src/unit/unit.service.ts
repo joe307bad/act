@@ -30,7 +30,7 @@ export class UnitsService {
       .find({
         selector: {
           type: { $eq: type },
-          created_at: { $gt: timestamp },
+          created_on_server: { $gt: timestamp },
           deleted: { $or: [{ $eq: false }, { $exists: false }] }
         }
       })
@@ -71,7 +71,7 @@ export class UnitsService {
       .find({
         selector: {
           type: { $eq: type },
-          created_at: { $gt: timestamp }
+          created_on_server: { $gt: timestamp }
         }
       })
       .then((response) =>
@@ -98,7 +98,7 @@ export class UnitsService {
           type: { $eq: type },
           _id: { $nin: c },
           deleted: { $eq: false },
-          updated_at: { $gt: timestamp }
+          updated_on_server: { $gt: timestamp }
         }
       })
       .then((response) =>

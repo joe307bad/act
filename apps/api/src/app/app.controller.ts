@@ -84,7 +84,9 @@ export class AppController {
     @Body() changes: SyncDatabaseChangeSet,
     @Query() query: Record<string, any>
   ) {
-    const { last_pulled_at } = query;
+    // TODO does this need to be used? lol
+    let { last_pulled_at } = query;
+    last_pulled_at = Number(last_pulled_at);
     try {
       for (const table in changes) {
         for (const changeType in changes[table]) {
@@ -95,6 +97,7 @@ export class AppController {
                 delete unit._status;
                 delete unit._changed;
                 unit._id = unit.id;
+                unit.created_on_server = last_pulled_at;
                 delete unit.id;
                 this.unitService
                   .create({ type: table, ...unit })
@@ -112,6 +115,7 @@ export class AppController {
                 delete unit._status;
                 delete unit._changed;
                 unit._id = unit.id;
+                unit.updated_on_server = last_pulled_at;
                 delete unit.id;
                 this.unitService
                   .update({ type: table, ...unit })
@@ -132,7 +136,11 @@ export class AppController {
                 this.unitService
                   .update({
                     type: table,
-                    ...{ _id: id, deleted: true }
+                    ...{
+                      _id: id,
+                      deleted: true,
+                      updated_on_server: last_pulled_at
+                    }
                   })
                   .catch((e) => {
                     throw new HttpException(
