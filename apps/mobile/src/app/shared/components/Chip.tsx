@@ -7,7 +7,8 @@ const Chip = ({
   title,
   onDelete = undefined,
   style = undefined,
-  count = undefined
+  count = undefined,
+  icon = 'plus-circle'
 }) => {
   const theme = useTheme();
   return (
@@ -25,7 +26,7 @@ const Chip = ({
         alignContent: 'center',
         justifyContent: 'center'
       }}
-      icon="plus-circle"
+      icon={icon}
       mode="outlined"
     >
       <Columns>

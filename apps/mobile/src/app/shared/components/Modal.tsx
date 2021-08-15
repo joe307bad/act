@@ -137,7 +137,11 @@ const Modal: FC<ModalProps> = ({
                   </Row>
                 )}
                 <Row height="content">
-                  <CardActions apply={apply} onDismiss={onDismiss} />
+                  <CardActions
+                    apply={apply}
+                    onDismiss={onDismiss}
+                    dismissText={dismissText}
+                  />
                 </Row>
               </Rows>
             </Card>

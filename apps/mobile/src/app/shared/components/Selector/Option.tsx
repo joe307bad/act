@@ -25,6 +25,7 @@ export const Option: FC<{
   onInfoButtonPress?: () => void;
   points?: number;
   onPress?: (e: GestureResponderEvent, count?: number) => void;
+  fixedCount?: number;
 }> = ({
   title,
   disableSelection,
@@ -34,7 +35,8 @@ export const Option: FC<{
   showInfoButton,
   onInfoButtonPress,
   points,
-  onPress
+  onPress,
+  fixedCount
 }) => {
   const theme = useTheme();
 
@@ -84,6 +86,11 @@ export const Option: FC<{
                   <Picker.Item label="8" value="8" />
                   <Picker.Item label="9" value="9" />
                 </Picker>
+              </Column>
+            )}
+            {!!fixedCount && (
+              <Column width="content">
+                <Chip title={fixedCount} icon="multiplication-box" />
               </Column>
             )}
             {!!points && (

@@ -25,14 +25,14 @@
 
 - ✅ **[MOBILE]** - List of user sorted by most points to least points
 - ✅ **[MOBILE]** - Filter out checkins that have yet to be Approved
-- [ ] **[MOBILE]** - Ability to select user and see their checkins
+- ✅ **[MOBILE]** - Ability to select user and see their Achievements/Achievement Count
 
 #### Checkin/Feed
 
-- [ ] **[MOBILE] + [WEB]** - View a users checkins (most likely from the leaderboard on mobile)
+- [ ] **[MOBILE]** - List of checkins with pending approvals + way to approve all pending checkins
+- [ ] **[MOBILE] + [WEB]** - View a users checkin feed
 - [ ] **[MOBILE]** - Ability to see a feed of checkins sorted by most recent to oldest
 - [ ] **[MOBILE]** - Admins should be able to delete checkins from the feed
-- [ ] **[MOBILE]** - List of checkins with pending approvals + way to approve all pending checkins
 
 #### Achievements
 

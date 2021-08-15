@@ -15,7 +15,8 @@ export const CheckinSuccess = ({
   numberOfAchievements,
   timestamp,
   note = undefined,
-  userCount
+  userCount,
+  dismissText = undefined
 }) => {
   const [progress, setProgress] = useState(new Animated.Value(0));
 
@@ -32,7 +33,7 @@ export const CheckinSuccess = ({
 
   return (
     <Modal
-      dismissText="Reset"
+      dismissText={dismissText || 'Reset'}
       onDismiss={onDismiss}
       visible={visible}
     >

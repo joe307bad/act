@@ -66,6 +66,7 @@ const Achievements: FC = () => {
         timestamp={confirmedCheckin?.created}
         note={confirmedCheckin?.insertProps?.note ?? ''}
         userCount={confirmedCheckin?.users?.length}
+        dismissText="Dismiss"
       />
     </>
   );
