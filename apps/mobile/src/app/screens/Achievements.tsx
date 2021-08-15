@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import {
   Achievement,
   AchievementCategory,
@@ -8,6 +8,9 @@ import { TabbedList } from '../shared/components/TabbedList';
 import { SingleCheckin } from '../checkin/SingleCheckin';
 import db, { useActAuth } from '@act/data/rn';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
+import { HeaderContext } from '../Entry';
+import { useDebounce } from '../shared/hooks/useDebounce';
+import { isEmpty } from 'lodash';
 
 const Achievements: FC = () => {
   const achievements = db.useCollection<Achievement>('achievements', [
@@ -25,10 +28,38 @@ const Achievements: FC = () => {
   const [confirmedCheckin, setConfirmedCheckin] =
     useState<CreateCheckin>();
 
+  const { searchCriteria, setSearchCriteria } =
+    useContext(HeaderContext);
+  const debouncedSearchCriteria = useDebounce(searchCriteria, 500);
+  const [hiddenOptions, setHiddenOptions] = useState(
+    new Set<string>()
+  );
+
+  useEffect(() => {
+    if (isEmpty(debouncedSearchCriteria)) {
+      setHiddenOptions(new Set());
+    } else {
+      setHiddenOptions(
+        new Set(
+          achievements
+            .filter(
+              (a) =>
+                a.name
+                  .toUpperCase()
+                  .search(debouncedSearchCriteria.toUpperCase()) ===
+                -1
+            )
+            .map((a) => a.id)
+        )
+      );
+    }
+  }, [debouncedSearchCriteria, achievements]);
+
   return (
     <>
       <TabbedList<Achievement, AchievementCategory>
         data={achievements}
+        hiddenOptions={hiddenOptions}
         categories={categories}
         optionTitleProperty={'name'}
         onOptionSelect={(achievement) =>

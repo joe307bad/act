@@ -29,6 +29,8 @@ export const HeaderContext =
     setExcludedPendingApprovals: React.Dispatch<
       React.SetStateAction<Set<string>>
     >;
+    searchCriteria: string;
+    setSearchCriteria: React.Dispatch<React.SetStateAction<string>>;
   }>(undefined);
 
 var fontFamily = 'Bebas-Regular';
@@ -80,9 +82,11 @@ const NavBar: (
 ) => ReactElement = ({ scene, previous, navigation }) => {
   const [showSearch, setShowSearch] = useState<boolean>(false);
 
-  // TODO this search criteria should sort the achievements list
-  const [searchCriteria, setSearchCriteria] = useState<string>('');
-  const { excludedPendingApprovals } = useContext(HeaderContext);
+  const {
+    excludedPendingApprovals,
+    searchCriteria,
+    setSearchCriteria
+  } = useContext(HeaderContext);
 
   const { options } = scene.descriptor;
   const title =
@@ -157,11 +161,14 @@ const EntryStack = () => {
   const theme = useTheme();
   const [excludedPendingApprovals, setExcludedPendingApprovals] =
     useState<Set<string>>(new Set());
+  const [searchCriteria, setSearchCriteria] = useState<string>('');
   return (
     <HeaderContext.Provider
       value={{
         excludedPendingApprovals,
-        setExcludedPendingApprovals
+        setExcludedPendingApprovals,
+        searchCriteria,
+        setSearchCriteria
       }}
     >
       <Stack.Navigator

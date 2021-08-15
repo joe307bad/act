@@ -30,7 +30,7 @@
 #### Achievements
 
 - ✅ **[MOBILE]** - List of achievements in tabbed category view, ability to select 1 and checkin to it
-- [ ] **[MOBILE]** - Ability to search list of achievements
+- ✅ **[MOBILE]** - Ability to search list of achievements
 
 #### Sync
 
