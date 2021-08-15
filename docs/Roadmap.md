@@ -8,10 +8,6 @@
 - ✅ **[API] + [KEYCLOAK]** - Send down an admin/non-admin key in the access token
 - ✅ **[MOBILE] + [KEYCLOAK]** - Sending down a display name from Keycloak (from first name)
 
-#### Sync
-
-- ✅ **[MOBILE]** - There probably should be an auto sync somewhere triggered by something - Sync on create checkin, on keycloak provider mount, and sync button in toolbar
-
 #### Checkin Builder
 
 - ✅ **[MOBILE]** - For non-admins, default to a single user (the current user)
@@ -30,22 +26,19 @@
 #### Checkin/Feed
 
 - [ ] **[MOBILE]** - List of checkins with pending approvals + way to approve all pending checkins
-- [ ] **[MOBILE] + [WEB]** - View a users checkin feed
-- [ ] **[MOBILE]** - Ability to see a feed of checkins sorted by most recent to oldest
-- [ ] **[MOBILE]** - Admins should be able to delete checkins from the feed
 
 #### Achievements
 
 - ✅ **[MOBILE]** - List of achievements in tabbed category view, ability to select 1 and checkin to it
 - [ ] **[MOBILE]** - Ability to search list of achievements
 
+#### Sync
+
+- ✅ **[MOBILE]** - There probably should be an auto sync somewhere triggered by something - Sync on create checkin, on keycloak provider mount, and sync button in toolbar
+
 #### Deployment
 
 - [ ] **[WEB]** - Make `db.seed` method to seed achievements and achievement categories
-
-#### Profile
-
-- [ ] **[MOBILE]** - In the side menu, show username, total points, total checkins
 
 #### Distribution
 
@@ -56,6 +49,11 @@
 
 ## Beyond
 
+- [ ] **[MOBILE]** - (Profile) In the side menu, show username, total points, total checkins
+- [ ] **[MOBILE]** - Toasts for successful sync/failed sync
+- [ ] **[MOBILE] + [WEB]** - View a users checkin feed
+- [ ] **[MOBILE]** - Ability to see a feed of checkins sorted by most recent to oldest
+- [ ] **[MOBILE]** - Admins should be able to delete checkins from the feed
 - [ ] **[MOBILE] [WEB] [API]** - Access control layer/RBAC
 - [ ] **[MOBILE] [WEB] [OPS]** - Live feed of checkins with web sockets
 - [ ] **[MOBILE] [WEB] [OPS]** - Photo uploads as seperate entities and attached to checkins
