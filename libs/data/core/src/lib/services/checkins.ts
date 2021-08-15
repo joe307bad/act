@@ -246,4 +246,35 @@ export class CheckinsService extends BaseService<Checkin> {
         )
         .then(() => newCheckin.createdAt);
     });
+
+  approveCheckins = async (checkins: Set<string>) =>
+    this._db.action(async () =>
+      this._db.batch(
+        ...(await Promise.all(
+          Array.from(checkins).map(async (checkinId) =>
+            (
+              await this._collection.find(checkinId)
+            ).prepareUpdate((c) => {
+              c.approved = true;
+            })
+          )
+        ))
+      )
+    );
+
+  approveAllCheckins = async (excludeCheckins: Set<string>) => {
+    debugger;
+    const allCheckins = await this._collection.query().fetch();
+    return this._db.action(async () =>
+      this._db.batch(
+        ...allCheckins
+          .filter((c) => !excludeCheckins.has(c.id))
+          .map((c) =>
+            c.prepareUpdate((checkin) => {
+              checkin.approved = true;
+            })
+          )
+      )
+    );
+  };
 }

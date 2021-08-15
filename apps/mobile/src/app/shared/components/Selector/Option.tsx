@@ -1,4 +1,4 @@
-import { Box, Column, Columns } from '@mobily/stacks';
+import { Box, Column, Columns, Row, Rows } from '@mobily/stacks';
 import { Picker } from '@react-native-picker/picker';
 import React, { FC, useState } from 'react';
 import {
@@ -10,7 +10,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 import Chip from '../Chip';
-import { GestureResponderEvent } from 'react-native';
+import { GestureResponderEvent, Text } from 'react-native';
 
 export const Option: FC<{
   value: string;
@@ -26,6 +26,7 @@ export const Option: FC<{
   points?: number;
   onPress?: (e: GestureResponderEvent, count?: number) => void;
   fixedCount?: number;
+  onCheckButtonPress?: () => void;
 }> = ({
   title,
   disableSelection,
@@ -36,7 +37,9 @@ export const Option: FC<{
   onInfoButtonPress,
   points,
   onPress,
-  fixedCount
+  fixedCount,
+  subtitle,
+  onCheckButtonPress
 }) => {
   const theme = useTheme();
 
@@ -57,7 +60,20 @@ export const Option: FC<{
           paddingRight={disableSelection ? 2 : 0}
         >
           <TouchableRipple onPress={onPress}>
-            <Title numberOfLines={1}>{title}</Title>
+            {subtitle ? (
+              <Rows>
+                <Row>
+                  <Title numberOfLines={1}>{title}</Title>
+                </Row>
+                <Row paddingBottom={2}>
+                  <Text style={{ marginTop: -5 }} numberOfLines={1}>
+                    {subtitle}
+                  </Text>
+                </Row>
+              </Rows>
+            ) : (
+              <Title numberOfLines={1}>{title}</Title>
+            )}
           </TouchableRipple>
         </Column>
         <Column width="content">
@@ -105,6 +121,17 @@ export const Option: FC<{
                 <TouchableRipple onPress={onInfoButtonPress}>
                   <MaterialCommunityIcons
                     name="information-outline"
+                    color={theme.colors.primary}
+                    size={30}
+                  />
+                </TouchableRipple>
+              </Column>
+            )}
+            {onCheckButtonPress && (
+              <Column width="content" paddingRight={2}>
+                <TouchableRipple onPress={onCheckButtonPress}>
+                  <MaterialCommunityIcons
+                    name="check-circle-outline"
                     color={theme.colors.primary}
                     size={30}
                   />

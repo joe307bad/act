@@ -1,4 +1,9 @@
-import React, { ReactElement, useState } from 'react';
+import React, {
+  createContext,
+  ReactElement,
+  useContext,
+  useState
+} from 'react';
 import {
   configureFonts,
   Headline,
@@ -15,8 +20,16 @@ import db from '@act/data/rn';
 import { Provider } from 'react-native-paper';
 import Leaderboard from './screens/Leaderboard';
 import { StacksProvider } from '@mobily/stacks';
+import { PendingApprovals } from './screens/PendingApprovals';
 
 const Stack = createStackNavigator();
+export const HeaderContext =
+  createContext<{
+    excludedPendingApprovals: Set<string>;
+    setExcludedPendingApprovals: React.Dispatch<
+      React.SetStateAction<Set<string>>
+    >;
+  }>(undefined);
 
 var fontFamily = 'Bebas-Regular';
 var fonts = configureFonts({
@@ -69,6 +82,7 @@ const NavBar: (
 
   // TODO this search criteria should sort the achievements list
   const [searchCriteria, setSearchCriteria] = useState<string>('');
+  const { excludedPendingApprovals } = useContext(HeaderContext);
 
   const { options } = scene.descriptor;
   const title =
@@ -117,6 +131,16 @@ const NavBar: (
           onPress={() => setShowSearch(true)}
         />
       )}
+      {scene.route.name === 'PendingApprovals' && (
+        <Appbar.Action
+          icon="checkbox-multiple-marked-circle"
+          onPress={() =>
+            db.models.checkins.approveAllCheckins(
+              excludedPendingApprovals
+            )
+          }
+        />
+      )}
       <Appbar.Action
         icon="refresh-circle"
         onPress={() => db.sync()}
@@ -131,30 +155,44 @@ const NavBar: (
 
 const EntryStack = () => {
   const theme = useTheme();
+  const [excludedPendingApprovals, setExcludedPendingApprovals] =
+    useState<Set<string>>(new Set());
   return (
-    <Stack.Navigator
-      initialRouteName="Leaderboard"
-      headerMode="float"
-      screenOptions={{
-        header: (props) => <NavBar {...props} theme={theme} />
+    <HeaderContext.Provider
+      value={{
+        excludedPendingApprovals,
+        setExcludedPendingApprovals
       }}
     >
-      <Stack.Screen
-        name="CheckinBuilder"
-        options={{ title: 'Checkin Builder' }}
-        component={CheckinBuilder}
-      />
-      <Stack.Screen
-        name="Achievements"
-        options={{ title: 'Achievements' }}
-        component={Achievements}
-      />
-      <Stack.Screen
-        name="Leaderboard"
-        options={{ title: 'Leaderboard' }}
-        component={Leaderboard}
-      />
-    </Stack.Navigator>
+      <Stack.Navigator
+        initialRouteName="PendingApprovals"
+        headerMode="float"
+        screenOptions={{
+          header: (props) => <NavBar {...props} theme={theme} />
+        }}
+      >
+        <Stack.Screen
+          name="CheckinBuilder"
+          options={{ title: 'Checkin Builder' }}
+          component={CheckinBuilder}
+        />
+        <Stack.Screen
+          name="Achievements"
+          options={{ title: 'Achievements' }}
+          component={Achievements}
+        />
+        <Stack.Screen
+          name="Leaderboard"
+          options={{ title: 'Leaderboard' }}
+          component={Leaderboard}
+        />
+        <Stack.Screen
+          name="PendingApprovals"
+          options={{ title: 'Pending Approvals' }}
+          component={PendingApprovals}
+        />
+      </Stack.Navigator>
+    </HeaderContext.Provider>
   );
 };
 

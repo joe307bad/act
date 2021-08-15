@@ -25,7 +25,7 @@
 
 #### Checkin/Feed
 
-- [ ] **[MOBILE]** - List of checkins with pending approvals + way to approve all pending checkins
+- ✅ **[MOBILE]** - List of checkins with pending approvals + way to approve all pending checkins (while excluding some)
 
 #### Achievements
 
@@ -38,6 +38,8 @@
 
 #### Deployment
 
+- [ ] **[MOBILE] + [WEB]** - Stress test - Web exposed method to generate a random checkin, then automate that method to run every minute to test syncing capabilities.
+        - Also, generate 1000 checkins and see if that affects Mobile performance
 - [ ] **[WEB]** - Make `db.seed` method to seed achievements and achievement categories
 
 #### Distribution
@@ -49,14 +51,16 @@
 
 ## Beyond
 
+- [ ] **[MOBILE]** - User achievements from Leaderboard should show Approved and Pending Approved as categories, not the Achievement categories
+- [ ] **[MOBILE]** - Sort user achievements by number of times checked into the achievement
 - [ ] **[MOBILE]** - (Profile) In the side menu, show username, total points, total checkins
 - [ ] **[MOBILE]** - Toasts for successful sync/failed sync
 - [ ] **[MOBILE] + [WEB]** - View a users checkin feed
 - [ ] **[MOBILE]** - Ability to see a feed of checkins sorted by most recent to oldest
 - [ ] **[MOBILE]** - Admins should be able to delete checkins from the feed
-- [ ] **[MOBILE] [WEB] [API]** - Access control layer/RBAC
-- [ ] **[MOBILE] [WEB] [OPS]** - Live feed of checkins with web sockets
-- [ ] **[MOBILE] [WEB] [OPS]** - Photo uploads as seperate entities and attached to checkins
+- [ ] **[MOBILE] + [WEB] + [API]** - Access control layer/RBAC
+- [ ] **[MOBILE] + [WEB] + [OPS]** - Live feed of checkins with web sockets
+- [ ] **[MOBILE] + [WEB] + [OPS]** - Photo uploads as seperate entities and attached to checkins
 - [ ] **[MOBILE]** - More advanced stats on checkins (checkins per hour, checkins per day, who has the most points in a specific time frame, etc.)
 - More listed in the READMEs of Points
 

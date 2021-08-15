@@ -29,15 +29,15 @@ const DrawerList: FC<
     setForceLogout: (forceLogout: boolean) => void;
   }
 > = ({ navigation, theme, keycloak, setForceLogout }) => {
-  const auth = useActAuth();
+  const { currentUser } = useActAuth();
 
   return (
     <>
       <Stack space={2} padding={5}>
         <Box>
           <Card elevation={0} style={{ padding: 10 }}>
-            <Title>{auth.currentUser?.fullName}</Title>
-            <Text>{auth.currentUser?.username}</Text>
+            <Title>{currentUser?.fullName}</Title>
+            <Text>{currentUser?.username}</Text>
           </Card>
         </Box>
       </Stack>
@@ -118,6 +118,37 @@ const DrawerList: FC<
           </View>
         )}
       />
+      {currentUser?.admin && (
+        <List.Item
+          onPress={() => {
+            navigation.navigate('Entry', {
+              screen: 'PendingApprovals'
+            });
+          }}
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.primary
+          }}
+          titleStyle={{ fontSize: 25 }}
+          title={'Pending Approvals'}
+          description={
+            'View checkins by non-admins that have not been approved'
+          }
+          left={(props) => (
+            <View
+              style={{
+                justifyContent: 'center'
+              }}
+            >
+              <MaterialCommunityIcons
+                name="dots-horizontal-circle-outline"
+                color={theme.colors.primary}
+                size={40}
+              />
+            </View>
+          )}
+        />
+      )}
       <Stack space={2} padding={5}>
         <Box>
           <AwesomeButtonMedium onPress={() => db.sync()}>

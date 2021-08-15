@@ -15,6 +15,7 @@ export * from './user';
 export * from './checkin';
 export * from './checkin-user';
 export * from './base-model';
+export * from './checkin-achievement';
 
 const baseColumns = (schema: ColumnSchema[]): ColumnSchema[] => [
   ...schema,

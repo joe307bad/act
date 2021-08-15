@@ -29,6 +29,7 @@ import {
 import { map } from 'rxjs/operators';
 import { CheckinAchievement } from 'libs/data/core/src/lib/schema/checkin-achievement';
 import { UserAchievements } from '../achievement/UserAchievements';
+import { checkinUsersAndAchievements } from '../shared/queries/checkinUsersAndAchievements';
 
 const LeaderboardItem: FC<{
   name: string;
@@ -240,32 +241,8 @@ const Leaderboard: FC<{
 };
 
 export default withObservables([''], () => ({
+  ...checkinUsersAndAchievements(),
   users: db.get.get('users').query().observe(),
-  checkinAchievements: db.get
-    .get<CheckinAchievement>('checkin_achievements')
-    .query()
-    .observeWithColumns(['count'])
-    .pipe(
-      map((cas) =>
-        cas.reduce((acc, item) => {
-          const exists = acc.get(item.checkinId);
-          if (exists) {
-            return acc.set(
-              item.checkinId,
-              new Map([
-                ...exists,
-                ...new Map([[item.achievementId, item.count]])
-              ])
-            );
-          } else {
-            return acc.set(
-              item.checkinId,
-              new Map([[item.achievementId, item.count]])
-            );
-          }
-        }, new Map<string, Map<string, number>>())
-      )
-    ),
   checkins: db.get
     .get<Checkin>('checkins')
     .query()
@@ -281,25 +258,6 @@ export default withObservables([''], () => ({
           }, new Set())
         );
       })
-    ),
-  userCheckins: db.get
-    .get<CheckinUser>('checkin_users')
-    .query()
-    .observe()
-    .pipe(
-      map((ucs) =>
-        ucs.reduce((acc, item) => {
-          const exists = acc.get(item.userId);
-          if (exists) {
-            return acc.set(
-              item.userId,
-              new Set([...exists, item.checkinId])
-            );
-          } else {
-            return acc.set(item.userId, new Set([item.checkinId]));
-          }
-        }, new Map<string, Set<string>>())
-      )
     ),
   achievements: db.get
     .get<Achievement>('achievements')

@@ -21,9 +21,10 @@ type OptionListProps<T extends BaseModel> = {
   ) => void;
   initialSelected: Map<string, SelectedOption>;
   optionTitleProperty: keyof T;
-  optionSubtitleProperty?: keyof T;
+  optionSubtitleProperty: keyof T;
   selectable?: boolean;
   showCountDropdown?: boolean;
+  onCheckButtonPress?: (id: string) => void;
 };
 const OptionListComponent: <T extends BaseModel>(
   p: PropsWithChildren<OptionListProps<T>>
@@ -34,7 +35,8 @@ const OptionListComponent: <T extends BaseModel>(
   optionSubtitleProperty,
   optionTitleProperty,
   selectable = true,
-  showCountDropdown = false
+  showCountDropdown = false,
+  onCheckButtonPress = undefined
 }) => {
   const [items, setItems] = useState<Map<string, any>>(new Map());
 
@@ -57,7 +59,7 @@ const OptionListComponent: <T extends BaseModel>(
   }, []);
 
   const renderItem: FC<{ item: any }> = ({ item }) => {
-    const { id, username } = item;
+    const { id } = item;
     return (
       <Option
         disableSelection={!selectable}
@@ -67,13 +69,14 @@ const OptionListComponent: <T extends BaseModel>(
         subtitle={item[snakeCase(optionSubtitleProperty as string)]}
         checked={items.has(id)}
         showCountDropdown={showCountDropdown}
+        onCheckButtonPress={() => onCheckButtonPress(id)}
         onPress={(e: GestureResponderEvent, count?: number) => {
           const exists = items.has(id);
           const newItems = new Map(items);
           if (exists) {
             newItems.delete(id);
           } else {
-            newItems.set(id, { id, name: username });
+            newItems.set(id, { id, name: optionSubtitleProperty });
           }
           setItems(newItems);
         }}
