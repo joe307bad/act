@@ -4,7 +4,7 @@
 
 #### Technical overview
 
-This repository is an exploratory exercise and case study of three concepts: **[offline-first](https://hasura.io/blog/design-guide-to-offline-first-apps/) mobile applications, code sharing via monorepos (using [Nx](https://github.com/nrwl/nx)), and [microservices](https://microservices.io/patterns/microservices.html)**. The foremost technical goals of The Act App are to investigate these concepts, determine best practices, and apply them to a real-world idea.
+This repository is an exploratory exercise and case study of three concepts: **[offline first](https://hasura.io/blog/design-guide-to-offline-first-apps/) mobile applications, code sharing via monorepos (using [Nx](https://github.com/nrwl/nx)), and [microservices](https://microservices.io/patterns/microservices.html)**. The foremost technical goals of The Act App are to investigate these concepts, determine best practices, and apply them to a real-world idea.
 
 ### Applications, libraries, and architecture
 
