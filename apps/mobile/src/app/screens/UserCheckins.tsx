@@ -88,7 +88,8 @@ const UserCheckinsComponent: FC<{
                       format(checkin.createdAt, 'EEE MMM do @ pp')}
                   </Headline>
                 </Column>
-                {currentUser.admin && (
+                {(currentUser.admin ||
+                  currentUser.id === selectedUser) && (
                   <Column width="content">
                     <TouchableRipple
                       onPress={() =>
