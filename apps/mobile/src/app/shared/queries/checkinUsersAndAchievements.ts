@@ -7,20 +7,22 @@ export const checkinUsersAndAchievements = () => ({
   userCheckins: db.get
     .get<CheckinUser>('checkin_users')
     .query()
-    .observe()
+    .observeWithColumns(['approved'])
     .pipe(
       map((ucs) =>
-        ucs.reduce((acc, item) => {
-          const exists = acc.get(item.userId);
-          if (exists) {
-            return acc.set(
-              item.userId,
-              new Set([...exists, item.checkinId])
-            );
-          } else {
-            return acc.set(item.userId, new Set([item.checkinId]));
-          }
-        }, new Map<string, Set<string>>())
+        ucs
+          .sort((a, b) => b.createdAt - a.createdAt)
+          .reduce((acc, item) => {
+            const exists = acc.get(item.userId);
+            if (exists) {
+              return acc.set(
+                item.userId,
+                new Set([...exists, item.checkinId])
+              );
+            } else {
+              return acc.set(item.userId, new Set([item.checkinId]));
+            }
+          }, new Map<string, Set<string>>())
       )
     ),
   checkinAchievements: db.get

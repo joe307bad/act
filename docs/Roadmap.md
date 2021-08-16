@@ -53,10 +53,10 @@
 
 ## Beyond
 
+- [ ] **[MOBILE]** - Toasts for successful sync/failed sync
 - [ ] **[MOBILE]** - User achievements from Leaderboard should show Approved and Pending Approved as categories, not the Achievement categories
 - [ ] **[MOBILE]** - Sort user achievements by number of times checked into the achievement
 - [ ] **[MOBILE]** - (Profile) In the side menu, show username, total points, total checkins
-- [ ] **[MOBILE]** - Toasts for successful sync/failed sync
 - [ ] **[MOBILE] + [WEB]** - View a users checkin feed
 - [ ] **[MOBILE]** - Ability to see a feed of checkins sorted by most recent to oldest
 - [ ] **[MOBILE]** - Admins should be able to delete checkins from the feed

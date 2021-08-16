@@ -21,6 +21,7 @@ import { Provider } from 'react-native-paper';
 import Leaderboard from './screens/Leaderboard';
 import { StacksProvider } from '@mobily/stacks';
 import { PendingApprovals } from './screens/PendingApprovals';
+import { UserCheckins } from './screens/UserCheckins';
 
 const Stack = createStackNavigator();
 export const HeaderContext =
@@ -172,7 +173,7 @@ const EntryStack = () => {
       }}
     >
       <Stack.Navigator
-        initialRouteName="PendingApprovals"
+        initialRouteName="UserCheckins"
         headerMode="float"
         screenOptions={{
           header: (props) => <NavBar {...props} theme={theme} />
@@ -197,6 +198,11 @@ const EntryStack = () => {
           name="PendingApprovals"
           options={{ title: 'Pending Approvals' }}
           component={PendingApprovals}
+        />
+        <Stack.Screen
+          name="UserCheckins"
+          options={{ title: 'User Checkins' }}
+          component={UserCheckins}
         />
       </Stack.Navigator>
     </HeaderContext.Provider>

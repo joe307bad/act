@@ -78,7 +78,9 @@ const DrawerList: FC<
         }}
         titleStyle={{ fontSize: 25 }}
         title={'Achievements'}
-        description={'View Achievements and Categories'}
+        description={
+          'Find Achievements by Category and create a Checkin'
+        }
         left={(props) => (
           <View
             style={{
@@ -112,6 +114,31 @@ const DrawerList: FC<
           >
             <MaterialCommunityIcons
               name="format-list-numbered"
+              color={theme.colors.primary}
+              size={40}
+            />
+          </View>
+        )}
+      />
+      <List.Item
+        onPress={() => {
+          navigation.navigate('Entry', { screen: 'UserCheckins' });
+        }}
+        style={{
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.primary
+        }}
+        titleStyle={{ fontSize: 25 }}
+        title={'User Checkins'}
+        description={'view checkins by user'}
+        left={(props) => (
+          <View
+            style={{
+              justifyContent: 'center'
+            }}
+          >
+            <MaterialCommunityIcons
+              name="checkbox-multiple-marked-circle-outline"
               color={theme.colors.primary}
               size={40}
             />
