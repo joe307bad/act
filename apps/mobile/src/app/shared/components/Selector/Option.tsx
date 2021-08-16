@@ -27,6 +27,7 @@ export const Option: FC<{
   onPress?: (e: GestureResponderEvent, count?: number) => void;
   fixedCount?: number;
   onCheckButtonPress?: () => void;
+  onDeleteButtonPress?: (confirmDelete: any) => void;
 }> = ({
   title,
   disableSelection,
@@ -39,7 +40,8 @@ export const Option: FC<{
   onPress,
   fixedCount,
   subtitle,
-  onCheckButtonPress
+  onCheckButtonPress,
+  onDeleteButtonPress
 }) => {
   const theme = useTheme();
 
@@ -121,6 +123,17 @@ export const Option: FC<{
                 <TouchableRipple onPress={onInfoButtonPress}>
                   <MaterialCommunityIcons
                     name="information-outline"
+                    color={theme.colors.primary}
+                    size={30}
+                  />
+                </TouchableRipple>
+              </Column>
+            )}
+            {onDeleteButtonPress && (
+              <Column width="content" paddingRight={2}>
+                <TouchableRipple onPress={onDeleteButtonPress}>
+                  <MaterialCommunityIcons
+                    name="trash-can-outline"
                     color={theme.colors.primary}
                     size={30}
                   />

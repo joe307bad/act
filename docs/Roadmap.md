@@ -26,6 +26,8 @@
 #### Checkin/Feed
 
 - ✅ **[MOBILE]** - List of checkins with pending approvals + way to approve all pending checkins (while excluding some)
+- ✅ **[MOBILE]** - Delete checkins from Pending Approvals screen
+- [ ] **[MOBILE]** - "User Checkins" screen where you can see a list of checkins for a given user (select user from dropdown in header?). This would provide a nice way for an admin to quickly remove a single user from a checkin.
 
 #### Achievements
 

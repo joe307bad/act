@@ -263,7 +263,6 @@ export class CheckinsService extends BaseService<Checkin> {
     );
 
   approveAllCheckins = async (excludeCheckins: Set<string>) => {
-    debugger;
     const allCheckins = await this._collection.query().fetch();
     return this._db.action(async () =>
       this._db.batch(

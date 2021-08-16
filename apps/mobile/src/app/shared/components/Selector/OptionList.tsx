@@ -8,7 +8,7 @@ import React, {
   useEffect,
   useState
 } from 'react';
-import { FlatList, GestureResponderEvent } from 'react-native';
+import { Alert, FlatList, GestureResponderEvent } from 'react-native';
 import { Surface } from 'react-native-paper';
 import { SelectedOption } from '.';
 import { Option } from './Option';
@@ -25,6 +25,7 @@ type OptionListProps<T extends BaseModel> = {
   selectable?: boolean;
   showCountDropdown?: boolean;
   onCheckButtonPress?: (id: string) => void;
+  onDeleteButtonPress?: (id: string) => void;
 };
 const OptionListComponent: <T extends BaseModel>(
   p: PropsWithChildren<OptionListProps<T>>
@@ -36,7 +37,8 @@ const OptionListComponent: <T extends BaseModel>(
   optionTitleProperty,
   selectable = true,
   showCountDropdown = false,
-  onCheckButtonPress = undefined
+  onCheckButtonPress = undefined,
+  onDeleteButtonPress = undefined
 }) => {
   const [items, setItems] = useState<Map<string, any>>(new Map());
 
@@ -58,6 +60,13 @@ const OptionListComponent: <T extends BaseModel>(
     );
   }, []);
 
+  const confirmDeletion = (confirmDelete) =>
+    Alert.alert(
+      'Confirm Checkin Deletion',
+      'Are you sure you want to delete this checkin?',
+      [{ text: 'Yes', onPress: confirmDelete }, { text: 'No' }]
+    );
+
   const renderItem: FC<{ item: any }> = ({ item }) => {
     const { id } = item;
     return (
@@ -69,7 +78,16 @@ const OptionListComponent: <T extends BaseModel>(
         subtitle={item[snakeCase(optionSubtitleProperty as string)]}
         checked={items.has(id)}
         showCountDropdown={showCountDropdown}
-        onCheckButtonPress={() => onCheckButtonPress(id)}
+        onDeleteButtonPress={
+          confirmDeletion
+            ? () => confirmDeletion(() => onDeleteButtonPress(id))
+            : undefined
+        }
+        onCheckButtonPress={
+          onCheckButtonPress
+            ? () => onCheckButtonPress(id)
+            : undefined
+        }
         onPress={(e: GestureResponderEvent, count?: number) => {
           const exists = items.has(id);
           const newItems = new Map(items);

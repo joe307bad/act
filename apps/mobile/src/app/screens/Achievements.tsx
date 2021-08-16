@@ -28,8 +28,7 @@ const Achievements: FC = () => {
   const [confirmedCheckin, setConfirmedCheckin] =
     useState<CreateCheckin>();
 
-  const { searchCriteria, setSearchCriteria } =
-    useContext(HeaderContext);
+  const { searchCriteria } = useContext(HeaderContext);
   const debouncedSearchCriteria = useDebounce(searchCriteria, 500);
   const [hiddenOptions, setHiddenOptions] = useState(
     new Set<string>()

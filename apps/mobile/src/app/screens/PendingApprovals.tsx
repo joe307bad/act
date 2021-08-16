@@ -86,6 +86,7 @@ const PendingApprovalsComponent: FC<{
         onCheckButtonPress={(id: string) =>
           db.models.checkins.approveCheckins(new Set([id]))
         }
+        onDeleteButtonPress={db.models.checkins.delete}
       />
     </Box>
   );

@@ -95,7 +95,7 @@ export const UserAchievements: FC<{
                   if (exists) {
                     acc.set(achievementId, exists + count);
                   } else {
-                    acc.set(achievementId, 1);
+                    acc.set(achievementId, count);
                   }
                 }
               );
