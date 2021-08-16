@@ -17,6 +17,7 @@ import {
 } from './services/seed/AchievementSeed';
 import { MockFactory } from 'mockingbird-ts';
 import { isString } from 'lodash';
+import { CheckinUsersService } from './services/checkin-users';
 
 const seedWithMock = (seed: (args: SeedArgs) => void) => ({
   achievements: () =>
@@ -64,7 +65,8 @@ export const registryFactory = (adapter) => {
       achievementCategories: new AchievementCategoriesService(),
       achievements: new AchievementsService(),
       users: new UsersService(),
-      checkins: new CheckinsService()
+      checkins: new CheckinsService(),
+      checkinUsers: new CheckinUsersService()
     }
   };
 };

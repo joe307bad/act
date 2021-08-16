@@ -1,4 +1,8 @@
-import { Headline, Surface } from 'react-native-paper';
+import {
+  Headline,
+  Surface,
+  TouchableRipple
+} from 'react-native-paper';
 import React, { FC, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import {
@@ -11,8 +15,14 @@ import {
 } from '@mobily/stacks';
 import withObservables from '@nozbe/with-observables';
 import db, { useActAuth } from '@act/data/rn';
-import { Achievement, Checkin, User } from '@act/data/core';
-import { ScrollView, Text } from 'react-native';
+import {
+  Achievement,
+  Checkin,
+  CheckinAchievement,
+  CheckinUser,
+  User
+} from '@act/data/core';
+import { Alert, ScrollView, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
@@ -25,7 +35,7 @@ import { isEmpty } from 'lodash';
 
 const UserCheckinsComponent: FC<{
   users: User[];
-  userCheckins: Map<string, Set<string>>;
+  userCheckins: Map<string, Map<string, string>>;
   checkinAchievements: Map<string, Map<string, number>>;
   checkins: Map<string, { createdAt: Date; note: string }>;
   achievements: Map<string, { name: string; points: number }>;
@@ -40,9 +50,17 @@ const UserCheckinsComponent: FC<{
   const theme = useTheme();
   const [selectedUser, setSelectedUser] = useState(currentUser.id);
 
+  const confirmDeletion = (confirmDelete) =>
+    Alert.alert(
+      'Confirm Checkin User Deletion',
+      'Are you sure you want to delete this checkin user?',
+      [{ text: 'Yes', onPress: confirmDelete }, { text: 'No' }]
+    );
+
   const RenderItem = ({ item }) => {
-    const achievements = checkinAchievements.get(item);
-    const checkin = checkins.get(item);
+    const [checkinId, checkinUserId] = item;
+    const achievements = checkinAchievements.get(checkinId);
+    const checkin = checkins.get(checkinId);
     const total = !achievements
       ? 0
       : Array.from(achievements).reduce(
@@ -63,10 +81,31 @@ const UserCheckinsComponent: FC<{
         >
           <Rows padding={2}>
             <Row>
-              <Headline>
-                {checkin &&
-                  format(checkin.createdAt, 'EEE MMM do @ pp')}
-              </Headline>
+              <Columns alignY="center">
+                <Column>
+                  <Headline>
+                    {checkin &&
+                      format(checkin.createdAt, 'EEE MMM do @ pp')}
+                  </Headline>
+                </Column>
+                {currentUser.admin && (
+                  <Column width="content">
+                    <TouchableRipple
+                      onPress={() =>
+                        confirmDeletion(() =>
+                          db.models.checkinUsers.delete(checkinUserId)
+                        )
+                      }
+                    >
+                      <MaterialCommunityIcons
+                        name={`trash-can-outline`}
+                        color={theme.colors.primary}
+                        size={25}
+                      />
+                    </TouchableRipple>
+                  </Column>
+                )}
+              </Columns>
             </Row>
             <Row>
               {!isEmpty(checkin.note) && (
@@ -144,10 +183,10 @@ const UserCheckinsComponent: FC<{
         <Box padding={2} paddingBottom={0}>
           <FlatList
             data={Array.from(userCheckins.get(selectedUser)).filter(
-              (uc) => checkins.has(uc)
+              ([uc]) => checkins.has(uc)
             )}
             renderItem={RenderItem}
-            keyExtractor={(c) => c}
+            keyExtractor={([c]) => c}
           />
         </Box>
       </Row>
@@ -184,5 +223,56 @@ export const UserCheckins = withObservables([''], () => ({
           )
       )
     ),
-  ...checkinUsersAndAchievements()
+  userCheckins: db.get
+    .get<CheckinUser>('checkin_users')
+    .query()
+    .observeWithColumns(['approved'])
+    .pipe(
+      map((ucs) =>
+        ucs
+          .sort((a, b) => b.createdAt - a.createdAt)
+          .reduce((acc, item) => {
+            const exists = acc.get(item.userId);
+            if (exists) {
+              return acc.set(
+                item.userId,
+                new Map([
+                  ...exists,
+                  ...new Map([[item.checkinId, item.id]])
+                ])
+              );
+            } else {
+              return acc.set(
+                item.userId,
+                new Map([[item.checkinId, item.id]])
+              );
+            }
+          }, new Map<string, Map<string, string>>())
+      )
+    ),
+  checkinAchievements: db.get
+    .get<CheckinAchievement>('checkin_achievements')
+    .query()
+    .observeWithColumns(['count'])
+    .pipe(
+      map((cas) =>
+        cas.reduce((acc, item) => {
+          const exists = acc.get(item.checkinId);
+          if (exists) {
+            return acc.set(
+              item.checkinId,
+              new Map([
+                ...exists,
+                ...new Map([[item.achievementId, item.count]])
+              ])
+            );
+          } else {
+            return acc.set(
+              item.checkinId,
+              new Map([[item.achievementId, item.count]])
+            );
+          }
+        }, new Map<string, Map<string, number>>())
+      )
+    )
 }))(UserCheckinsComponent);
