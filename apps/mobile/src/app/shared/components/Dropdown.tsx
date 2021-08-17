@@ -9,7 +9,8 @@ export const Dropdown = ({
   onValueChange,
   value,
   items,
-  padding = undefined
+  padding = undefined,
+  fullWidth = false
 }) => {
   const theme = useTheme();
   let pickerRef = React.createRef();
@@ -25,7 +26,7 @@ export const Dropdown = ({
   return (
     <TouchableRipple onPress={() => openPicker()}>
       <Columns alignY="center" padding={padding || 1}>
-        <Column>
+        <Column width={fullWidth ? undefined : 'content'}>
           <RNPickerSelect
             onValueChange={(itemValue, _) => onValueChange(itemValue)}
             textInputProps={{

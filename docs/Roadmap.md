@@ -47,7 +47,7 @@
 #### Distribution
 
 - [ ] **[MOBILE]** - Bugsnag
-- [ ] **[MOBILE]** - Get working on iOS lol
+- ✅ **[MOBILE]** - Get working on iOS lol
 - [ ] **[MOBILE]** - Bitrise pipeline that provides public links for Android/iOS downloads
 - [ ] **[OPS]** - Reslient and automated API + Keycloak + DB deployment
 

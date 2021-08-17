@@ -160,6 +160,7 @@ const UserCheckinsComponent: FC<{
       <Row height="content">
         <Surface style={{ elevation: 2 }}>
           <Dropdown
+            fullWidth
             value={selectedUser}
             onValueChange={(v) => setSelectedUser(v)}
             items={users.map((u) => ({
