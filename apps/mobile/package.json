@@ -52,6 +52,7 @@
     "lottie-ios": "*",
     "date-fns": "*",
     "recompose": "*",
-    "react-native-picker-select": "*"
+    "react-native-picker-select": "*",
+    "faker": "*"
   }
 }

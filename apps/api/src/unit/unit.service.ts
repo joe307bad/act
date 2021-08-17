@@ -16,7 +16,10 @@ export class UnitsService {
   }
 
   getAllByType(type: string) {
-    return this.unitRepo.find({ selector: { type: { $eq: type } } });
+    return this.unitRepo.find({
+      selector: { type: { $eq: type } },
+      limit: 1000
+    });
   }
 
   findById(id: string): Promise<DirtyRaw> {
@@ -32,7 +35,8 @@ export class UnitsService {
           type: { $eq: type },
           created_on_server: { $gt: timestamp },
           deleted: { $or: [{ $eq: false }, { $exists: false }] }
-        }
+        },
+        limit: 1000
       })
       .then((response) =>
         response.docs.map((d) => {
@@ -52,7 +56,8 @@ export class UnitsService {
         selector: {
           type: { $eq: type },
           deleted: { $eq: true }
-        }
+        },
+        limit: 1000
       })
       .then((response) =>
         response.docs.map((d) => {
@@ -72,7 +77,8 @@ export class UnitsService {
         selector: {
           type: { $eq: type },
           created_on_server: { $gt: timestamp }
-        }
+        },
+        limit: 1000
       })
       .then((response) =>
         response.docs.map((d) => {
@@ -99,7 +105,8 @@ export class UnitsService {
           _id: { $nin: c },
           deleted: { $eq: false },
           updated_on_server: { $gt: timestamp }
-        }
+        },
+        limit: 1000
       })
       .then((response) =>
         response.docs.map((d) => {
@@ -120,9 +127,13 @@ export class UnitsService {
   }
 
   async update(unit: any): Promise<DocumentInsertResponse> {
-    const existingUnit = await this.unitRepo.get(unit._id);
+    const existingUnit = await this.unitRepo
+      .get(unit._id)
+      .catch((e) => false);
+
     return this.unitRepo.insert({
-      ...existingUnit,
+      // @ts-ignore
+      ...(existingUnit !== false ? existingUnit : {}),
       ...unit
     });
   }

@@ -40,7 +40,7 @@
 
 #### Deployment
 
-- [ ] **[MOBILE] + [WEB]** - Stress test - Web exposed method to generate a random checkin, then automate that method to run every minute to test syncing capabilities.
+- ✅ **[MOBILE] + [WEB]** - Stress test - Web exposed method to generate a random checkin, then automate that method to run every minute to test syncing capabilities.
         - Also, generate 1000 checkins and see if that affects Mobile performance
 - [ ] **[WEB]** - Make `db.seed` method to seed achievements and achievement categories
 

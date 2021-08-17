@@ -88,6 +88,11 @@ const columns: GridColDef[] = [
     width: 200
   },
   {
+    field: 'approved',
+    headerName: 'Approved',
+    width: 200
+  },
+  {
     field: '',
     filterable: false,
     width: 200,

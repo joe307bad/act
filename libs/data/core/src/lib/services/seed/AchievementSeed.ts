@@ -1,4 +1,4 @@
-import { Mock, MockFactory } from 'mockingbird-ts';
+import { Mock } from 'mockingbird-ts';
 
 export enum Categories {
   Category1 = 'Category 1',

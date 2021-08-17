@@ -18,6 +18,7 @@ import {
 import { MockFactory } from 'mockingbird-ts';
 import { isString } from 'lodash';
 import { CheckinUsersService } from './services/checkin-users';
+import { CreateCheckinSeed } from './services/seed/CreateCheckinSeed';
 
 const seedWithMock = (seed: (args: SeedArgs) => void) => ({
   achievements: () =>
@@ -31,7 +32,17 @@ const seedWithMock = (seed: (args: SeedArgs) => void) => ({
           isString(c)
         )
       }
-    })
+    }),
+  checkins: (numberOfCheckins: number) => {
+    return seed({
+      type: 'CHECKINS',
+      units: {
+        checkins: [...new Array(numberOfCheckins)].map(() =>
+          MockFactory.create<CreateCheckinSeed>(CreateCheckinSeed)
+        )
+      }
+    });
+  }
 });
 
 export const registryFactory = (adapter) => {

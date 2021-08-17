@@ -1,4 +1,5 @@
 import { Achievement, BaseModel } from '@act/data/core';
+import { Box } from '@mobily/stacks';
 import { snakeCase } from 'change-case';
 import React, {
   FC,
@@ -26,6 +27,7 @@ type OptionListProps<T extends BaseModel> = {
   showCountDropdown?: boolean;
   onCheckButtonPress?: (id: string) => void;
   onDeleteButtonPress?: (id: string) => void;
+  paddingTop?: number;
 };
 const OptionListComponent: <T extends BaseModel>(
   p: PropsWithChildren<OptionListProps<T>>
@@ -38,7 +40,8 @@ const OptionListComponent: <T extends BaseModel>(
   selectable = true,
   showCountDropdown = false,
   onCheckButtonPress = undefined,
-  onDeleteButtonPress = undefined
+  onDeleteButtonPress = undefined,
+  paddingTop = undefined
 }) => {
   const [items, setItems] = useState<Map<string, any>>(new Map());
 
@@ -70,48 +73,58 @@ const OptionListComponent: <T extends BaseModel>(
   const renderItem: FC<{ item: any }> = ({ item }) => {
     const { id } = item;
     return (
-      <Option
-        disableSelection={!selectable}
-        key={id}
-        value={id}
-        title={item[snakeCase(optionTitleProperty as string)]}
-        subtitle={item[snakeCase(optionSubtitleProperty as string)]}
-        checked={items.has(id)}
-        showCountDropdown={showCountDropdown}
-        onDeleteButtonPress={
-          onDeleteButtonPress
-            ? () => confirmDeletion(() => onDeleteButtonPress(id))
-            : undefined
-        }
-        onCheckButtonPress={
-          onCheckButtonPress
-            ? () => onCheckButtonPress(id)
-            : undefined
-        }
-        onPress={(e: GestureResponderEvent, count?: number) => {
-          const exists = items.has(id);
-          const newItems = new Map(items);
-          if (exists) {
-            newItems.delete(id);
-          } else {
-            newItems.set(id, {
-              id,
-              name: item[snakeCase(optionSubtitleProperty as string)]
-            });
-          }
-          setItems(newItems);
-        }}
-      />
+      <Box marginBottom={2}>
+        <Surface style={{ elevation: 2 }}>
+          <Option
+            disableSelection={!selectable}
+            key={id}
+            value={id}
+            title={item[snakeCase(optionTitleProperty as string)]}
+            subtitle={
+              item[snakeCase(optionSubtitleProperty as string)]
+            }
+            checked={items.has(id)}
+            showCountDropdown={showCountDropdown}
+            onDeleteButtonPress={
+              onDeleteButtonPress
+                ? () => confirmDeletion(() => onDeleteButtonPress(id))
+                : undefined
+            }
+            onCheckButtonPress={
+              onCheckButtonPress
+                ? () => onCheckButtonPress(id)
+                : undefined
+            }
+            onPress={(e: GestureResponderEvent, count?: number) => {
+              const exists = items.has(id);
+              const newItems = new Map(items);
+              if (exists) {
+                newItems.delete(id);
+              } else {
+                newItems.set(id, {
+                  id,
+                  name: item[
+                    snakeCase(optionSubtitleProperty as string)
+                  ]
+                });
+              }
+              setItems(newItems);
+            }}
+          />
+        </Surface>
+      </Box>
     );
   };
   return (
-    <Surface style={{ elevation: 2 }}>
-      <FlatList
-        data={Array.from(data)}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-    </Surface>
+    <FlatList
+      contentContainerStyle={{
+        paddingTop: 10,
+        paddingBottom: 10
+      }}
+      data={Array.from(data)}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+    />
   );
 };
 

@@ -57,32 +57,6 @@ export class CheckinsService extends BaseService<Checkin> {
     });
   };
 
-  // TODO there was an issue where checkin_achievements
-  // were coming back from the server has updated but were
-  // not present locally. I could only solve this with wiping the DB
-  // I hypothesize theres one of two things going on here:
-  // 1) There is an actual bug in the code
-  // 2) or (I hope) I got into a bad state when developing the
-  // checkin_achievement functionality
-  _deleteAllCheckinAchievements = () => {
-    throw Error('Dont use this method');
-    // return this._db.action(async (action) => {
-    //   const allCheckinAchievements =
-    //     await this._checkinAchievementCollection.query().fetch();
-
-    //   this._db.batch(
-    //     ...allCheckinAchievements.map((ca) =>
-    //       ca.prepareMarkAsDeleted()
-    //     ),
-    //     ...allCheckinAchievements.map((ca) =>
-    //       this._deletedCollection.prepareCreate((deletedUnit) => {
-    //         deletedUnit.deletedId = ca.id;
-    //       })
-    //     )
-    //   );
-    // });
-  };
-
   edit = async (args: {
     id: string;
     editProps: Partial<Omit<Checkin, 'achievements' | 'users'>>;
@@ -263,7 +237,9 @@ export class CheckinsService extends BaseService<Checkin> {
     );
 
   approveAllCheckins = async (excludeCheckins: Set<string>) => {
-    const allCheckins = await this._collection.query().fetch();
+    const allCheckins = await this._collection
+      .query(Q.where('approved', false))
+      .fetch();
     return this._db.action(async () =>
       this._db.batch(
         ...allCheckins

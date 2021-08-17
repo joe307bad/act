@@ -138,8 +138,7 @@ export class AppController {
                     type: table,
                     ...{
                       _id: id,
-                      deleted: true,
-                      updated_on_server: last_pulled_at
+                      deleted: true
                     }
                   })
                   .catch((e) => {

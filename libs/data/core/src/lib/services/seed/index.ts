@@ -1,22 +1,36 @@
 import { inject, autoInjectable } from 'tsyringe';
 import { ActContext } from '../../context';
 import { AchievementSeed } from './AchievementSeed';
-import { Achievement, AchievementCategory } from '../../schema';
+import {
+  Achievement,
+  AchievementCategory,
+  Checkin,
+  CheckinAchievement,
+  CheckinUser,
+  User
+} from '../../schema';
 import { Collection, Database } from '@nozbe/watermelondb';
-import { partition } from 'lodash';
+import { partition, random, sampleSize } from 'lodash';
+import * as faker from 'faker';
+import { CreateCheckinSeed } from './CreateCheckinSeed';
 
 export type SeedArgs = {
-  type: 'ACHIEVEMENTS';
+  type: 'ACHIEVEMENTS' | 'CHECKINS';
   units: {
     achievements?: AchievementSeed[];
     categories?: string[];
+    checkins?: CreateCheckinSeed[];
   };
 };
 
 @autoInjectable()
 export class SeedService {
+  _checkins: Collection<Checkin>;
   _achievements: Collection<Achievement>;
+  _users: Collection<User>;
+  _checkinUsers: Collection<CheckinUser>;
   _achievementCategories: Collection<AchievementCategory>;
+  _checkinAchievements: Collection<CheckinAchievement>;
   _db: Database;
 
   constructor(@inject('ActContext') private _context?: ActContext) {
@@ -28,6 +42,20 @@ export class SeedService {
     this._achievementCategories = this._context
       .get()
       .collections.get<AchievementCategory>('achievement_categories');
+
+    this._checkins = this._context
+      .get()
+      .collections.get<Checkin>('checkins');
+
+    this._users = this._context.get().collections.get<User>('users');
+
+    this._checkinUsers = this._context
+      .get()
+      .collections.get<CheckinUser>('checkin_users');
+
+    this._checkinAchievements = this._context
+      .get()
+      .collections.get<CheckinAchievement>('checkin_achievements');
   }
 
   seed = (args: SeedArgs) => {
@@ -42,7 +70,109 @@ export class SeedService {
             categories || []
           )
         );
+      case 'CHECKINS':
+        if (!units.checkins) {
+          throw Error('units.checkins required');
+        }
+        return this._seedCheckins(units.checkins.length)
+          .then((checkins) =>
+            this._seedCheckinUsers(checkins, units.checkins)
+          )
+          .then((checkins) =>
+            this._seedCheckinAchievements(checkins, units.checkins)
+          );
     }
+  };
+
+  _seedCheckins = async (numberOfCheckins: number) => {
+    let newCheckinIds = [];
+    return new Promise<Checkin[]>((resolve) => {
+      this._db.action(async () => {
+        [...new Array(numberOfCheckins)].forEach(async (_, i) => {
+          newCheckinIds.push(
+            await this._checkins.create((m: Checkin) => {
+              m.note = faker.lorem.sentences(4);
+            })
+          );
+          if (i + 1 === numberOfCheckins) {
+            resolve(newCheckinIds);
+          }
+        });
+      });
+    });
+  };
+
+  _seedCheckinUsers = async (
+    checkins: Checkin[],
+    createCheckinsSeed: CreateCheckinSeed[]
+  ) => {
+    if (checkins.length !== createCheckinsSeed.length) {
+      throw Error(
+        'checkins[] and createCheckinsSeed[] must be same length'
+      );
+    }
+
+    const users = await this._users.query().fetch();
+
+    return this._db
+      .action(async () => {
+        return this._db.batch(
+          ...createCheckinsSeed.flatMap(({ numberOfUsers }, i) => {
+            const subsetOfUsers = sampleSize(users, numberOfUsers);
+
+            return subsetOfUsers.map((user) => {
+              return this._checkinUsers.prepareCreate(
+                (checkinUser) => {
+                  checkinUser.userId = user.id;
+                  checkinUser.checkinId = checkins[i].id;
+                }
+              );
+            });
+          })
+        );
+      })
+      .then(() => checkins);
+  };
+
+  _seedCheckinAchievements = async (
+    checkins: Checkin[],
+    createCheckinsSeed: CreateCheckinSeed[]
+  ) => {
+    if (checkins.length !== createCheckinsSeed.length) {
+      throw Error(
+        'checkins[] and createCheckinsSeed[] must be same length'
+      );
+    }
+
+    const achievements = await this._achievements.query().fetch();
+
+    return this._db
+      .action(async () => {
+        return this._db.batch(
+          ...createCheckinsSeed.flatMap(
+            ({ numberOfAchievements }, i) => {
+              const subsetOfAchievements = sampleSize(
+                achievements,
+                numberOfAchievements
+              );
+
+              return subsetOfAchievements.map((achievement) => {
+                return this._checkinAchievements.prepareCreate(
+                  (checkinAchievement) => {
+                    checkinAchievement.achievementId = achievement.id;
+                    checkinAchievement.checkinId = checkins[i].id;
+                    checkinAchievement.count = faker.datatype.number({
+                      min: 1,
+                      max: 9
+                    });
+                  }
+                );
+              });
+            }
+          )
+        );
+      })
+      .then(() => checkins);
   };
 
   _seedAchievementCategories = async (
@@ -59,25 +189,13 @@ export class SeedService {
       allAchievementCategories.find((aa) => a === aa.name)
     );
 
-    const updateAchievementCategories =
-      shoulUpdateAchievementCategories.map((suac) =>
-        allAchievementCategories.find((aac) => aac.name === suac)
-      );
-
-    await this._db.action((action) =>
+    await this._db.action(() =>
       this._db.batch(
         ...insertAchievementCategories.map((ac) =>
           this._achievementCategories.prepareCreate((r) => {
             r.name = ac;
           })
         )
-        // No need to update because its only the name
-        // and the name should be unique
-        // ...updateAchievementCategories.map((uac) =>
-        //   uac.prepareUpdate((r) => {
-        //     r.name = uac.name;
-        //   })
-        // )
       )
     );
 
@@ -89,19 +207,10 @@ export class SeedService {
     categories: AchievementCategory[]
   ) => {
     const allAchievements = await this._achievements.query().fetch();
-    const allAchievementCategories = await this._achievementCategories
-      .query()
-      .fetch();
 
-    const [updateAchievements, insertAchievements] = partition(
-      achievements,
-      (a) => allAchievements.find((aa) => a.name === aa.name)
+    const [_, insertAchievements] = partition(achievements, (a) =>
+      allAchievements.find((aa) => a.name === aa.name)
     );
-
-    const [updateAchievementCategories, insertAchievementCategories] =
-      partition(achievements, (a) =>
-        allAchievementCategories.find((aa) => a.name === aa.name)
-      );
 
     return this._db.action((action) =>
       this._db.batch(

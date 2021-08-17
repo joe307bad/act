@@ -11,11 +11,12 @@ import {
   User
 } from '@act/data/core';
 import { Q } from '@nozbe/watermelondb';
-import { Box } from '@mobily/stacks';
+import { Box, Row, Rows } from '@mobily/stacks';
 import { map } from 'rxjs/operators';
 import { CheckinAchievement } from '@act/data/core';
 import { HeaderContext } from '../Entry';
 import { format } from 'date-fns';
+import { Headline } from 'react-native-paper';
 
 type PendingApproval = {
   id: string;
@@ -41,17 +42,19 @@ const PendingApprovalsComponent: FC<{
   >([]);
   const { setExcludedPendingApprovals } = useContext(HeaderContext);
 
+  db.get
+    .get<Checkin>('checkins')
+    .query()
+    .fetch()
+    .then((checkins) => console.log(checkins));
+
   useEffect(() => {
     if (checkinUsers && checkinAchievements) {
       setPendingApprovals(
         checkinsPendingApproval.reduce((acc, cpa) => {
-          const usersForCheckin = checkinUsers.get(cpa.id);
-          const achievementsForCheckin = checkinAchievements.get(
-            cpa.id
-          );
-          if (!usersForCheckin || !achievementsForCheckin) {
-            return acc;
-          }
+          const usersForCheckin = checkinUsers.get(cpa.id) || [];
+          const achievementsForCheckin =
+            checkinAchievements.get(cpa.id) || [];
 
           acc.push({
             id: cpa.id.toString(),
@@ -72,23 +75,31 @@ const PendingApprovalsComponent: FC<{
   }, [checkinsPendingApproval, checkinUsers]);
 
   return (
-    <Box padding={2} paddingBottom={0}>
-      <OptionList<Checkin>
-        initialSelected={new Map()}
-        optionTitleProperty="users"
-        optionSubtitleProperty="subtitle"
-        data={pendingApprovals}
-        onChange={(selected: Map<string, any>) => {
-          setExcludedPendingApprovals(
-            new Set(Array.from(selected).map(([id]) => id))
-          );
-        }}
-        onCheckButtonPress={(id: string) =>
-          db.models.checkins.approveCheckins(new Set([id]))
-        }
-        onDeleteButtonPress={db.models.checkins.delete}
-      />
-    </Box>
+    <Rows>
+      <Row padding={2} height="content">
+        <Headline>
+          {checkinsPendingApproval.length} Checkins Pending Approval
+        </Headline>
+      </Row>
+      <Row>
+        <OptionList<Checkin>
+          initialSelected={new Map()}
+          optionTitleProperty="users"
+          optionSubtitleProperty="subtitle"
+          data={pendingApprovals}
+          paddingTop={2}
+          onChange={(selected: Map<string, any>) => {
+            setExcludedPendingApprovals(
+              new Set(Array.from(selected).map(([id]) => id))
+            );
+          }}
+          onCheckButtonPress={(id: string) =>
+            db.models.checkins.approveCheckins(new Set([id]))
+          }
+          onDeleteButtonPress={db.models.checkins.delete}
+        />
+      </Row>
+    </Rows>
   );
 };
 
