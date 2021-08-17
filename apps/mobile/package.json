@@ -44,13 +44,14 @@
     "mockingbird-ts": "*",
     "react-native-material-chip": "*",
     "react-native-responsive-screen": "*",
-    "react-native-multithreading": "*",
     "react-native-progress": "*",
     "react-native-svg": "*",
     "use-interval": "*",
     "react-native-confetti": "*",
     "lottie-react-native": "*",
+    "lottie-ios": "*",
     "date-fns": "*",
-    "recompose": "*"
+    "recompose": "*",
+    "react-native-picker-select": "*"
   }
 }

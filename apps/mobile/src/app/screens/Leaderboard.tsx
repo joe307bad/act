@@ -103,9 +103,7 @@ const LeaderboardItem: FC<{
                 </Headline>
               </Column>
               <Column width="content">
-                <Headline>
-                  <Chip title={points.toLocaleString()} />
-                </Headline>
+                <Chip title={points.toLocaleString()} />
               </Column>
             </Columns>
           </Box>

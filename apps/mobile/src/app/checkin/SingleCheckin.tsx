@@ -4,6 +4,7 @@ import Modal from '../shared/components/Modal';
 import { Rows, Row } from '@mobily/stacks';
 import { Achievement } from '@act/data/core';
 import { TextInput } from 'react-native-paper';
+import { getDefaultFont } from '../core/getDefaultFont';
 
 export const SingleCheckin: FC<{
   achievement?: Achievement;
@@ -37,14 +38,14 @@ export const SingleCheckin: FC<{
             textAlign="left"
             label="Checkin Note"
             value={note}
-            mode="outlined"
             theme={{
               fonts: {
                 regular: {
-                  fontFamily: 'sans-serif'
+                  fontFamily: getDefaultFont()
                 }
               }
             }}
+            mode="outlined"
             onChangeText={setNote}
           />
         </Row>

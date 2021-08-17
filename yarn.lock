@@ -3333,7 +3333,7 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/masked-view/-/masked-view-0.1.11.tgz#2f4c6e10bee0786abff4604e39a37ded6f3980ce"
   integrity sha512-rQfMIGSR/1r/SyN87+VD8xHHzDYeHaJq6elOSCAD+0iLagXkSI2pfA0LmSXP21uw5i3em7GkkRjfJ8wpqWXZNw==
 
-"@react-native-picker/picker@^1.16.3":
+"@react-native-picker/picker@1.16.3", "@react-native-picker/picker@^1.16.3", "@react-native-picker/picker@^1.8.3":
   version "1.16.3"
   resolved "https://registry.yarnpkg.com/@react-native-picker/picker/-/picker-1.16.3.tgz#22750f8d44465432845fa59ce20e69761029b6ef"
   integrity sha512-Qt40DBg7IEhBN5x2DYPV3B26j5fNhVZcpCestr1IuirneMNtOaIyA9+nPYniL/OBzd9YbpUKbS7XSy/MM9bP3w==
@@ -3381,9 +3381,9 @@
     color "^3.1.3"
     react-native-iphone-x-helper "^1.3.0"
 
-"@rescript-react-native/paper@git+https://github.com/joe307bad/paper.git#f9d541e58d677e20d4f5c06e8996871f785720b5":
+"@rescript-react-native/paper@git+https://github.com/joe307bad/paper.git#7094294a446eff99f9edf57bd30a09d96a04d0a2":
   version "3.0.6"
-  resolved "git+https://github.com/joe307bad/paper.git#f9d541e58d677e20d4f5c06e8996871f785720b5"
+  resolved "git+https://github.com/joe307bad/paper.git#7094294a446eff99f9edf57bd30a09d96a04d0a2"
 
 "@rescript/react@0.10.1":
   version "0.10.1"
@@ -14972,11 +14972,6 @@ react-native-material-chip@^1.0.2:
   resolved "https://registry.yarnpkg.com/react-native-material-chip/-/react-native-material-chip-1.0.2.tgz#30c65e0c9b8dbf9d3ab9fce9c363abe859ff8663"
   integrity sha512-Q3P4BMoqTf9I4ApvUmvvtumiJOFlb0Qtc3wQZW1zRQU/ymWbIn4EtWdgwWzQfdmgvoFxx0mqhUzysklU1koCcw==
 
-react-native-multithreading@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-multithreading/-/react-native-multithreading-1.1.1.tgz#e1522ecd56115993d444a69c21bca49ca123bf4e"
-  integrity sha512-ceJQRZAPjH5LfrDjb5svF4F18Ne7QR7QLQUFO0huAe+9w0hd2C3PR12ATxljo+590GXCzWRt2ruR9pY3EstFAQ==
-
 react-native-pager-view@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.2.1.tgz#ad69a6035edd998771daf302830f73602e5204a9"
@@ -14995,6 +14990,14 @@ react-native-paper@^4.8.1:
     "@callstack/react-theme-provider" "^3.0.5"
     color "^3.1.2"
     react-native-iphone-x-helper "^1.3.1"
+
+react-native-picker-select@^8.0.4:
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-picker-select/-/react-native-picker-select-8.0.4.tgz#3f7f1f42df69b06e7d2c10338288332a6c40fd10"
+  integrity sha512-orBjPIwBkV5oipyVw263YNMI56f6Kj3p/ejabZoCYYNSG3AiLVVhC2RqsxMgDA7IayyURAW+AlV+mDJyVqLBkg==
+  dependencies:
+    "@react-native-picker/picker" "^1.8.3"
+    lodash.isequal "^4.5.0"
 
 react-native-progress@^5.0.0:
   version "5.0.0"

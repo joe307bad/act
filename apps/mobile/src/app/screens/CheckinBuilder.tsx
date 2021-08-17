@@ -13,6 +13,7 @@ import { Avatar, Card, TextInput } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../AwesomeButton';
 import { CreateCheckin } from '@act/data/core';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
+import { getDefaultFont } from '../core/getDefaultFont';
 
 const CheckinBuilder: FC = () => {
   const users = db.useCollection<User>('users');
@@ -84,7 +85,7 @@ const CheckinBuilder: FC = () => {
                     theme={{
                       fonts: {
                         regular: {
-                          fontFamily: 'sans-serif'
+                          fontFamily: getDefaultFont()
                         }
                       }
                     }}

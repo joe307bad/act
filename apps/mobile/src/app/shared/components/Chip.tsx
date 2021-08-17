@@ -1,13 +1,11 @@
-import { Column, Columns } from '@mobily/stacks';
 import React from 'react';
 import { Chip as C, useTheme } from 'react-native-paper';
-import { Text } from 'react-native';
+import { getDefaultFont } from '../../core/getDefaultFont';
 
 const Chip = ({
   title,
   onDelete = undefined,
   style = undefined,
-  count = undefined,
   icon = 'plus-circle'
 }) => {
   const theme = useTheme();
@@ -21,7 +19,7 @@ const Chip = ({
         ...style
       }}
       textStyle={{
-        fontFamily: 'sans-serif',
+        fontFamily: getDefaultFont(),
         alignItems: 'center',
         alignContent: 'center',
         justifyContent: 'center'
@@ -29,25 +27,7 @@ const Chip = ({
       icon={icon}
       mode="outlined"
     >
-      <Columns>
-        {count && (
-          <Column>
-            <Text
-              style={{
-                color: theme.colors.primary,
-                paddingRight: 5,
-                marginLeft: -5,
-                fontWeight: 'bold'
-              }}
-            >
-              {count}
-            </Text>
-          </Column>
-        )}
-        <Column>
-          <Text>{title}</Text>
-        </Column>
-      </Columns>
+      {title?.toString()}
     </C>
   );
 };

@@ -5,6 +5,7 @@ import k, {
 } from '@react-keycloak/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import db from './';
+import { Platform } from 'react-native';
 
 const keycloak = new RNKeycloak({
   url: 'http://192.168.0.4:8080/auth',
@@ -73,11 +74,21 @@ const KeycloakProvider: FC = ({ children }) => {
     return AuthStatus.Authenticated;
   })();
 
+  const redirectUri = (() => {
+    const scheme = 'io.act.auth';
+
+    if (Platform.OS === 'ios') {
+      return `${scheme}://`;
+    }
+
+    return `${scheme}://io.act.host/`;
+  })();
+
   return (
     <ReactNativeKeycloakProvider
       authClient={keycloak}
       initOptions={{
-        redirectUri: 'io.act.auth://io.act.host/CreateCheckin/'
+        redirectUri: `${redirectUri}Achievements/`
       }}
       onEvent={async (ev) => {
         if (ev === 'onAuthSuccess') {

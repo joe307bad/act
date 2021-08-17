@@ -79,7 +79,7 @@ const OptionListComponent: <T extends BaseModel>(
         checked={items.has(id)}
         showCountDropdown={showCountDropdown}
         onDeleteButtonPress={
-          confirmDeletion
+          onDeleteButtonPress
             ? () => confirmDeletion(() => onDeleteButtonPress(id))
             : undefined
         }
@@ -94,7 +94,10 @@ const OptionListComponent: <T extends BaseModel>(
           if (exists) {
             newItems.delete(id);
           } else {
-            newItems.set(id, { id, name: optionSubtitleProperty });
+            newItems.set(id, {
+              id,
+              name: item[snakeCase(optionSubtitleProperty as string)]
+            });
           }
           setItems(newItems);
         }}

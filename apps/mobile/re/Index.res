@@ -82,7 +82,7 @@ module Login = {
                 <Headline> {"Welcome to the Act App"->React.string} </Headline>
                 <Paper.Text
                   style={Style.style(
-                    ~fontFamily="sans-serif",
+                    ~fontFamily={Platform.os === Platform.ios ? "Arial" : "sans-serif"},
                     ~paddingBottom=5.->ReactNative.Style.dp,
                     (),
                   )}>
@@ -109,7 +109,7 @@ module Login = {
                 <Box flex=[#fluid] alignY=[#center]>
                   <Paper.Text
                     style={Style.style(
-                      ~fontFamily="sans-serif",
+                      ~fontFamily="Arial",
                       ~width=100.->ReactNative.Style.pct,
                       ~textAlign=#center,
                       ~padding=10.->ReactNative.Style.dp,
@@ -159,6 +159,12 @@ module Root = {
           ~medium={fontFamily: fontFamily, fontWeight: "normal"},
           ~light={fontFamily: fontFamily, fontWeight: "normal"},
         ),
+        ~ios=ThemeProvider.Theme.Fonts.platformFont(
+          ~regular={fontFamily: fontFamily, fontWeight: "normal"},
+          ~thin={fontFamily: fontFamily, fontWeight: "normal"},
+          ~medium={fontFamily: fontFamily, fontWeight: "normal"},
+          ~light={fontFamily: fontFamily, fontWeight: "normal"},
+        ),
       ),
     )
 
@@ -176,10 +182,11 @@ module Root = {
       ~surface="white",
       ~text="black",
     )
-    let screens = Js.Dict.fromList(list{("CreateCheckin", "CreateCheckin/:id")})
+    let screens = Js.Dict.fromList(list{("Achievements", "Achievements/:id")})
+
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
     let {status} = ActData.useActAuth()
-    <StacksProvider debug={true}>
+    <StacksProvider debug={false}>
       <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
         <Paper.PaperProvider theme>
           <Native.NavigationContainer
@@ -190,7 +197,10 @@ module Root = {
           //   | None => Js.log("Unable to stringify navigation state")
           //   }
           // }}
-            linking={prefixes: ["io.act.auth://io.act.host/"], config: {screens: screens}}>
+            linking={
+              prefixes: [`io.act.auth://${Platform.os === Platform.ios ? "" : "io.act.host/"}`],
+              config: {screens: screens},
+            }>
             <ActDrawer>
               {
                 // This approach of rendering the screens based on auth status throws a

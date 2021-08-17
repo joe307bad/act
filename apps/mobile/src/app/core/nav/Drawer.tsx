@@ -35,10 +35,8 @@ const DrawerList: FC<
     <>
       <Stack space={2} padding={5}>
         <Box>
-          <Card elevation={0} style={{ padding: 10 }}>
-            <Title>{currentUser?.fullName}</Title>
-            <Text>{currentUser?.username}</Text>
-          </Card>
+          <Title>{currentUser?.fullName}</Title>
+          <Text>{currentUser?.username}</Text>
         </Box>
       </Stack>
       <List.Item

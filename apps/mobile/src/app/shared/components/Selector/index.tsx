@@ -408,6 +408,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
         </Card.Content>
         <Card.Actions>
           <AwesomeButtonMedium
+            type="outlined"
             onPress={() => setSelectorModalVisible(true)}
           >
             Select {plural}

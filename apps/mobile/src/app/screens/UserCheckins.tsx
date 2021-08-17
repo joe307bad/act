@@ -4,15 +4,7 @@ import {
   TouchableRipple
 } from 'react-native-paper';
 import React, { FC, useState } from 'react';
-import { Picker } from '@react-native-picker/picker';
-import {
-  Box,
-  Column,
-  Columns,
-  Row,
-  Rows,
-  Stack
-} from '@mobily/stacks';
+import { Box, Column, Columns, Row, Rows } from '@mobily/stacks';
 import withObservables from '@nozbe/with-observables';
 import db, { useActAuth } from '@act/data/rn';
 import {
@@ -22,16 +14,17 @@ import {
   CheckinUser,
   User
 } from '@act/data/core';
-import { Alert, ScrollView, Text } from 'react-native';
+import { Alert, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
-import { checkinUsersAndAchievements } from '../shared/queries/checkinUsersAndAchievements';
 import { map } from 'rxjs/operators';
 import { Q } from '@nozbe/watermelondb';
 import { format } from 'date-fns';
 import Chip from '../shared/components/Chip';
 import { isEmpty } from 'lodash';
+import RNPickerSelect from 'react-native-picker-select';
+import { Dropdown } from '../shared/components/Dropdown';
 
 const UserCheckinsComponent: FC<{
   users: User[];
@@ -166,26 +159,26 @@ const UserCheckinsComponent: FC<{
     <Rows>
       <Row height="content">
         <Surface style={{ elevation: 2 }}>
-          <Picker
-            selectedValue={selectedUser}
+          <Dropdown
+            value={selectedUser}
             onValueChange={(v) => setSelectedUser(v)}
-          >
-            {users.map((u) => (
-              <Picker.Item
-                key={u.id}
-                label={u.fullName}
-                value={u.id}
-              />
-            ))}
-          </Picker>
+            items={users.map((u) => ({
+              label: u.fullName,
+              value: u.id
+            }))}
+            padding={3}
+          />
         </Surface>
       </Row>
       <Row>
-        <Box padding={2} paddingBottom={0}>
+        <Box padding={2} paddingBottom={0} paddingTop={0}>
           <FlatList
             data={Array.from(userCheckins.get(selectedUser)).filter(
               ([uc]) => checkins.has(uc)
             )}
+            contentContainerStyle={{
+              paddingTop: 5
+            }}
             renderItem={RenderItem}
             keyExtractor={([c]) => c}
           />

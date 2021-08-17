@@ -92,7 +92,7 @@ export const CheckinSuccess = ({
           </Headline>
         </Row>
         {note !== '' && note && (
-          <Row paddingBottom={6}>
+          <Row paddingTop={2} paddingBottom={6}>
             <Surface style={{ elevation: 2 }}>
               <Box padding={5}>
                 <Text>{note}</Text>

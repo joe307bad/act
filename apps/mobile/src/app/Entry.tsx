@@ -53,6 +53,24 @@ var fonts = configureFonts({
       fontFamily: fontFamily,
       fontWeight: 'normal'
     }
+  },
+  ios: {
+    regular: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    thin: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    medium: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    light: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    }
   }
 });
 var animation = {
@@ -173,7 +191,7 @@ const EntryStack = () => {
       }}
     >
       <Stack.Navigator
-        initialRouteName="UserCheckins"
+        initialRouteName="Achievements"
         headerMode="float"
         screenOptions={{
           header: (props) => <NavBar {...props} theme={theme} />

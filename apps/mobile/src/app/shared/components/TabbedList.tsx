@@ -176,7 +176,8 @@ export const TabbedListComponent: <
   );
 
   const [index, setIndex] = useState(0);
-  const [routes, setRoutes] = useState([]);
+  const [routes, setRoutes] =
+    useState<{ key: string; title: string }[]>();
 
   useEffect(() => {
     setRoutes([
@@ -231,24 +232,29 @@ export const TabbedListComponent: <
         onOptionSelect
       }}
     >
-      <TabView
-        renderTabBar={(props) => (
-          <TB
-            {...props}
-            scrollEnabled={true}
-            indicatorStyle={{ backgroundColor: 'white' }}
-            style={{ backgroundColor: colors.primary }}
-            labelStyle={{ fontSize: 20, fontFamily: 'Bebas-Regular' }}
-          />
-        )}
-        navigationState={{ index, routes }}
-        lazy={true}
-        renderScene={({ route }) => (
-          <AchievementList route={route} data={data} />
-        )}
-        onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
-      />
+      {routes && (
+        <TabView
+          renderTabBar={(props) => (
+            <TB
+              {...props}
+              scrollEnabled={true}
+              indicatorStyle={{ backgroundColor: 'white' }}
+              style={{ backgroundColor: colors.primary }}
+              labelStyle={{
+                fontSize: 20,
+                fontFamily: 'Bebas-Regular'
+              }}
+            />
+          )}
+          navigationState={{ index, routes }}
+          lazy={true}
+          renderScene={({ route }) => (
+            <AchievementList route={route} data={data} />
+          )}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+        />
+      )}
     </TabbedListOptionContext.Provider>
   );
 };

@@ -1,16 +1,18 @@
 import { Box, Column, Columns, Row, Rows } from '@mobily/stacks';
-import { Picker } from '@react-native-picker/picker';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import {
   Checkbox,
+  Surface,
   Title,
   TouchableRipple,
   useTheme
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { widthPercentageToDP } from 'react-native-responsive-screen';
 import Chip from '../Chip';
 import { GestureResponderEvent, Text } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
+import { Dropdown } from '../Dropdown';
 
 export const Option: FC<{
   value: string;
@@ -50,7 +52,7 @@ export const Option: FC<{
       <Columns alignY="center">
         {!disableSelection && (
           <Column width="content">
-            <Checkbox
+            <Checkbox.Android
               onPress={() => onPress?.({} as any, null)}
               color={theme.colors.primary}
               status={checked ? 'checked' : 'unchecked'}
@@ -78,81 +80,76 @@ export const Option: FC<{
             )}
           </TouchableRipple>
         </Column>
-        <Column width="content">
-          <Columns alignY="center">
-            {showCountDropdown && (
-              <Column width="1/5" paddingRight={5}>
-                <Picker
-                  selectedValue={Number(count).toString()}
-                  style={{
-                    width: widthPercentageToDP(23)
-                  }}
-                  onValueChange={(itemValue, _) =>
-                    onPress(
-                      {} as GestureResponderEvent,
-                      Number(itemValue)
-                    )
-                  }
-                >
-                  <Picker.Item label="1" value="1" />
-                  <Picker.Item label="2" value="2" />
-                  <Picker.Item label="3" value="3" />
-                  <Picker.Item label="4" value="4" />
-                  <Picker.Item label="5" value="5" />
-                  <Picker.Item label="6" value="6" />
-                  <Picker.Item label="7" value="7" />
-                  <Picker.Item label="8" value="8" />
-                  <Picker.Item label="9" value="9" />
-                </Picker>
-              </Column>
-            )}
-            {!!fixedCount && (
-              <Column width="content">
-                <Chip title={fixedCount} icon="multiplication-box" />
-              </Column>
-            )}
-            {!!points && (
-              <Column width="content" padding={1}>
-                <TouchableRipple onPress={onPress}>
-                  <Chip title={points} />
-                </TouchableRipple>
-              </Column>
-            )}
-            {showInfoButton && (
-              <Column width="content" paddingRight={2}>
-                <TouchableRipple onPress={onInfoButtonPress}>
-                  <MaterialCommunityIcons
-                    name="information-outline"
-                    color={theme.colors.primary}
-                    size={30}
-                  />
-                </TouchableRipple>
-              </Column>
-            )}
-            {onDeleteButtonPress && (
-              <Column width="content" paddingRight={2}>
-                <TouchableRipple onPress={onDeleteButtonPress}>
-                  <MaterialCommunityIcons
-                    name="trash-can-outline"
-                    color={theme.colors.primary}
-                    size={30}
-                  />
-                </TouchableRipple>
-              </Column>
-            )}
-            {onCheckButtonPress && (
-              <Column width="content" paddingRight={2}>
-                <TouchableRipple onPress={onCheckButtonPress}>
-                  <MaterialCommunityIcons
-                    name="check-circle-outline"
-                    color={theme.colors.primary}
-                    size={30}
-                  />
-                </TouchableRipple>
-              </Column>
-            )}
-          </Columns>
-        </Column>
+
+        {showCountDropdown && (
+          <Column width="content">
+            <Dropdown
+              items={[
+                { label: '1', value: '1' },
+                { label: '2', value: '2' },
+                { label: '3', value: '3' },
+                { label: '4', value: '4' },
+                { label: '5', value: '5' },
+                { label: '6', value: '6' },
+                { label: '7', value: '7' },
+                { label: '8', value: '8' },
+                { label: '9', value: '9' }
+              ]}
+              onValueChange={(itemValue) =>
+                onPress(
+                  {} as GestureResponderEvent,
+                  Number(itemValue)
+                )
+              }
+              value={count ? Number(count).toString() : '1'}
+            />
+          </Column>
+        )}
+        {!!fixedCount && (
+          <Column width="content">
+            <Chip title={fixedCount} icon="multiplication-box" />
+          </Column>
+        )}
+        {!!points && (
+          <Column width="content" padding={1}>
+            <TouchableRipple onPress={onPress}>
+              <Chip title={points} />
+            </TouchableRipple>
+          </Column>
+        )}
+        {showInfoButton && (
+          <Column width="content" paddingRight={2}>
+            <TouchableRipple onPress={onInfoButtonPress}>
+              <MaterialCommunityIcons
+                name="information-outline"
+                color={theme.colors.primary}
+                size={30}
+              />
+            </TouchableRipple>
+          </Column>
+        )}
+        {onDeleteButtonPress && (
+          <Column width="content" paddingRight={2}>
+            <TouchableRipple onPress={onDeleteButtonPress}>
+              <MaterialCommunityIcons
+                name="trash-can-outline"
+                color={theme.colors.primary}
+                size={30}
+              />
+            </TouchableRipple>
+          </Column>
+        )}
+        {onCheckButtonPress && (
+          <Column width="content" paddingRight={2}>
+            <TouchableRipple onPress={onCheckButtonPress}>
+              <MaterialCommunityIcons
+                name="check-circle-outline"
+                color={theme.colors.primary}
+                size={30}
+              />
+            </TouchableRipple>
+          </Column>
+        )}
       </Columns>
     </Box>
   );
