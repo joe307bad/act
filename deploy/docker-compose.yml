@@ -6,17 +6,20 @@ services:
       dockerfile: deploy/Dockerfile
       args:
         - ACT_SRC=${ACT_SRC}
-    environment:
-      - COUCH_DB_URL=${COUCH_DB_URL}
-      - COUCHDB_USER=${COUCHDB_USER}
-      - COUCHDB_PASSWORD=${COUCHDB_PW}
+        - COUCHDB_URL=${COUCHDB_URL}
+        - COUCHDB_USER=${COUCHDB_USER}
+        - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
     ports:
       - '80:3333'
+    depends_on:
+      - couchdb
+    networks:
+      - act-network
   couchdb:
     image: couchdb
     environment:
       - COUCHDB_USER=${COUCHDB_USER}
-      - COUCHDB_PASSWORD=${COUCHDB_PW}
+      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
     ports:
       - '5984:5984'
       - '4369:4369'
@@ -24,6 +27,8 @@ services:
     volumes:
       - '${COUCHDB_DATA}:/bitnami/couchdb'
       - ./couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
+    networks:
+      - act-network
   postgres:
     image: postgres
     volumes:
@@ -32,6 +37,8 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - act-network
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     environment:
@@ -47,3 +54,8 @@ services:
       - 8080:8080
     depends_on:
       - postgres
+    networks:
+      - act-network
+networks:
+  act-network:
+    driver: bridge
