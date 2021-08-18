@@ -1,0 +1,8 @@
+[web]
+192.168.0.1
+
+[web:vars]
+ansible_ssh_user=
+ansible_ssh_host=
+ansible_ssh_private_key_file=
+mount=

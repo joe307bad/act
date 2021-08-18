@@ -1,0 +1,32 @@
+---
+- name: Deploy the act app
+  hosts: web
+  become: yes
+  vars:
+    api: "{{hostvars[inventory_hostname]['mount']}}/act/api"
+    couchdb: "{{hostvars[inventory_hostname]['mount']}}/act/couchdb"
+    postgres: "{{hostvars[inventory_hostname]['mount']}}/act/postgres"
+    keycloak: "{{hostvars[inventory_hostname]['mount']}}/act/keycloak"
+  tasks:
+    - name: Create directories for act app
+      file: path=/{{item}} state=directory
+      with_items:
+        - ['{{couchdb}}/data', '{{postgres}}/data', '{{api}}/src']
+      tags: act-folders
+    - name: Checkout act src files
+      git:
+        repo: 'git://github.com/joe307bad/act.git'
+        dest: '{{api}}/src/'
+      tags: act-src
+    - name: Copy up .env.prod
+      copy:
+        src: ../.env.prod
+        dest: '{{api}}/src/deploy/.env.prod'
+      tags: act-env
+    - name: Start the act app
+      docker_compose:
+        project_src: '{{api}}/src/deploy'
+        restarted: yes
+        state: present
+        env_file: '{{api}}/src/deploy/.env.prod'
+      tags: act-up

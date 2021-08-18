@@ -104,3 +104,6 @@ apps/mobile/android/.idea/libraries/Gradle__androidx_lifecycle_lifecycle_viewmod
 apps/mobile/android/.idea/libraries/Gradle__artifacts_react_native_reanimated_unspecified.xml
 apps/mobile/android/.idea/libraries/Gradle__org_jetbrains_kotlin_kotlin_stdlib_1_3_50.xml
 apps/mobile/android/.idea/libraries/Gradle__org_jetbrains_kotlin_kotlin_stdlib_common_1_3_50.xml
+
+deploy/ansible/production
+deploy/.env.prod
