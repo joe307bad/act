@@ -1,9 +1,15 @@
 version: '2'
 services:
   act:
-    image: Dockerfile
+    build:
+      context: ../
+      dockerfile: deploy/Dockerfile
+      args:
+        - ACT_SRC=${ACT_SRC}
     environment:
       - COUCH_DB_URL=${COUCH_DB_URL}
+      - COUCHDB_USER=${COUCHDB_USER}
+      - COUCHDB_PASSWORD=${COUCHDB_PW}
     ports:
       - '80:3333'
   couchdb:

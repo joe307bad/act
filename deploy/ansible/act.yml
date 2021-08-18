@@ -1,6 +1,9 @@
 ---
 - name: Deploy the act app
   hosts: web
+  roles:
+    - name: act.yarn
+      tags: yarn
   become: yes
   vars:
     api: "{{hostvars[inventory_hostname]['mount']}}/act/api"
@@ -29,6 +32,20 @@
         src: ../docker-compose.yml
         dest: '{{api}}/src/deploy/docker-compose.yml'
       tags: act-copy-docker-compose
+    - name: Copy up Dockerfile
+      copy:
+        src: ../Dockerfile
+        dest: '{{api}}/src/deploy/Dockerfile'
+      tags: act-copy-Dockerfile
+    - name: Install API packages
+      community.general.yarn:
+        path: '{{api}}/src'
+      tags: act-yarn-install
+    - name: Build API dist
+      ansible.builtin.command: 'yarn build:api'
+      args:
+        chdir: '{{api}}/src'
+      tags: act-build-api
     - name: Start the act app
       docker_compose:
         project_src: '{{api}}/src/deploy'
