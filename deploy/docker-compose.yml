@@ -1,21 +1,27 @@
 version: '2'
 services:
+  act:
+    image: Dockerfile
+    environment:
+      - COUCH_DB_URL=${COUCH_DB_URL}
+    ports:
+      - '80:3333'
   couchdb:
     image: couchdb
     environment:
       - COUCHDB_USER=${COUCHDB_USER}
-      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
+      - COUCHDB_PASSWORD=${COUCHDB_PW}
     ports:
       - '5984:5984'
       - '4369:4369'
       - '9100:9100'
     volumes:
-      - ${COUCHDB_DATA}:/bitnami/couchdb
+      - '${COUCHDB_DATA}:/bitnami/couchdb'
       - ./couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
   postgres:
     image: postgres
     volumes:
-      - ${POSTGRES_DATA}:/var/lib/postgresql/data
+      - '${POSTGRES_DATA}:/var/lib/postgresql/data'
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: ${POSTGRES_USER}

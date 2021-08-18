@@ -4,10 +4,13 @@ import { UnitsModule } from '../unit/unit.module';
 
 import { AppController } from './app.controller';
 
+const couchDbUrl =
+  process.env.COUCH_DB_URL ?? 'http://localhost:5984';
+
 @Module({
   imports: [
     CouchDbModule.forRoot({
-      url: 'http://localhost:5984',
+      url: couchDbUrl,
       username: 'admin',
       userpass: 'password',
       requestDefaults: { jar: true }

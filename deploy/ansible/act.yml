@@ -17,16 +17,21 @@
       git:
         repo: 'git://github.com/joe307bad/act.git'
         dest: '{{api}}/src/'
+        force: yes
       tags: act-src
     - name: Copy up .env.prod
       copy:
         src: ../.env.prod
-        dest: '{{api}}/src/deploy/.env.prod'
+        dest: '{{api}}/src/deploy/.env'
       tags: act-env
+    - name: Copy up docker-compose
+      copy:
+        src: ../docker-compose.yml
+        dest: '{{api}}/src/deploy/docker-compose.yml'
+      tags: act-copy-docker-compose
     - name: Start the act app
       docker_compose:
         project_src: '{{api}}/src/deploy'
         restarted: yes
         state: present
-        env_file: '{{api}}/src/deploy/.env.prod'
       tags: act-up
