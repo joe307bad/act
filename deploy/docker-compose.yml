@@ -32,6 +32,7 @@ services:
     container_name: couchdb
     image: couchdb
     environment:
+      PROXY_ADDRESS_FORWARDING: 'true'
       VIRTUAL_HOST: couchdb.${base_url}
       LETSENCRYPT_HOST: couchdb.${base_url}
       VIRTUAL_PORT: 5984
@@ -61,8 +62,10 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     environment:
+      PROXY_ADDRESS_FORWARDING: 'true'
       VIRTUAL_HOST: keycloak.${base_url}
       LETSENCRYPT_HOST: keycloak.${base_url}
+      KEYCLOAK_HOSTNAME: keycloak.${base_url}
       VIRTUAL_PORT: 8080
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
@@ -72,6 +75,8 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       KEYCLOAK_USER: ${KEYCLOAK_USER}
       KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
+    volumes:
+      - ${NGINX_DATA}/certs/:/etc/x509/https
     expose:
       - '8080'
     depends_on:
