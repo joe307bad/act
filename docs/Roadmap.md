@@ -49,7 +49,7 @@
 - [ ] **[MOBILE]** - Bugsnag
 - ✅ **[MOBILE]** - Get working on iOS lol
 - [ ] **[MOBILE]** - Bitrise pipeline that provides public links for Android/iOS downloads
-- [ ] **[OPS]** - Reslient and automated API + Keycloak + DB deployment
+- ✅ **[OPS]** - Publicly accessible services behind HTTPS
 
 ## Beyond
 
@@ -65,6 +65,7 @@
 - [ ] **[MOBILE] + [WEB] + [OPS]** - Photo uploads as seperate entities and attached to checkins
 - [ ] **[MOBILE]** - More advanced stats on checkins (checkins per hour, checkins per day, who has the most points in a specific time frame, etc.)
 - More listed in the READMEs of Points
+- [ ] **[OPS]** - Reslient and automated API + Keycloak + DB deployment
 
 ## Tech Debt
 

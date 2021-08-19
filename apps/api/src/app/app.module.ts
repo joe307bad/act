@@ -8,12 +8,6 @@ const couchDbUrl = process.env.COUCHDB_URL ?? 'http://localhost:5984';
 const couchDbUser = process.env.COUCHDB_USER ?? 'admin';
 const couchDbPassword = process.env.COUCHDB_PASSWORD ?? 'password';
 
-console.log({
-  couchDbUrl,
-  couchDbUser,
-  couchDbPassword
-});
-
 @Module({
   imports: [
     CouchDbModule.forRoot({

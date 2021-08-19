@@ -6,18 +6,29 @@
       tags: yarn
   become: yes
   vars:
-    api: "{{hostvars[inventory_hostname]['mount']}}/act/api"
-    couchdb: "{{hostvars[inventory_hostname]['mount']}}/act/couchdb"
-    postgres: "{{hostvars[inventory_hostname]['mount']}}/act/postgres"
-    keycloak: "{{hostvars[inventory_hostname]['mount']}}/act/keycloak"
+    nginx: "{{hostvars[inventory_hostname]['mount']}}/nginx"
+    api: "{{hostvars[inventory_hostname]['mount']}}/api"
+    couchdb: "{{hostvars[inventory_hostname]['mount']}}/couchdb"
+    postgres: "{{hostvars[inventory_hostname]['mount']}}/postgres"
+    keycloak: "{{hostvars[inventory_hostname]['mount']}}/keycloak"
     couchdb_password: "{{hostvars[inventory_hostname]['COUCHDB_PASSWORD']}}"
     couchdb_user: "{{hostvars[inventory_hostname]['COUCHDB_USER']}}"
     network: "{{hostvars[inventory_hostname]['network']}}"
+    base_url: "{{hostvars[inventory_hostname]['base_url']}}"
   tasks:
-    - name: Create directories for act app
+    - name: Create directories for act
       file: path=/{{item}} state=directory
       with_items:
-        - ['{{couchdb}}/data', '{{postgres}}/data', '{{api}}/src']
+        - [
+            '{{couchdb}}/data',
+            '{{postgres}}/data',
+            '{{api}}/src',
+            '{{api}}/src'
+          ]
+    - name: Create directories for nginx
+      file: path={{nginx}}/{{item}} state=directory
+      with_items:
+        - ['conf', 'vhost', 'html', 'dhparam', 'certs', 'acme']
       tags: act-folders
     - name: Checkout act src files
       git:
@@ -25,9 +36,9 @@
         dest: '{{api}}/src/'
         force: yes
       tags: act-src
-    - name: Copy up .env.prod
+    - name: Copy up .env
       copy:
-        src: ../.env.prod
+        src: ../.env
         dest: '{{api}}/src/deploy/.env'
       tags: act-env
     - name: Copy up docker-compose
@@ -53,7 +64,7 @@
     - name: Create act database in couchdb
       shell: 'docker run --network {{network}} --rm curlimages/curl:7.78.0 -L -v -X PUT http://{{couchdb_user}}:{{couchdb_password}}@couchdb:5984/act'
       tags: act-create-couchdb-db
-    - name: Start node container for the act API
+    - name: Start node container for act API
       docker_container:
         name: act-api
         image: node:8
@@ -63,14 +74,16 @@
         working_dir: /home/node/app/
         env:
           NODE_ENV: production
-          VIRTUAL_PORT: '3000'
+          VIRTUAL_HOST: 'act.{{base_url}}'
+          LETSENCRYPT_HOST: 'act.{{base_url}}'
+          VIRTUAL_PORT: '3333'
           COUCHDB_PASSWORD: '{{couchdb_password}}'
           COUCHDB_USER: '{{couchdb_user}}'
           COUCHDB_URL: http://couchdb:5984
         links:
           - couchdb
         expose:
-          - 3000
+          - 3333
         volumes:
           - '{{api}}/src/:/home/node/app'
         networks:
