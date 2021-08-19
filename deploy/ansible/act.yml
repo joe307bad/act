@@ -10,6 +10,9 @@
     couchdb: "{{hostvars[inventory_hostname]['mount']}}/act/couchdb"
     postgres: "{{hostvars[inventory_hostname]['mount']}}/act/postgres"
     keycloak: "{{hostvars[inventory_hostname]['mount']}}/act/keycloak"
+    couchdb_password: "{{hostvars[inventory_hostname]['COUCHDB_PASSWORD']}}"
+    couchdb_user: "{{hostvars[inventory_hostname]['COUCHDB_USER']}}"
+    network: "{{hostvars[inventory_hostname]['network']}}"
   tasks:
     - name: Create directories for act app
       file: path=/{{item}} state=directory
@@ -32,11 +35,6 @@
         src: ../docker-compose.yml
         dest: '{{api}}/src/deploy/docker-compose.yml'
       tags: act-copy-docker-compose
-    - name: Copy up Dockerfile
-      copy:
-        src: ../Dockerfile
-        dest: '{{api}}/src/deploy/Dockerfile'
-      tags: act-copy-Dockerfile
     - name: Install API packages
       community.general.yarn:
         path: '{{api}}/src'
@@ -46,9 +44,37 @@
       args:
         chdir: '{{api}}/src'
       tags: act-build-api
-    - name: Start the act app
+    - name: Start dependant services from docker-compose
       docker_compose:
         project_src: '{{api}}/src/deploy'
         restarted: yes
         state: present
-      tags: act-up
+      tags: act-dep-services
+    - name: Create act database in couchdb
+      shell: 'docker run --network {{network}} --rm curlimages/curl:7.78.0 -L -v -X PUT http://{{couchdb_user}}:{{couchdb_password}}@couchdb:5984/act'
+      tags: act-create-couchdb-db
+    - name: Start node container for the act API
+      docker_container:
+        name: act-api
+        image: node:8
+        state: started
+        restart_policy: always
+        restart: yes
+        working_dir: /home/node/app/
+        env:
+          NODE_ENV: production
+          VIRTUAL_PORT: '3000'
+          COUCHDB_PASSWORD: '{{couchdb_password}}'
+          COUCHDB_USER: '{{couchdb_user}}'
+          COUCHDB_URL: http://couchdb:5984
+        links:
+          - couchdb
+        expose:
+          - 3000
+        volumes:
+          - '{{api}}/src/:/home/node/app'
+        networks:
+          - name: '{{network}}'
+        network_mode: bridge
+        command: node /home/node/app/dist/apps/api/main.js
+      tags: act-api
