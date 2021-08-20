@@ -1,6 +1,4 @@
 rootProject.name = 'Mobile'
-include ':@bugsnag_react-native'
-project(':@bugsnag_react-native').projectDir = new File(rootProject.projectDir, '../../../node_modules/@bugsnag/react-native/android')
 include ':nozbe_watermelondb'
 project(':nozbe_watermelondb').projectDir =
     new File(rootProject.projectDir, '../node_modules/@nozbe/watermelondb/native/android')
