@@ -53,6 +53,7 @@
     "date-fns": "*",
     "recompose": "*",
     "react-native-picker-select": "*",
-    "faker": "*"
+    "faker": "*",
+    "@bugsnag/react-native": "*"
   }
 }

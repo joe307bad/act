@@ -31,5 +31,7 @@
         <data android:scheme="io.act.auth" android:host="io.act.host" android:pathPrefix="" />
       </intent-filter>
     </activity>
+    <meta-data android:name="com.bugsnag.android.API_KEY"
+             android:value="da7126934a00b42375ca438d1cfb4939"/>
   </application>
 </manifest>

@@ -82,7 +82,7 @@ project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
 ]
 
-apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../../../node_modules/react-native/react.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -203,6 +203,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@bugsnag_react-native')
     implementation project(':nozbe_watermelondb')
      implementation project(':lottie-react-native')
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -239,5 +240,6 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 project.ext.vectoricons = [
   iconFontNames: [ 'MaterialCommunityIcons.ttf' ] 
 ]
-
 apply from: "../../../../node_modules/react-native-vector-icons/fonts.gradle"
+//apply plugin: "com.bugsnag.android.gradle"
+apply from: "../../../../node_modules/@bugsnag/react-native/bugsnag-react-native.gradle"

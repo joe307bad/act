@@ -37,6 +37,7 @@
   "private": true,
   "dependencies": {
     "@ambientlight/bs-rx": "0.2.3",
+    "@bugsnag/react-native": "^7.12.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/data-grid": "^4.0.0-alpha.26",
     "@material-ui/icons": "^4.11.2",

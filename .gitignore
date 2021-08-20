@@ -108,3 +108,4 @@ apps/mobile/android/.idea/libraries/Gradle__org_jetbrains_kotlin_kotlin_stdlib_c
 deploy/ansible/production
 deploy/.env.prod
 deploy/.env
+apps/mobile/android/.idea
