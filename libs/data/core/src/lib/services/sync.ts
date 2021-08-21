@@ -23,8 +23,10 @@ export class SyncService {
             Object.keys(schemaAndMigrations.schema.tables)
           )}`;
           const response = await fetch(
-            `http://192.168.0.4:3333/api/sync?${urlParams}`
-          );
+            `${this._context.getActApiUrl()}/sync?${urlParams}`
+          ).catch((e) => {
+            throw new Error(e);
+          });
           if (!response.ok) {
             throw new Error(await response.text());
           }
@@ -34,7 +36,7 @@ export class SyncService {
         },
         pushChanges: async ({ changes, lastPulledAt }) => {
           const response = await fetch(
-            `http://192.168.0.4:3333/api/sync?last_pulled_at=${lastPulledAt}`,
+            `${this._context.getActApiUrl()}/sync?last_pulled_at=${lastPulledAt}`,
             {
               method: 'POST',
               headers: {
@@ -42,7 +44,9 @@ export class SyncService {
               },
               body: JSON.stringify(changes)
             }
-          );
+          ).catch((e) => {
+            throw new Error(e);
+          });
           if (!response.ok) {
             throw new Error(await response.text());
           }

@@ -45,7 +45,11 @@ const seedWithMock = (seed: (args: SeedArgs) => void) => ({
   }
 });
 
-export const registryFactory = (adapter) => {
+export const registryFactory = (
+  adapter,
+  config?: { ACT_API_URL: string; KEYCLOAK_URL: string }
+) => {
+  const { ACT_API_URL } = config || {};
   container.register('ContextService', ContextService);
   container.register('SyncService', SyncService);
   container.register('CommunitiesService', CommunitiesService);
@@ -59,7 +63,7 @@ export const registryFactory = (adapter) => {
 
   container.register('ActContext', {
     useFactory: instanceCachingFactory<ActContext>(() => {
-      return new ActContext(adapter);
+      return new ActContext(adapter, ACT_API_URL);
     })
   });
 

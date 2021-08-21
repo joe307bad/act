@@ -31,7 +31,7 @@ module ActData = {
     | Pending
     | Authenticated
     | Unauthenticated
-  type useActAuthHook = {status: authStatus, initialSyncComplete: bool}
+  type useActAuthHook = {status: authStatus, initialSyncComplete: bool, syncFailed: bool}
   @module("@act/data/rn")
   external useActAuth: unit => useActAuthHook = "useActAuth"
 
@@ -101,33 +101,7 @@ module Login = {
           </Card>
         </Box>
       </Row>
-      <Row height=[#x13]>
-        <Box flex=[#fluid] alignY=[#bottom]>
-          <Columns alignX=[#center]>
-            <Column height=[#x25] width=[#x12]>
-              <Card style={Style.style(~height=100.->ReactNative.Style.pct, ())} elevation=5>
-                <Box flex=[#fluid] alignY=[#center]>
-                  <Paper.Text
-                    style={Style.style(
-                      ~fontFamily="Arial",
-                      ~width=100.->ReactNative.Style.pct,
-                      ~textAlign=#center,
-                      ~padding=10.->ReactNative.Style.dp,
-                      ~paddingTop=0.->ReactNative.Style.dp,
-                      (),
-                    )}>
-                    {switch initialSyncComplete {
-                    | true => "Sync successful"->React.string
-                    | false => "Performing initial application sync..."->React.string
-                    }}
-                  </Paper.Text>
-                  <SyncStatus />
-                </Box>
-              </Card>
-            </Column>
-          </Columns>
-        </Box>
-      </Row>
+      <Row height=[#x13]> <SyncStatus /> </Row>
     </Rows>
   }
 }
@@ -190,13 +164,6 @@ module Root = {
       <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
         <Paper.PaperProvider theme>
           <Native.NavigationContainer
-          // onStateChange={state => {
-          //   let maybeJsonState = Js.Json.stringifyAny(state)
-          //   switch maybeJsonState {
-          //   | Some(jsonState) => ActData.db.sync()
-          //   | None => Js.log("Unable to stringify navigation state")
-          //   }
-          // }}
             linking={
               prefixes: [`io.act.auth://${Platform.os === Platform.ios ? "" : "io.act.host/"}`],
               config: {screens: screens},
@@ -208,7 +175,12 @@ module Root = {
                 // because the component itself is not rendered due to this instance of pattern matching
                 switch status {
                 | Authenticated => <Screen name="Entry" component=EntryComponent.make />
-                | Unauthenticated => <Screen name="Login" component=Login.make />
+                | Unauthenticated =>
+                  <Screen
+                    name="Login"
+                    options={_ => options(~gestureEnabled=false, ())}
+                    component=Login.make
+                  />
                 | _ => <Screen name="Pending" component=Pending.make />
                 }
               }

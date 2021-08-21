@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import k, {
   RNKeycloak,
   ReactNativeKeycloakProvider
@@ -6,9 +6,10 @@ import k, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import db from './';
 import { Platform } from 'react-native';
+import Config from 'react-native-config';
 
 const keycloak = new RNKeycloak({
-  url: 'http://192.168.0.4:8080/auth',
+  url: `${Config.KEYCLOAK_URL ?? 'http://192.168.0.4:8080'}/auth`,
   realm: 'master',
   clientId: 'account'
 });
@@ -31,6 +32,9 @@ export const AuthContext = React.createContext<{
   status?: AuthStatus;
   setForceLogout?: (forceLogout: boolean) => void;
   initialSyncComplete?: boolean;
+  setInitialSyncComplete?: (initialSyncComplete?: boolean) => void;
+  syncFailed?: boolean;
+  setSyncFailed?: (syncFailed: boolean) => void;
 }>({});
 
 const KeycloakProvider: FC = ({ children }) => {
@@ -39,11 +43,31 @@ const KeycloakProvider: FC = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [forceLogout, setForceLogout] =
     useState<boolean | undefined>();
+  const [syncFailed, setSyncFailed] = useState<boolean | undefined>();
+  const loggingOut = useRef(false);
+
+  useEffect(() => {
+    if (forceLogout === true && loggingOut.current === false) {
+      loggingOut.current = true;
+      AsyncStorage.getItem('currentUserId').then((id) => {
+        if (id) {
+          AsyncStorage.removeItem('currentUserId');
+          keycloak.logout();
+        }
+      });
+    }
+  }, [forceLogout]);
 
   useEffect(() => {
     db.sync()
-      .then(() => setInitialSyncComplete(true))
-      .catch((e) => setInitialSyncComplete(false));
+      .then(() => {
+        setSyncFailed(false);
+        setInitialSyncComplete(true);
+      })
+      .catch((e) => {
+        setSyncFailed(true);
+        setInitialSyncComplete(false);
+      });
 
     AsyncStorage.getItem('currentUserId')
       .then((id) => {
@@ -96,6 +120,12 @@ const KeycloakProvider: FC = ({ children }) => {
             keycloak.idToken
           );
 
+          if (!user) {
+            setForceLogout(true);
+            return;
+          }
+
+          loggingOut.current = false;
           AsyncStorage.setItem('currentUserId', user.id);
           setCurrentUser(user);
           setForceLogout(undefined);
@@ -107,7 +137,10 @@ const KeycloakProvider: FC = ({ children }) => {
           currentUser,
           status,
           setForceLogout,
-          initialSyncComplete
+          initialSyncComplete,
+          setInitialSyncComplete,
+          syncFailed,
+          setSyncFailed
         }}
       >
         {children}

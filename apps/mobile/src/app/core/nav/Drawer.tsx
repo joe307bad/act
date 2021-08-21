@@ -1,12 +1,6 @@
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
-import {
-  List,
-  useTheme,
-  Button,
-  Card,
-  Title
-} from 'react-native-paper';
+import { List, useTheme, Button, Title } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   createDrawerNavigator,
@@ -18,7 +12,6 @@ import db, { useActAuth } from '@act/data/rn';
 import { Box, Stack } from '@mobily/stacks';
 import { useKeycloak } from '@react-keycloak/native';
 import KeycloakReactNativeClient from '@react-keycloak/native/lib/typescript/src/keycloak/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 MaterialCommunityIcons.loadFont();
 
@@ -184,8 +177,6 @@ const DrawerList: FC<
           <Button
             onPress={() => {
               setForceLogout(true);
-              AsyncStorage.removeItem('currentUserId');
-              keycloak.logout();
               (navigation as any).closeDrawer();
             }}
           >

@@ -16,7 +16,8 @@ import { CheckinUser } from './schema/checkin-user';
 @singleton()
 export class ActContext {
   private _database: Database;
-  constructor(adapter: DatabaseAdapter) {
+  private _actApiUrl: string;
+  constructor(adapter: DatabaseAdapter, actApiUrl?: string) {
     this._database = new Database({
       adapter,
       modelClasses: [
@@ -32,9 +33,14 @@ export class ActContext {
       ],
       actionsEnabled: true
     });
+    this._actApiUrl = actApiUrl;
   }
 
   get() {
     return this._database;
+  }
+
+  getActApiUrl() {
+    return this._actApiUrl ?? 'http://192.168.0.4:3333/api';
   }
 }

@@ -109,3 +109,5 @@ deploy/ansible/production
 deploy/.env.prod
 deploy/.env
 apps/mobile/android/.idea
+apps/mobile/.env
+apps/mobile/.env.prod

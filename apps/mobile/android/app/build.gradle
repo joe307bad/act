@@ -235,7 +235,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: file("../../../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 project.ext.vectoricons = [
   iconFontNames: [ 'MaterialCommunityIcons.ttf' ] 
 ]
@@ -245,3 +245,5 @@ apply plugin: "com.bugsnag.android.gradle"
 bugsnag {
     nodeModulesDir = new File(rootProject.projectDir, "../../../node_modules")
 }
+
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"

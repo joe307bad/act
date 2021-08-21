@@ -54,6 +54,7 @@
     "recompose": "*",
     "react-native-picker-select": "*",
     "faker": "*",
-    "@bugsnag/react-native": "*"
+    "@bugsnag/react-native": "*",
+    "react-native-config": "*"
   }
 }

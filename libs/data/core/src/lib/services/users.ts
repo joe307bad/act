@@ -6,10 +6,10 @@ import jwt_decode from 'jwt-decode';
 import { BaseService } from './base-service';
 
 type Token = {
-  sub: string;
-  username: string;
-  admin: boolean;
-  full_name: string;
+  sub?: string;
+  username?: string;
+  admin?: boolean;
+  full_name?: string;
 };
 
 @autoInjectable()
@@ -18,14 +18,36 @@ export class UsersService extends BaseService<User> {
     super(_context, 'users');
   }
 
-  async insertIfDoesNotExist(token: string): Promise<{
-    username: string;
-    admin: boolean;
-    id: string;
-    fullName: string;
-  }> {
-    const { sub, username, admin, full_name } =
-      jwt_decode<Token>(token);
+  async insertIfDoesNotExist(token: string): Promise<
+    | {
+        username: string;
+        admin: boolean;
+        id: string;
+        fullName: string;
+      }
+    | false
+  > {
+    let parsedToken: Token;
+    try {
+      const jwt = jwt_decode<Token>(token);
+
+      const { sub, username, admin, full_name } = jwt;
+      if (!sub || !username || !admin || !full_name) {
+        throw Error(
+          `Something is wrong with your id token: ${JSON.stringify({
+            sub,
+            username,
+            admin,
+            full_name
+          })}`
+        );
+      }
+
+      parsedToken = jwt;
+    } catch (e) {
+      return false;
+    }
+    const { sub, username, admin, full_name } = parsedToken;
 
     const userByKeycloakId = await this.getByKeycloakId(sub);
 

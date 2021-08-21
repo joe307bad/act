@@ -58,4 +58,42 @@ export const AwesomeButtonMedium = ({
   );
 };
 
+export const AwesomeButtonSmall = ({
+  children,
+  onPress,
+  style = undefined,
+  type = 'filled',
+  disabled = false
+}) => {
+  const { colors } = useTheme();
+  const outlined = type === 'outlined';
+  return (
+    <ReallyAwesomeButton
+      stretch
+      backgroundColor={disabled ? '#676B6D' : colors.primary}
+      backgroundDarker="#3809C3"
+      onNativePress={() => !disabled && onPress()}
+      height={30}
+      style={style}
+      disabled={disabled}
+      {...(outlined
+        ? {
+            borderColor: colors.primary,
+            borderWidth: 2,
+            backgroundColor: 'white'
+          }
+        : {})}
+    >
+      <Headline
+        style={{
+          color: outlined ? colors.primary : 'white',
+          fontSize: 20
+        }}
+      >
+        {children}
+      </Headline>
+    </ReallyAwesomeButton>
+  );
+};
+
 export default AwesomeButton;
