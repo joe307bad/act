@@ -42,12 +42,6 @@ const PendingApprovalsComponent: FC<{
   >([]);
   const { setExcludedPendingApprovals } = useContext(HeaderContext);
 
-  db.get
-    .get<Checkin>('checkins')
-    .query()
-    .fetch()
-    .then((checkins) => console.log(checkins));
-
   useEffect(() => {
     if (checkinUsers && checkinAchievements) {
       setPendingApprovals(
