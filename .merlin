@@ -1,0 +1,20 @@
+####{BSB GENERATED: NO EDIT
+FLG -ppx '/Users/jbadaczewski/Source/other/act/node_modules/rescript/darwin/bsc.exe -as-ppx -bs-jsx 3'
+S /Users/jbadaczewski/Source/other/act/node_modules/rescript/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/rescript/lib/ocaml
+FLG -w +a-4-9-20-40-41-42-50-61-102
+S /Users/jbadaczewski/Source/other/act/node_modules/@mobily/stacks/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/@mobily/stacks/lib/ocaml
+S /Users/jbadaczewski/Source/other/act/node_modules/@rescript/react/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/@rescript/react/lib/ocaml
+S /Users/jbadaczewski/Source/other/act/node_modules/rescript-react-native/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/rescript-react-native/lib/ocaml
+S /Users/jbadaczewski/Source/other/act/node_modules/@rescript-react-native/paper/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/@rescript-react-native/paper/lib/ocaml
+S /Users/jbadaczewski/Source/other/act/node_modules/wonka/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/wonka/lib/ocaml
+S /Users/jbadaczewski/Source/other/act/node_modules/rescript-react-navigation/lib/ocaml
+B /Users/jbadaczewski/Source/other/act/node_modules/rescript-react-navigation/lib/ocaml
+S apps/mobile/re
+B lib/bs/apps/mobile/re
+####BSB GENERATED: NO EDIT}

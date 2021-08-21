@@ -5,7 +5,7 @@
   "scripts": {
     "re:clean": "bsb -clean-world",
     "re:watch": "bsb -clean-world -make-world -w",
-    "re:build": "bsb -clean-world -make-world"
+    "re:build": "rescript"
   },
   "dependencies": {
     "@mobily/stacks": "*",
@@ -55,6 +55,7 @@
     "react-native-picker-select": "*",
     "faker": "*",
     "@bugsnag/react-native": "*",
-    "react-native-config": "*"
+    "react-native-config": "*",
+    "rescript": "*"
   }
 }

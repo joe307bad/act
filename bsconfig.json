@@ -4,17 +4,17 @@
   "reason": {
     "react-jsx": 3
   },
+  "sources": [
+    {
+      "dir": "apps/mobile/re",
+      "subdirs": true
+    }
+  ],
   "package-specs": {
     "module": "commonjs",
     "in-source": true
   },
   "suffix": ".bs.js",
-  "sources": [
-    {
-      "dir": "re",
-      "subdirs": true
-    }
-  ],
   "bs-dependencies": [
     "@mobily/stacks",
     "@rescript/react",
