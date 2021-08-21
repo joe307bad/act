@@ -28,7 +28,9 @@ const DrawerList: FC<
     <>
       <Stack space={2} padding={5}>
         <Box>
-          <Title>{currentUser?.fullName}</Title>
+          <Title style={{ fontFamily: 'Bebas-Regular' }}>
+            {currentUser?.fullName}
+          </Title>
           <Text>{currentUser?.username}</Text>
         </Box>
       </Stack>
@@ -42,7 +44,10 @@ const DrawerList: FC<
           borderBottomColor: theme.colors.primary,
           borderTopColor: theme.colors.primary
         }}
-        titleStyle={{ fontSize: 25 }}
+        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+        descriptionStyle={{
+          fontFamily: 'Bebas-Regular'
+        }}
         title={'Checkin Builder'}
         description={'Create a checkin for one or more achievements'}
         left={(props) => (
@@ -67,7 +72,10 @@ const DrawerList: FC<
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.primary
         }}
-        titleStyle={{ fontSize: 25 }}
+        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+        descriptionStyle={{
+          fontFamily: 'Bebas-Regular'
+        }}
         title={'Achievements'}
         description={
           'Find Achievements by Category and create a Checkin'
@@ -94,7 +102,10 @@ const DrawerList: FC<
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.primary
         }}
-        titleStyle={{ fontSize: 25 }}
+        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+        descriptionStyle={{
+          fontFamily: 'Bebas-Regular'
+        }}
         title={'Leaderboard'}
         description={'View users sorted by most points'}
         left={(props) => (
@@ -119,7 +130,10 @@ const DrawerList: FC<
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.primary
         }}
-        titleStyle={{ fontSize: 25 }}
+        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+        descriptionStyle={{
+          fontFamily: 'Bebas-Regular'
+        }}
         title={'User Checkins'}
         description={'view checkins by user'}
         left={(props) => (
@@ -147,7 +161,10 @@ const DrawerList: FC<
             borderBottomWidth: 1,
             borderBottomColor: theme.colors.primary
           }}
-          titleStyle={{ fontSize: 25 }}
+          titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+          descriptionStyle={{
+            fontFamily: 'Bebas-Regular'
+          }}
           title={'Pending Approvals'}
           description={
             'View checkins by non-admins that have not been approved'
@@ -179,6 +196,8 @@ const DrawerList: FC<
               setForceLogout(true);
               (navigation as any).closeDrawer();
             }}
+            labelStyle={{ fontFamily: 'Bebas-Regular' }}
+            //style={{ fontFamily: 'Bebas-Regular' }}
           >
             Logout
           </Button>

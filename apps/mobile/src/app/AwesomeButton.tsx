@@ -15,7 +15,11 @@ const AwesomeButton = ({ children, onPress, disabled = false }) => {
       onNativePress={() => !disabled && onPress()}
       disabled={disabled}
     >
-      <Headline style={{ color: 'white' }}>{children}</Headline>
+      <Headline
+        style={{ color: 'white', fontFamily: 'Bebas-Regular' }}
+      >
+        {children}
+      </Headline>
     </ReallyAwesomeButton>
   );
 };
@@ -49,7 +53,8 @@ export const AwesomeButtonMedium = ({
       <Headline
         style={{
           color: outlined ? colors.primary : 'white',
-          fontSize: 20
+          fontSize: 20,
+          fontFamily: 'Bebas-Regular'
         }}
       >
         {children}
@@ -87,7 +92,8 @@ export const AwesomeButtonSmall = ({
       <Headline
         style={{
           color: outlined ? colors.primary : 'white',
-          fontSize: 20
+          fontSize: 20,
+          fontFamily: 'Bebas-Regular'
         }}
       >
         {children}
