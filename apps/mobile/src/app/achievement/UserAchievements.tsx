@@ -80,29 +80,27 @@ export const UserAchievements: FC<{
     description?: string;
   }>({});
   useEffect(() => {
-    if (visible) {
+    const checkinsForUser = userCheckins.get(userId);
+    if (visible && checkinsForUser) {
       setUserAchievements(
-        Array.from(userCheckins.get(userId)).reduce(
-          (acc, checkinId) => {
-            if (!checkins?.has(checkinId)) {
-              return acc;
-            }
-            const achievements = checkinAchievements.get(checkinId);
-            achievements &&
-              Array.from(achievements).forEach(
-                ([achievementId, count]) => {
-                  const exists = acc.get(achievementId);
-                  if (exists) {
-                    acc.set(achievementId, exists + count);
-                  } else {
-                    acc.set(achievementId, count);
-                  }
-                }
-              );
+        Array.from(checkinsForUser).reduce((acc, checkinId) => {
+          if (!checkins?.has(checkinId)) {
             return acc;
-          },
-          new Map()
-        )
+          }
+          const achievements = checkinAchievements.get(checkinId);
+          achievements &&
+            Array.from(achievements).forEach(
+              ([achievementId, count]) => {
+                const exists = acc.get(achievementId);
+                if (exists) {
+                  acc.set(achievementId, exists + count);
+                } else {
+                  acc.set(achievementId, count);
+                }
+              }
+            );
+          return acc;
+        }, new Map())
       );
     }
   }, [visible]);

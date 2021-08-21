@@ -71,6 +71,24 @@ var fonts = configureFonts({
       fontFamily: fontFamily,
       fontWeight: 'normal'
     }
+  },
+  android: {
+    regular: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    thin: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    medium: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    },
+    light: {
+      fontFamily: fontFamily,
+      fontWeight: 'normal'
+    }
   }
 });
 var animation = {

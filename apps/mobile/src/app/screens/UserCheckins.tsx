@@ -23,7 +23,6 @@ import { Q } from '@nozbe/watermelondb';
 import { format } from 'date-fns';
 import Chip from '../shared/components/Chip';
 import { isEmpty } from 'lodash';
-import RNPickerSelect from 'react-native-picker-select';
 import { Dropdown } from '../shared/components/Dropdown';
 
 const UserCheckinsComponent: FC<{
@@ -155,6 +154,8 @@ const UserCheckinsComponent: FC<{
     );
   };
 
+  const checkinsForUser = userCheckins.get(selectedUser);
+
   return (
     <Rows>
       <Row height="content">
@@ -173,16 +174,18 @@ const UserCheckinsComponent: FC<{
       </Row>
       <Row>
         <Box padding={2} paddingBottom={0} paddingTop={0}>
-          <FlatList
-            data={Array.from(userCheckins.get(selectedUser)).filter(
-              ([uc]) => checkins.has(uc)
-            )}
-            contentContainerStyle={{
-              paddingTop: 5
-            }}
-            renderItem={RenderItem}
-            keyExtractor={([c]) => c}
-          />
+          {checkinsForUser && (
+            <FlatList
+              data={Array.from(checkinsForUser).filter(([uc]) =>
+                checkins.has(uc)
+              )}
+              contentContainerStyle={{
+                paddingTop: 5
+              }}
+              renderItem={RenderItem}
+              keyExtractor={([c]) => c}
+            />
+          )}
         </Box>
       </Row>
     </Rows>
