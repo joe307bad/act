@@ -6,7 +6,7 @@ The `username` and `full_name` user properties should be included with the acces
 
 #### How to add a User Attribute Client Mapper
 
-1. Clients > Mappers > Create >
+1. Clients > account > Mappers > Create >
 2. the Mapper Type should be User Attribute (for `admin`) or User Property (`username` and `full_name`) >
 3. Claim JSON type should be whatever type you want >
 4. Select Add to access token
@@ -32,3 +32,9 @@ Adding a user in Keycloak is easy. After creating the user, also make sure these
 #### Resetting a users password
 
 Resetting a users password is as easy as using the field under User > Credentials > Reset Password. Mark the password as Temporary and this should automatically mark Update Password as a Required USer Action under the user Details.
+
+#### Adding redirect_uri
+
+Add two redirect_uri's by going to Clients > Account > Settings > Valid Redirect URIs
+- `io.act.auth://io.act.host/Achievements/*` (for Android)
+- `io.act.auth://Achievements/*` (for iOS)
