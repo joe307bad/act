@@ -8,8 +8,3 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
-  -keepattributes *Annotation*
-  -keepclassmembers class ** {
-    @org.greenrobot.eventbus.Subscribe <methods>;
-   }
-  -keep enum org.greenrobot.eventbus.ThreadMode { *; }

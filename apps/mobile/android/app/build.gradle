@@ -176,9 +176,9 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-          ndk {
-            abiFilters "armeabi-v7a", "armeabi"
-          }
+        //   ndk {
+        //     abiFilters "armeabi-v7a", "armeabi"
+        //   }
         }
     }
 
