@@ -31,13 +31,12 @@ export class UsersService extends BaseService<User> {
     try {
       const jwt = jwt_decode<Token>(token);
 
-      const { sub, username, admin, full_name } = jwt;
-      if (!sub || !username || !admin || !full_name) {
+      const { sub, username, full_name } = jwt;
+      if (!sub || !username || !full_name) {
         throw Error(
           `Something is wrong with your id token: ${JSON.stringify({
             sub,
             username,
-            admin,
             full_name
           })}`
         );
