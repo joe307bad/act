@@ -222,7 +222,6 @@ export class SeedService {
       categories,
       (a) => allAchievementCategories.find((aa) => a === aa.name)
     );
-    debugger;
 
     await this._db.action(() =>
       this._db.batch(

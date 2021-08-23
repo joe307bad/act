@@ -68,12 +68,12 @@ export const registryFactory = (
   });
 
   const database = new ContextService().get();
+  const { seed, seedWithAchievementsJsonFile } = new SeedService();
 
   return {
     sync: new SyncService().sync,
-    seedWithMock: seedWithMock(new SeedService().seed),
-    seedWithAchievementsJsonFile: new SeedService()
-      .seedWithAchievementsJsonFile,
+    seedWithMock: seedWithMock(seed),
+    seedWithAchievementsJsonFile,
     get: database,
     useCollection: useCollectionFactory(database),
     models: {
