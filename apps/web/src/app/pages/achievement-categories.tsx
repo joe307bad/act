@@ -82,7 +82,6 @@ const AchievementCategories = () => {
           rows={achievementCategories}
           columns={columns}
           onEditCellChangeCommitted={handleEditCellChangeCommitted}
-          pageSize={5}
           checkboxSelection
         />
       </GridContainer>

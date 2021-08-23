@@ -197,7 +197,6 @@ export const SelectAchievementsAndUsersComponent = ({
                   )
                 );
               }}
-              pageSize={5}
               checkboxSelection
             />
           </div>

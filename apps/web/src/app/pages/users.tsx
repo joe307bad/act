@@ -69,7 +69,7 @@ const columns: GridColDef[] = [
   }
 ];
 const SelectAdmin = ({ id, value }) => {
-  const [v, setValue] = useState('false');
+  const [v, setValue] = useState(value.toString());
 
   const actualValue = (() => {
     if (v === 'false') {
