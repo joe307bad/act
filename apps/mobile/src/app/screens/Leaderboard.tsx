@@ -7,7 +7,7 @@ import {
   Box
 } from '@mobily/stacks';
 import React, { FC, useState, useEffect } from 'react';
-import { Pressable, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import {
   Headline,
   Surface,
@@ -20,14 +20,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Chip from '../shared/components/Chip';
 import withObservables from '@nozbe/with-observables';
 import db from '@act/data/rn';
-import {
-  Achievement,
-  Checkin,
-  CheckinUser,
-  User
-} from '@act/data/core';
+import { Achievement, Checkin, User } from '@act/data/core';
 import { map } from 'rxjs/operators';
-import { CheckinAchievement } from 'libs/data/core/src/lib/schema/checkin-achievement';
 import { UserAchievements } from '../achievement/UserAchievements';
 import { checkinUsersAndAchievements } from '../shared/queries/checkinUsersAndAchievements';
 

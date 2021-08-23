@@ -3,7 +3,6 @@ import Modal from '../shared/components/Modal';
 import { TabbedList } from '../shared/components/TabbedList';
 import db from '@act/data/rn';
 import { Achievement, AchievementCategory } from '@act/data/core';
-import withObservables from '@nozbe/with-observables';
 
 const UserAchievementsTabbedList: FC<{
   achievementsById: Map<
