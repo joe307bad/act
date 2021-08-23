@@ -29,7 +29,10 @@ const UserCheckinsComponent: FC<{
   users: User[];
   userCheckins: Map<string, Map<string, string>>;
   checkinAchievements: Map<string, Map<string, number>>;
-  checkins: Map<string, { createdAt: Date; note: string }>;
+  checkins: Map<
+    string,
+    { createdAt: Date; note: string; approved: boolean }
+  >;
   achievements: Map<string, { name: string; points: number }>;
 }> = ({
   users,
@@ -53,6 +56,7 @@ const UserCheckinsComponent: FC<{
     const [checkinId, checkinUserId] = item;
     const achievements = checkinAchievements.get(checkinId);
     const checkin = checkins.get(checkinId);
+
     const total = !achievements
       ? 0
       : Array.from(achievements).reduce(
@@ -80,6 +84,15 @@ const UserCheckinsComponent: FC<{
                       format(checkin.createdAt, 'EEE MMM do @ pp')}
                   </Headline>
                 </Column>
+                {!checkin?.approved && (
+                  <Column width="content">
+                    <MaterialCommunityIcons
+                      name={`code-not-equal`}
+                      color={theme.colors.primary}
+                      size={25}
+                    />
+                  </Column>
+                )}
                 {(currentUser.admin ||
                   currentUser.id === selectedUser) && (
                   <Column width="content">
@@ -208,7 +221,7 @@ export const UserCheckins = withObservables([''], () => ({
     ),
   checkins: db.get
     .get<Checkin>('checkins')
-    .query(Q.where('approved', true))
+    .query()
     .observeWithColumns(['approved'])
     .pipe(
       map(
@@ -216,7 +229,11 @@ export const UserCheckins = withObservables([''], () => ({
           new Map(
             cs.map((c) => [
               c.id,
-              { createdAt: c.createdAt, note: c.note }
+              {
+                createdAt: c.createdAt,
+                note: c.note,
+                approved: c.approved
+              }
             ])
           )
       )

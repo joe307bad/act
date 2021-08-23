@@ -111,6 +111,3 @@ apps/mobile/android/.idea
 apps/mobile/.env
 apps/mobile/.env.prod
 lib
-.vscodeg/extensions.json
-.vscodeg/launch.json
-.vscodeg/tasks.json
