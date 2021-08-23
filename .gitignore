@@ -1,5 +1,5 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
-
+.vscode
 # compiled output
 /dist
 /tmp
@@ -111,3 +111,6 @@ apps/mobile/android/.idea
 apps/mobile/.env
 apps/mobile/.env.prod
 lib
+.vscodeg/extensions.json
+.vscodeg/launch.json
+.vscodeg/tasks.json
