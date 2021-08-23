@@ -10,7 +10,7 @@ import {
   User
 } from '../../schema';
 import { Collection, Database } from '@nozbe/watermelondb';
-import { partition, random, sampleSize } from 'lodash';
+import { partition, sampleSize } from 'lodash';
 import * as faker from 'faker';
 import { CreateCheckinSeed } from './CreateCheckinSeed';
 
@@ -57,6 +57,42 @@ export class SeedService {
       .get()
       .collections.get<CheckinAchievement>('checkin_achievements');
   }
+
+  seedWithAchievementsJsonFile = async (
+    remoteAchievementsJsonFile: string
+  ) => {
+    const achievementsFromJson = (await fetch(
+      remoteAchievementsJsonFile
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('HTTP error ' + response.status);
+        }
+        return response.json();
+      })
+      .catch(function (e) {
+        throw Error(e);
+      })) as AchievementSeed[];
+
+    const [categories, achievements] = achievementsFromJson.reduce(
+      (acc, achievement) => {
+        const [c, a] = acc;
+        c.add(achievement.category);
+        a.set(achievement.name, achievement);
+
+        return [c, a];
+      },
+      [new Set<string>(), new Map<string, AchievementSeed>()]
+    );
+
+    return this.seed({
+      type: 'ACHIEVEMENTS',
+      units: {
+        achievements: Array.from(achievements.values()),
+        categories: Array.from(categories)
+      }
+    });
+  };
 
   seed = (args: SeedArgs) => {
     const { units, type } = args;
@@ -182,12 +218,11 @@ export class SeedService {
       .query()
       .fetch();
 
-    const [
-      shoulUpdateAchievementCategories,
-      insertAchievementCategories
-    ] = partition(categories, (a) =>
-      allAchievementCategories.find((aa) => a === aa.name)
+    const [_, insertAchievementCategories] = partition(
+      categories,
+      (a) => allAchievementCategories.find((aa) => a === aa.name)
     );
+    debugger;
 
     await this._db.action(() =>
       this._db.batch(
@@ -217,7 +252,7 @@ export class SeedService {
         ...insertAchievements.map((a) =>
           this._achievements.prepareCreate((r) => {
             const category = categories.find(
-              (c) => c.name === a.categoryName
+              (c) => c.name === a.category
             );
             r.description = a.description;
             r.photo = a.photo;

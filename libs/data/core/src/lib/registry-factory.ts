@@ -72,6 +72,8 @@ export const registryFactory = (
   return {
     sync: new SyncService().sync,
     seedWithMock: seedWithMock(new SeedService().seed),
+    seedWithAchievementsJsonFile: new SeedService()
+      .seedWithAchievementsJsonFile,
     get: database,
     useCollection: useCollectionFactory(database),
     models: {

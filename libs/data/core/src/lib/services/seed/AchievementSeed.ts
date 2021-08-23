@@ -21,5 +21,5 @@ export class AchievementSeed {
   readonly description: string;
 
   @Mock({ enum: Categories })
-  readonly categoryName: string;
+  readonly category: string;
 }
