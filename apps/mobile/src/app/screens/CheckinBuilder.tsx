@@ -17,14 +17,16 @@ import { getDefaultFont } from '../core/getDefaultFont';
 
 const CheckinBuilder: FC = () => {
   const users = db.useCollection<User>('users');
-  const achievements = db.useCollection<Achievement>('achievements', [
-    'name',
-    'category_id'
-  ]);
-  const categories = db.useCollection<AchievementCategory>(
-    'achievement_categories',
-    ['name']
-  );
+  const achievements = [];
+  // db.useCollection<Achievement>('achievements', [
+  //   'name',
+  //   'category_id'
+  // ]);
+  const categories = [];
+  // db.useCollection<AchievementCategory>(
+  //   'achievement_categories',
+  //   ['name']
+  // );
   const achievementsByCategory = toPairs(
     groupBy(achievements, 'category_id')
   );
@@ -98,54 +100,6 @@ const CheckinBuilder: FC = () => {
                   />
                 </Card.Content>
               </Card>
-              <Selector<Achievement, AchievementCategory>
-                data={achievements}
-                value={checkin?.achievementCounts}
-                categories={categories}
-                single="Achievement"
-                plural="Achievements"
-                icon="checkbox-multiple-marked-circle-outline"
-                optionTitleProperty="name"
-                title="Checkin Achievements"
-                subtitle="Select one or more achievements to checkin"
-                fullHeight={true}
-                showCountDropdown={true}
-                showPointCount={true}
-                selectable={true}
-                showInfoButton={true}
-                onInfoButtonPress={() => {}}
-                onSelectorChange={(
-                  achievementCounts: Map<string, number>,
-                  points: number
-                ) =>
-                  setCheckin({
-                    ...checkin,
-                    achievementCounts,
-                    points
-                  })
-                }
-              />
-              {currentUser?.admin && (
-                <Selector<User>
-                  data={users}
-                  value={checkin?.users}
-                  defaultSelected={defaultSelectedUser}
-                  single="User"
-                  plural="Users"
-                  icon="account-box-multiple-outline"
-                  optionTitleProperty="fullName"
-                  optionSubtitleProperty="username"
-                  title="Checkin Users"
-                  subtitle="Select one or more users to checkin"
-                  inlineTags={true}
-                  onSelectorChange={(selectedItems: Set<string>) =>
-                    setCheckin({
-                      ...checkin,
-                      users: Array.from(selectedItems)
-                    })
-                  }
-                />
-              )}
             </Stack>
           </ScrollView>
         </Row>

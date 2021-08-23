@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import Chip from '../shared/components/Chip';
 import { isEmpty } from 'lodash';
 import { Dropdown } from '../shared/components/Dropdown';
+import { of } from 'rxjs';
 
 const UserCheckinsComponent: FC<{
   users: User[];

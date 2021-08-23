@@ -50,7 +50,7 @@ export const Dropdown = ({
                 display: 'none'
               }
             }}
-            useNativeAndroidPickerStyle={false}
+            useNativeAndroidPickerStyle={true}
             value={value}
             placeholder={{}}
             items={items}

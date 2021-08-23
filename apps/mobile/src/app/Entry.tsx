@@ -22,6 +22,8 @@ import Leaderboard from './screens/Leaderboard';
 import { StacksProvider } from '@mobily/stacks';
 import { PendingApprovals } from './screens/PendingApprovals';
 import { UserCheckins } from './screens/UserCheckins';
+import { Component1 } from './perf-exp/component-one';
+import { Component2 } from './perf-exp/component-two';
 
 const Stack = createStackNavigator();
 export const HeaderContext =
@@ -209,13 +211,33 @@ const EntryStack = () => {
       }}
     >
       <Stack.Navigator
-        initialRouteName="Achievements"
+        initialRouteName="Component1"
         headerMode="float"
         screenOptions={{
           header: (props) => <NavBar {...props} theme={theme} />
         }}
       >
         <Stack.Screen
+          name="Component1"
+          options={{ title: 'Component 1' }}
+          component={Component1}
+        />
+        <Stack.Screen
+          name="Component2"
+          options={{ title: 'Component 2' }}
+          component={Component2}
+        />
+        <Stack.Screen
+          name="CheckinBuilder"
+          options={{ title: 'Checkin Builder' }}
+          component={CheckinBuilder}
+        />
+        <Stack.Screen
+          name="Achievements"
+          options={{ title: 'Achievements' }}
+          component={Achievements}
+        />
+        {/* <Stack.Screen
           name="CheckinBuilder"
           options={{ title: 'Checkin Builder' }}
           component={CheckinBuilder}
@@ -239,7 +261,7 @@ const EntryStack = () => {
           name="UserCheckins"
           options={{ title: 'User Checkins' }}
           component={UserCheckins}
-        />
+        /> */}
       </Stack.Navigator>
     </HeaderContext.Provider>
   );

@@ -52,7 +52,7 @@
 - ✅ **[OPS]** - Publicly accessible services behind HTTPS
 
 ## Alpha issues
-- [ ] **[MOBILE]** - Can we improve performance by doing a lot of the Achievement & Checkin mapping in a root level Context?
+- ALPHA-1 -[ ] **[MOBILE]** - Can we improve performance by doing a lot of the Achievement & Checkin mapping in a root level Context?
 - [ ] **[MOBILE]** - Limit Category titles on Achievement tab list to one line 
 - [ ] **[MOBILE]** - Would making the tabbed list eager (lazy=false) improve performance?
 - [ ] **[MOBILE]** - Do not make text selectable for items in Achievement list. Swiping to next category sometimes selected that achievement.
