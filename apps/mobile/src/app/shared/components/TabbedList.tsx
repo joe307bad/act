@@ -2,10 +2,8 @@ import { Achievement, BaseModel } from '@act/data/core';
 import React, {
   createContext,
   Dispatch,
-  FC,
   memo,
   PropsWithChildren,
-  PureComponent,
   ReactElement,
   SetStateAction,
   useEffect,
@@ -13,10 +11,11 @@ import React, {
 } from 'react';
 import { Option } from './Selector/Option';
 import { SelectedOption } from './Selector';
-import { useWindowDimensions, FlatList } from 'react-native';
-import { TabView, TabBar as TB } from 'react-native-tab-view';
-import { useTheme } from 'react-native-paper';
+import { FlatList } from 'react-native';
+import { Surface, useTheme } from 'react-native-paper';
+import { Rows, Row, Box } from '@mobily/stacks';
 
+import { Dropdown } from './Dropdown';
 export type TabbedListProps<T, C> = {
   data: T[];
   categories: C[];
@@ -63,92 +62,6 @@ const TabbedListOptionContext =
     onOptionSelect: (achievement: Achievement) => {}
   });
 
-const RenderItem: FC<{ item: Achievement & { fixedCount: number } }> =
-  ({ item }) => {
-    const { id, points, name, description, fixedCount } = item;
-    return (
-      <TabbedListOptionContext.Consumer>
-        {({
-          items,
-          setItems,
-          itemsCounts,
-          setItemsCounts,
-          selectable,
-          showCountDropdown,
-          showInfoButton,
-          setSelectedInfo,
-          hiddenOptions,
-          onOptionSelect
-        }) =>
-          hiddenOptions?.has(id) ? null : (
-            <Option
-              fixedCount={fixedCount}
-              count={itemsCounts.get(id)}
-              points={points}
-              disableSelection={!selectable}
-              checked={items.has(id)}
-              title={name}
-              value={id}
-              key={id}
-              showCountDropdown={showCountDropdown}
-              showInfoButton={showInfoButton}
-              onInfoButtonPress={() =>
-                setSelectedInfo(name, description)
-              }
-              onPress={(e, count) => {
-                if (onOptionSelect) {
-                  onOptionSelect(item);
-                  return;
-                }
-                if (count) {
-                  const newCounts = new Map(itemsCounts);
-                  newCounts.set(id, count);
-                  setItemsCounts(newCounts);
-                }
-
-                const exists = items.has(id);
-                const newItems = new Map(items);
-                if (exists && !count) {
-                  newItems.delete(id);
-                } else {
-                  newItems.set(id, item);
-                }
-                setItems(newItems);
-              }}
-            />
-          )
-        }
-      </TabbedListOptionContext.Consumer>
-    );
-  };
-
-class AchievementList extends PureComponent<{
-  route: any;
-  data: any;
-}> {
-  render() {
-    const { route, data } = this.props;
-    const conditions = (() => {
-      if (route.key === 'noCategory') {
-        return (i) => !i.category_id;
-      }
-
-      if (route.key === 'all') {
-        return () => true;
-      }
-
-      return (i) => i.category_id === route.key;
-    })();
-    return (
-      <FlatList
-        data={Array.from(data).filter(conditions)}
-        renderItem={RenderItem}
-        keyExtractor={(item) => item.id}
-      />
-    );
-  }
-}
-
 export const TabbedListComponent: <
   T extends BaseModel,
   C extends Category
@@ -166,26 +79,14 @@ export const TabbedListComponent: <
   onOptionSelect,
   data
 }) => {
-  const layout = useWindowDimensions();
-  const { colors } = useTheme();
   const [items, setItems] = useState<Map<string, Achievement>>(
     new Map()
   );
   const [itemsCounts, setItemsCounts] = useState<Map<string, number>>(
     new Map()
   );
-
-  const [index, setIndex] = useState(0);
-  const [routes, setRoutes] =
-    useState<{ key: string; title: string }[]>();
-
-  useEffect(() => {
-    setRoutes([
-      { key: 'all', title: 'All' },
-      ...categories.map((c) => ({ key: c.id, title: c.name })),
-      { key: 'noCategory', title: 'No Category' }
-    ]);
-  }, [categories]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const theme = useTheme();
 
   useEffect(() => {
     setItems(
@@ -217,46 +118,78 @@ export const TabbedListComponent: <
     }
   }, [items]);
 
+  const hideByCategory = (item) =>
+    item.category_id !== selectedCategory &&
+    selectedCategory !== 'all';
+
   return (
-    <TabbedListOptionContext.Provider
-      value={{
-        items,
-        setItems,
-        itemsCounts,
-        setItemsCounts,
-        selectable,
-        setSelectedInfo,
-        showCountDropdown,
-        showInfoButton,
-        hiddenOptions,
-        onOptionSelect
-      }}
-    >
-      {routes && (
-        <TabView
-          renderTabBar={(props) => (
-            <TB
-              {...props}
-              scrollEnabled={true}
-              indicatorStyle={{ backgroundColor: 'white' }}
-              style={{ backgroundColor: colors.primary }}
-              labelStyle={{
-                fontSize: 20,
-                fontFamily: 'Bebas-Regular'
+    <Rows>
+      <Row height="content">
+        <Surface style={{ elevation: 2 }}>
+          <Dropdown
+            fullWidth
+            value={selectedCategory}
+            onValueChange={(v) => setSelectedCategory(v)}
+            items={categories.map((c) => ({
+              label: c.name,
+              value: c.id
+            }))}
+            padding={3}
+          />
+        </Surface>
+      </Row>
+      <Row>
+        <Box padding={2} paddingBottom={0} paddingTop={0}>
+          {data && (
+            <FlatList
+              data={data as Achievement[]}
+              renderItem={({ item }) => {
+                const { points, id, name, description } = item;
+                return hiddenOptions.has(item.id) ||
+                  hideByCategory(item) ? null : (
+                  <Option
+                    primaryColor={theme.colors.primary}
+                    count={itemsCounts.get(id)}
+                    points={points}
+                    disableSelection={!selectable}
+                    checked={items.has(id)}
+                    title={name}
+                    value={id}
+                    key={id}
+                    showCountDropdown={showCountDropdown}
+                    showInfoButton={showInfoButton}
+                    onInfoButtonPress={() =>
+                      setSelectedInfo(name, description)
+                    }
+                    onPress={(e, count) => {
+                      if (onOptionSelect) {
+                        onOptionSelect(item);
+                        return;
+                      }
+                      if (count) {
+                        const newCounts = new Map(itemsCounts);
+                        newCounts.set(id, count);
+                        setItemsCounts(newCounts);
+                      }
+
+                      const exists = items.has(id);
+                      const newItems = new Map(items);
+                      if (exists && !count) {
+                        newItems.delete(id);
+                      } else {
+                        newItems.set(id, item);
+                      }
+                      setItems(newItems);
+                    }}
+                  />
+                );
               }}
-              tabStyle={{ width: 'auto' }}
+              keyExtractor={(item) => item.id}
             />
           )}
-          navigationState={{ index, routes }}
-          lazy={true}
-          renderScene={({ route }) => (
-            <AchievementList route={route} data={data} />
-          )}
-          onIndexChange={setIndex}
-          initialLayout={{ width: layout.width }}
-        />
-      )}
-    </TabbedListOptionContext.Provider>
+        </Box>
+      </Row>
+    </Rows>
   );
 };
 

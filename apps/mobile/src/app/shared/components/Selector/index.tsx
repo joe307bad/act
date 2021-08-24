@@ -21,6 +21,7 @@ import { isEmpty } from 'lodash';
 import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useActAuth } from '@act/data/rn';
 
 export type SelectedOption = {
   id: string;
@@ -168,12 +169,16 @@ function Selector<T extends BaseModel, C extends Category = null>(
         setPendingPointsCount(0);
         setSelected(new Map());
       }
-      if (
-        listType === 'OPTION_LIST' &&
-        value?.length === defaultSelected?.size
-      ) {
+      if (listType === 'OPTION_LIST' && value?.length === 0) {
         setResetting(true);
-        setSelected(defaultSelected || new Map());
+        setSelected(defaultSelected);
+        onSelectorChange(
+          new Set(
+            Array.from(defaultSelected).map(
+              ([id, selectedOption]) => selectedOption.id
+            )
+          )
+        );
       }
     }
   }, [value]);
@@ -357,6 +362,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
                     style={{
                       padding: 4
                     }}
+                    alignY="center"
                   >
                     {showPointCount && (
                       <Column

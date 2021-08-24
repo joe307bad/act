@@ -10,7 +10,7 @@ import React, {
   useState
 } from 'react';
 import { Alert, FlatList, GestureResponderEvent } from 'react-native';
-import { Surface } from 'react-native-paper';
+import { Surface, useTheme } from 'react-native-paper';
 import { SelectedOption } from '.';
 import { Option } from './Option';
 
@@ -44,6 +44,7 @@ const OptionListComponent: <T extends BaseModel>(
   paddingTop = undefined
 }) => {
   const [items, setItems] = useState<Map<string, any>>(new Map());
+  const theme = useTheme();
 
   useEffect(() => {
     onChange(items);
@@ -76,6 +77,7 @@ const OptionListComponent: <T extends BaseModel>(
       <Box marginBottom={2}>
         <Surface style={{ elevation: 2 }}>
           <Option
+            primaryColor={theme.colors.primary}
             disableSelection={!selectable}
             key={id}
             value={id}

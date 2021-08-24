@@ -107,7 +107,6 @@ const Achievements: FC = () => {
           </Box>
         </Row>
       </Rows>
-
       <SingleCheckin
         visible={!!selectedAchievement && !confirmedCheckin}
         achievement={selectedAchievement}

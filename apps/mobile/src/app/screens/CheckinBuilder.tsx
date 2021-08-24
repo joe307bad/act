@@ -21,10 +21,15 @@ const CheckinBuilder: FC = () => {
     'name',
     'category_id'
   ]);
-  const categories = db.useCollection<AchievementCategory>(
-    'achievement_categories',
-    ['name']
-  );
+  const categories = [
+    { id: 'all', name: 'All' },
+    ...db
+      .useCollection<AchievementCategory>('achievement_categories', [
+        'name'
+      ])
+      .map((c) => ({ id: c.id, name: c.name })),
+    { id: 'noCategory', name: 'No Category' }
+  ];
   const achievementsByCategory = toPairs(
     groupBy(achievements, 'category_id')
   );
@@ -172,11 +177,7 @@ const CheckinBuilder: FC = () => {
           setCheckin({
             ...checkin,
             achievementCounts: new Map(),
-            users: defaultSelectedUser
-              ? Array.from(defaultSelectedUser.values()).map(
-                  (u) => u.id
-                )
-              : [],
+            users: [],
             points: 0,
             insertProps: undefined
           });
