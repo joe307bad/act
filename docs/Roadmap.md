@@ -52,17 +52,23 @@
 - ✅ **[OPS]** - Publicly accessible services behind HTTPS
 
 ## Alpha issues
+- ✅ **[MOBILE]** - Remove TabbedList from Achievements in favor of category dropdown
+- ✅ **[MOBILE]** - Remove TabbedList from CheckinBuilder in favor of category dropdown
 - [ ] **[MOBILE]** - Can we improve performance by doing a lot of the Achievement & Checkin mapping in a root level Context?
-- ✅ **[MOBILE]** - Limit Category titles on Achievement tab list to one line 
-- [ ] **[MOBILE]** - Would making the tabbed list eager (lazy=false) improve performance?
-- [ ] **[MOBILE]** - Do not make text selectable for items in Achievement list. Swiping to next category sometimes selected that achievement.
+- [ ] **[MOBILE]** - Use react-native-multithreading for leaderboard
 - [ ] **[MOBILE]** - Run `sync` on every created checkin.
 - [ ] **[MOBILE]** - View Achievement detail from User Checkins screen
 - [ ] **[MOBILE]** - Side menu shows last synced timestamp and loading icon when syncing (should not be able to run concurrent sync commands)
-- [ ] **[MOBILE]** - toLocaleString on
-  -  list of Achievements in UserCheckins
-  - Points next to Achievements in Achievements list (and by extenstion the Checkin Builder)
+- ✅ **[MOBILE]** - toLocaleString on
+  - ✅ list of Achievements in UserCheckins
+  - ✅ Points next to Achievements in Achievements list (and by extenstion the Checkin Builder)
 - [ ] **[MOBILE]** - Show ID on checkin for UserCheckins -> may be useful for inspecting a Checkin from mobile on the web client
+
+### Tabbed List issues
+
+- [ ] **[MOBILE]** - Would making the tabbed list eager (lazy=false)
+- [ ] **[MOBILE]** - Do not make text selectable for items in Achievement list. Swiping to next category sometimes selected that achievement. 
+- ✅ **[MOBILE]** - Limit Category titles on Achievement tab list to one line
 
 ## Beyond
 
@@ -83,7 +89,3 @@
 ## Tech Debt
 
 - [ ] **[MOBILE]** - TabbedList/Selector is convoluted because of optimization experimentation. TabbedList/Selector should be AchievementList specific and not overly generalized.
-
-
-bundle --entry-file src/main.tsx --platform ios --dev false --reset-cache --bundle-output ./bundle.js --entry-file apps/mobile/src/main.tsx
-

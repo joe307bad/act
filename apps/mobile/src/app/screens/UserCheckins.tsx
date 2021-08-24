@@ -147,7 +147,11 @@ const UserCheckinsComponent: FC<{
                         </Text>
                       </Column>
                       <Column width="content">
-                        <Chip title={a.get(achievementId).points} />
+                        <Chip
+                          title={a
+                            .get(achievementId)
+                            .points.toLocaleString()}
+                        />
                       </Column>
                     </Columns>
                   )
