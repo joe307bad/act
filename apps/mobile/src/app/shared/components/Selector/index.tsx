@@ -162,24 +162,15 @@ function Selector<T extends BaseModel, C extends Category = null>(
   }, [selected]);
 
   useEffect(() => {
-    if (typeof value !== 'undefined') {
-      if (listType === 'TABBED_LIST' && value?.size === 0) {
-        setResetting(true);
-        setPointsCount(0);
-        setPendingPointsCount(0);
-        setSelected(new Map());
-      }
-      if (listType === 'OPTION_LIST' && value?.length === 0) {
-        setResetting(true);
-        setSelected(defaultSelected);
-        onSelectorChange(
-          new Set(
-            Array.from(defaultSelected).map(
-              ([id, selectedOption]) => selectedOption.id
-            )
-          )
-        );
-      }
+    if (
+      typeof value !== 'undefined' &&
+      listType === 'TABBED_LIST' &&
+      value?.size === 0
+    ) {
+      setResetting(true);
+      setPointsCount(0);
+      setPendingPointsCount(0);
+      setSelected(new Map());
     }
   }, [value]);
 

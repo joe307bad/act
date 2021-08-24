@@ -112,7 +112,7 @@ export class Option extends PureComponent<{
           {!!points && (
             <Column width="content" padding={1}>
               <TouchableRipple onPress={onPress}>
-                <Chip title={points} />
+                <Chip title={points.toLocaleString()} />
               </TouchableRipple>
             </Column>
           )}

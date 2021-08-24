@@ -157,10 +157,17 @@ const CheckinBuilder: FC = () => {
         <Row padding={1} height="content">
           <AwesomeButtonMedium
             onPress={async () => {
+              const users = !currentUser.admin
+                ? Array.from(defaultSelectedUser.keys())
+                : checkin.users;
               const newCheckinCreated =
-                await db.models.checkins.create(checkin);
+                await db.models.checkins.create({
+                  ...checkin,
+                  users
+                });
               setCheckin({
                 ...checkin,
+                users,
                 created: newCheckinCreated
               });
               setCheckinCreated(true);
