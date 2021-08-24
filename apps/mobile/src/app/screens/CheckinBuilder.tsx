@@ -21,18 +21,11 @@ const CheckinBuilder: FC = () => {
     'name',
     'category_id'
   ]);
-  const categories = [
-    { id: 'all', name: 'All' },
-    ...db
-      .useCollection<AchievementCategory>('achievement_categories', [
-        'name'
-      ])
-      .map((c) => ({ id: c.id, name: c.name })),
-    { id: 'noCategory', name: 'No Category' }
-  ];
-  const achievementsByCategory = toPairs(
-    groupBy(achievements, 'category_id')
+  const categories = db.useCollection<AchievementCategory>(
+    'achievement_categories',
+    ['name']
   );
+
   const { currentUser } = useActAuth();
   const defaultSelectedUser = currentUser
     ? new Map([
@@ -42,8 +35,6 @@ const CheckinBuilder: FC = () => {
         ]
       ])
     : undefined;
-
-  achievementsByCategory.push(['All', achievements]);
 
   const [checkin, setCheckin] = useState<CreateCheckin>({
     users: Array.from(defaultSelectedUser.values()).map(

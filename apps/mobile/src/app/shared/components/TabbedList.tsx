@@ -82,10 +82,15 @@ export const TabbedListComponent: <
   const [items, setItems] = useState<Map<string, Achievement>>(
     new Map()
   );
+  const [itemsByCategory, setItemsByCategory] = useState<
+    Map<string, Map<string, Achievement>>
+  >(new Map());
   const [itemsCounts, setItemsCounts] = useState<Map<string, number>>(
     new Map()
   );
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState(
+    categories[0].id
+  );
   const theme = useTheme();
 
   useEffect(() => {
@@ -100,6 +105,29 @@ export const TabbedListComponent: <
           } as Achievement
         ])
       )
+    );
+
+    setItemsByCategory(
+      data.reduce((acc, item: any) => {
+        const achievement = item;
+
+        const categoryExists = acc.get(achievement.category_id);
+
+        if (categoryExists) {
+          return acc.set(
+            achievement.category_id,
+            new Map([
+              ...categoryExists,
+              ...new Map([[achievement.id, achievement]])
+            ])
+          );
+        }
+
+        return acc.set(
+          achievement.category_id,
+          new Map([[achievement.id, achievement]])
+        );
+      }, new Map())
     );
 
     setItemsCounts(
@@ -117,11 +145,8 @@ export const TabbedListComponent: <
       onChange(items, itemsCounts);
     }
   }, [items]);
-
-  const hideByCategory = (item) =>
-    item.category_id !== selectedCategory &&
-    selectedCategory !== 'all';
-
+  console.log({ itemsByCategory, selectedCategory });
+  const achievements = itemsByCategory.get(selectedCategory);
   return (
     <Rows>
       <Row height="content">
@@ -140,13 +165,19 @@ export const TabbedListComponent: <
       </Row>
       <Row>
         <Box padding={2} paddingBottom={0} paddingTop={0}>
-          {data && (
+          {achievements && (
             <FlatList
-              data={data as Achievement[]}
+              data={
+                hiddenOptions.size === 0
+                  ? Array.from(achievements.values())
+                  : Array.from(achievements.values()).filter(
+                      (a) => !hiddenOptions.has(a.id)
+                    )
+              }
               renderItem={({ item }) => {
-                const { points, id, name, description } = item;
-                return hiddenOptions.has(item.id) ||
-                  hideByCategory(item) ? null : (
+                const { points, id, name, description } =
+                  item as Achievement;
+                return (
                   <Option
                     primaryColor={theme.colors.primary}
                     count={itemsCounts.get(id)}
