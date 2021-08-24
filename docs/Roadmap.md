@@ -52,17 +52,18 @@
 - ✅ **[OPS]** - Publicly accessible services behind HTTPS
 
 ## Alpha issues
-- ✅ **[MOBILE]** - Remove TabbedList from Achievements in favor of category dropdown
-- ✅ **[MOBILE]** - Remove TabbedList from CheckinBuilder in favor of category dropdown
 - [ ] **[MOBILE]** - Can we improve performance by doing a lot of the Achievement & Checkin mapping in a root level Context?
 - [ ] **[MOBILE]** - Use react-native-multithreading for leaderboard
 - [ ] **[MOBILE]** - Run `sync` on every created checkin.
 - [ ] **[MOBILE]** - View Achievement detail from User Checkins screen
+- [ ] **[MOBILE]** - View Achievement detail Achievements by User on Leaderboard Screen
 - [ ] **[MOBILE]** - Side menu shows last synced timestamp and loading icon when syncing (should not be able to run concurrent sync commands)
+- ✅ **[MOBILE]** - Remove TabbedList from Achievements in favor of category dropdown
+- ✅ **[MOBILE]** - Remove TabbedList from CheckinBuilder in favor of category dropdown
 - ✅ **[MOBILE]** - toLocaleString on
   - ✅ list of Achievements in UserCheckins
   - ✅ Points next to Achievements in Achievements list (and by extenstion the Checkin Builder)
-- [ ] **[MOBILE]** - Show ID on checkin for UserCheckins -> may be useful for inspecting a Checkin from mobile on the web client
+- ✅ **[MOBILE]** - Show ID on checkin for UserCheckins -> may be useful for inspecting a Checkin from mobile on the web client
 
 ### Tabbed List issues
 

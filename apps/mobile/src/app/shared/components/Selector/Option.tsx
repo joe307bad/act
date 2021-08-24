@@ -65,7 +65,7 @@ export class Option extends PureComponent<{
             <TouchableRipple onPress={onPress}>
               {subtitle ? (
                 <Rows>
-                  <Row>
+                  <Row paddingTop={2}>
                     <Text numberOfLines={1}>{title}</Text>
                   </Row>
                   <Row paddingBottom={2}>

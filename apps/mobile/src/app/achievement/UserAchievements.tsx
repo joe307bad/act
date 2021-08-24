@@ -3,6 +3,11 @@ import Modal from '../shared/components/Modal';
 import { TabbedList } from '../shared/components/TabbedList';
 import db from '@act/data/rn';
 import { Achievement, AchievementCategory } from '@act/data/core';
+import { Rows, Row, Box } from '@mobily/stacks';
+import { AchievementRowLite } from './AchievementRowLite';
+import { FlatList } from 'react-native';
+import { Surface } from 'react-native-paper';
+import { Dropdown } from '../shared/components/Dropdown';
 
 const UserAchievementsTabbedList: FC<{
   achievementsById: Map<
@@ -26,19 +31,55 @@ const UserAchievementsTabbedList: FC<{
       };
     }
   );
-  const categories = db.useCollection<AchievementCategory>(
-    'achievement_categories',
-    ['name']
-  );
+
+  const categories = [
+    { id: 'all', name: 'All' },
+    ...db
+      .useCollection<AchievementCategory>('achievement_categories', [
+        'name'
+      ])
+      .map((c) => ({ id: c.id, name: c.name })),
+    { id: 'noCategory', name: 'No Category' }
+  ];
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const hideByCategory = (item) =>
+    item.category_id !== selectedCategory &&
+    selectedCategory !== 'all';
   return (
-    <TabbedList<Achievement, AchievementCategory>
-      data={achievements}
-      categories={categories}
-      selectable={false}
-      optionTitleProperty={'name'}
-      showInfoButton
-      setSelectedInfo={setSelectedInfo}
-    />
+    <Rows>
+      <Row height="content">
+        <Surface style={{ elevation: 2 }}>
+          <Dropdown
+            fullWidth
+            value={selectedCategory}
+            onValueChange={(v) => setSelectedCategory(v)}
+            items={categories.map((c) => ({
+              label: c.name,
+              value: c.id
+            }))}
+            padding={3}
+          />
+        </Surface>
+      </Row>
+      <Row>
+        <Box padding={2} paddingBottom={0} paddingTop={0}>
+          {achievements && (
+            <FlatList
+              data={achievements}
+              renderItem={({ item }) => (
+                <AchievementRowLite
+                  item={item}
+                  fixedCount={item.fixedCount}
+                  isHidden={hideByCategory(item)}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+            />
+          )}
+        </Box>
+      </Row>
+    </Rows>
   );
 };
 

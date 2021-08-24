@@ -158,13 +158,25 @@ const UserCheckinsComponent: FC<{
                 )}
               </Row>
             )}
-            {achievements && (
-              <Row paddingTop={2}>
-                <Box alignX="right">
-                  <Chip title={total.toLocaleString()} />
-                </Box>
-              </Row>
-            )}
+            <Row paddingTop={2}>
+              <Columns>
+                <Column>
+                  <Box alignX="left">
+                    <Chip
+                      icon="music-accidental-sharp"
+                      title={checkinId}
+                    />
+                  </Box>
+                </Column>
+                {achievements && (
+                  <Column>
+                    <Box alignX="right">
+                      <Chip title={total.toLocaleString()} />
+                    </Box>
+                  </Column>
+                )}
+              </Columns>
+            </Row>
           </Rows>
         </Surface>
       </Box>

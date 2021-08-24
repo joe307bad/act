@@ -9,9 +9,10 @@ export class AchievementRowLite extends PureComponent<{
   item: Achievement;
   isHidden: boolean;
   onPress: () => void;
+  fixedCount?: number;
 }> {
   render() {
-    const { onPress, isHidden, item } = this.props;
+    const { onPress, isHidden, item, fixedCount } = this.props;
     const { name, points } = item;
     if (isHidden) {
       return <Box></Box>;
@@ -23,6 +24,11 @@ export class AchievementRowLite extends PureComponent<{
             <Column>
               <Text>{name}</Text>
             </Column>
+            {!!fixedCount && (
+              <Column width="content">
+                <Chip title={fixedCount} icon="multiplication-box" />
+              </Column>
+            )}
             <Column width="content">
               <Chip title={points.toLocaleString()} />
             </Column>
