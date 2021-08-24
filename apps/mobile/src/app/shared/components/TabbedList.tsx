@@ -16,8 +16,8 @@ import { Surface, useTheme } from 'react-native-paper';
 import { Rows, Row, Box } from '@mobily/stacks';
 
 import { Dropdown } from './Dropdown';
+import { useGlobalContext } from '../../App';
 export type TabbedListProps<T, C> = {
-  data: T[];
   categories: C[];
   optionTitleProperty: string;
   optionSubtitleProperty?: string;
@@ -76,15 +76,12 @@ export const TabbedListComponent: <
   hiddenOptions,
   showInfoButton,
   setSelectedInfo,
-  onOptionSelect,
-  data
+  onOptionSelect
 }) => {
   const [items, setItems] = useState<Map<string, Achievement>>(
     new Map()
   );
-  const [itemsByCategory, setItemsByCategory] = useState<
-    Map<string, Map<string, Achievement>>
-  >(new Map());
+  const { achievementsByCategory } = useGlobalContext();
   const [itemsCounts, setItemsCounts] = useState<Map<string, number>>(
     new Map()
   );
@@ -107,29 +104,6 @@ export const TabbedListComponent: <
       )
     );
 
-    setItemsByCategory(
-      data.reduce((acc, item: any) => {
-        const achievement = item;
-
-        const categoryExists = acc.get(achievement.category_id);
-
-        if (categoryExists) {
-          return acc.set(
-            achievement.category_id,
-            new Map([
-              ...categoryExists,
-              ...new Map([[achievement.id, achievement]])
-            ])
-          );
-        }
-
-        return acc.set(
-          achievement.category_id,
-          new Map([[achievement.id, achievement]])
-        );
-      }, new Map())
-    );
-
     setItemsCounts(
       new Map(
         Array.from(initialSelected.entries()).map(([id, a]) => [
@@ -145,8 +119,7 @@ export const TabbedListComponent: <
       onChange(items, itemsCounts);
     }
   }, [items]);
-  console.log({ itemsByCategory, selectedCategory });
-  const achievements = itemsByCategory.get(selectedCategory);
+  const achievements = achievementsByCategory?.get(selectedCategory);
   return (
     <Rows>
       <Row height="content">
@@ -155,10 +128,13 @@ export const TabbedListComponent: <
             fullWidth
             value={selectedCategory}
             onValueChange={(v) => setSelectedCategory(v)}
-            items={categories.map((c) => ({
-              label: c.name,
-              value: c.id
-            }))}
+            items={[
+              ...categories.map((c) => ({
+                label: c.name,
+                value: c.id
+              })),
+              ...[{ label: 'All', value: 'all' }]
+            ]}
             padding={3}
           />
         </Surface>
