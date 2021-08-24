@@ -73,7 +73,7 @@
     "process": "^0.11.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-native": "0.63.4",
+    "react-native": "git+https://github.com/facebook/react-native.git#eb938863063f5535735af2be4e706f70647e5b90",
     "react-native-confetti": "^0.1.0",
     "react-native-config": "^1.4.3",
     "react-native-gesture-handler": "^1.10.3",
