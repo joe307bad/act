@@ -244,6 +244,7 @@ export const TabbedListComponent: <
                 fontSize: 20,
                 fontFamily: 'Bebas-Regular'
               }}
+              tabStyle={{ width: 'auto' }}
             />
           )}
           navigationState={{ index, routes }}
