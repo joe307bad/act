@@ -7,7 +7,11 @@
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@act/data/rn": ["libs/data/rn/src/index.ts"],
+      "@act/data/core": ["libs/data/core/src/index.ts"]
+    }
   },
   "files": [],
   "include": [],
