@@ -18,7 +18,7 @@ import CheckinBuilder from './screens/CheckinBuilder';
 import Achievements from './screens/Achievements';
 import db from '@act/data/rn';
 import { Provider } from 'react-native-paper';
-import Leaderboard from './screens/Leaderboard';
+import { Leaderboard } from './screens/Leaderboard';
 import { StacksProvider } from '@mobily/stacks';
 import { PendingApprovals } from './screens/PendingApprovals';
 import { UserCheckins } from './screens/UserCheckins';

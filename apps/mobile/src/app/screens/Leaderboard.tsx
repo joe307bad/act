@@ -20,10 +20,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Chip from '../shared/components/Chip';
 import withObservables from '@nozbe/with-observables';
 import db from '@act/data/rn';
-import { Achievement, Checkin, User } from '@act/data/core';
+import { Checkin, User } from '@act/data/core';
 import { map } from 'rxjs/operators';
 import { UserAchievements } from '../achievement/UserAchievements';
 import { checkinUsersAndAchievements } from '../shared/queries/checkinUsersAndAchievements';
+import { useGlobalContext } from '../core/providers/GlobalContextProvder';
 
 const LeaderboardItem: FC<{
   name: string;
@@ -108,87 +109,79 @@ const LeaderboardItem: FC<{
 };
 
 type LeaderboardItemData = {
+  id: string;
   name: string;
   points: number;
 };
 
-const Leaderboard: FC<{
-  users: User[];
-  userCheckins: Map<string, Set<string>>;
-  achievements: Map<
-    string,
-    {
-      points: number;
-      name: string;
-      category_id: string;
-      fixedCount: number;
-      description: string;
-    }
-  >;
-  checkinAchievements: Map<string, Map<string, number>>;
-  checkins: Set<string>;
-}> = ({
-  users,
-  userCheckins,
-  achievements: achievementsById,
-  checkinAchievements,
-  checkins
-}) => {
-  const [leaderboard, setLeaderboard] = useState<
-    Map<string, LeaderboardItemData>
-  >(new Map());
-  const [sortedUsers, setSortedUsers] = useState<
-    (LeaderboardItemData & { id: string })[]
-  >([]);
+export const Leaderboard: FC = () => {
+  const {
+    achievementsByCategory,
+    achievementsByCheckin,
+    checkinsByUser,
+    categoriesById,
+    fullNamesByUser,
+    checkinsById
+  } = useGlobalContext();
+
+  const achievementsById = achievementsByCategory.get('all');
+
+  const [leaderboard, setLeaderboard] =
+    useState<LeaderboardItemData[]>();
   const [selectedUser, setSelectedUser] =
     useState<{ userId: string; name: string }>();
   const [userAchievementsVisible, setUserAchievementsVisible] =
     useState(false);
 
   useEffect(() => {
-    const lboard: Map<string, LeaderboardItemData> = users.reduce(
-      (acc, u) => {
-        const uc = userCheckins.get(u.id);
-        return acc.set(u.id, {
-          name: u.fullName,
-          points: !uc
-            ? 0
-            : Array.from(uc).reduce((acc, checkinId) => {
-                const achievements =
-                  checkinAchievements.get(checkinId);
-                return (
-                  acc +
-                  (!achievements || !checkins.has(checkinId)
-                    ? 0
-                    : Array.from(achievements).reduce(
-                        (accc, [achievementId, count]) => {
-                          const a =
-                            achievementsById.get(achievementId);
-                          return accc + (a.points * count || 0);
-                        },
-                        0
-                      ))
-                );
-              }, 0)
-        });
-      },
-      new Map()
-    );
-    setLeaderboard(lboard);
-    setSortedUsers(
-      Array.from(lboard)
-        .map(([id, user]) => ({
-          ...user,
-          id
-        }))
-        .sort((a, b) => b.points - a.points)
-    );
+    if (checkinsByUser.size > 0) {
+      setLeaderboard(
+        Array.from(checkinsByUser)
+          .reduce((acc, userCheckins) => {
+            const [userId, checkins] = userCheckins;
+            const totalForCheckins = checkins.reduce(
+              (acc, checkinId) => {
+                const achievementsForCheckin =
+                  achievementsByCheckin.get(checkinId);
+
+                const checkinApproved =
+                  checkinsById.get(checkinId)?.approved;
+
+                if (!achievementsForCheckin || !checkinApproved) {
+                  return acc;
+                }
+
+                const totalForAchievements = Array.from(
+                  achievementsForCheckin
+                ).reduce((accc, [achievementId, count]) => {
+                  const achievement =
+                    achievementsById.get(achievementId);
+                  if (!achievement) {
+                    return acc;
+                  }
+
+                  return accc + achievement.points * count;
+                }, 0);
+                return acc + totalForAchievements;
+              },
+              0
+            );
+            acc.push({
+              id: userId,
+              name: fullNamesByUser.get(userId),
+              points: totalForCheckins
+            });
+            return acc;
+          }, [])
+          .sort((a, b) => b.points - a.points)
+      );
+    }
   }, [
-    users,
-    checkins,
-    checkinAchievements,
-    userCheckins,
-    achievementsById
+    achievementsByCategory,
+    achievementsByCheckin,
+    checkinsByUser,
+    categoriesById,
+    fullNamesByUser
   ]);
 
   return (
@@ -196,28 +189,28 @@ const Leaderboard: FC<{
       <ScrollView>
         <Stack space={2} padding={2}>
           <Rows space={3}>
-            {sortedUsers.map((user, i) => (
-              <LeaderboardItem
-                key={i}
-                name={user.name}
-                points={user.points}
-                isLast={users.length === i + 1}
-                i={i}
-                onPress={() => {
-                  setUserAchievementsVisible(true);
-                  setSelectedUser({
-                    userId: user.id,
-                    name: user.name
-                  });
-                }}
-              />
-            ))}
+            {leaderboard &&
+              leaderboard.map((user, i) => (
+                <LeaderboardItem
+                  key={i}
+                  name={user.name}
+                  points={user.points}
+                  isLast={checkinsByUser.size === i + 1}
+                  i={i}
+                  onPress={() => {
+                    setUserAchievementsVisible(true);
+                    setSelectedUser({
+                      userId: user.id,
+                      name: user.name
+                    });
+                  }}
+                />
+              ))}
           </Rows>
         </Stack>
       </ScrollView>
-      <UserAchievements
+      {/* <UserAchievements
         checkins={checkins}
-        achievementsById={achievementsById}
         checkinAchievements={checkinAchievements}
         userCheckins={userCheckins}
         visible={userAchievementsVisible}
@@ -227,48 +220,7 @@ const Leaderboard: FC<{
         totalPoints={
           leaderboard.get(selectedUser?.userId)?.points || 0
         }
-      />
+      /> */}
     </>
   );
 };
-
-export default withObservables([''], () => ({
-  ...checkinUsersAndAchievements(),
-  users: db.get.get('users').query().observe(),
-  checkins: db.get
-    .get<Checkin>('checkins')
-    .query()
-    .observeWithColumns(['approved'])
-    .pipe(
-      map((cs) => {
-        return new Set(
-          cs.reduce((acc, c) => {
-            if (!c.approved) {
-              return acc;
-            }
-            return acc.add(c.id);
-          }, new Set())
-        );
-      })
-    ),
-  achievements: db.get
-    .get<Achievement>('achievements')
-    .query()
-    .observeWithColumns(['points'])
-    .pipe(
-      map(
-        (as) =>
-          new Map(
-            as.map((a) => [
-              a.id,
-              {
-                points: a.points,
-                name: a.name,
-                category_id: a.category.id,
-                description: a.description
-              }
-            ])
-          )
-      )
-    )
-}))(Leaderboard);

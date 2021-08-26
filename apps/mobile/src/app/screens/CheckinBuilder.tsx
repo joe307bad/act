@@ -21,10 +21,6 @@ const CheckinBuilder: FC = () => {
     'name',
     'category_id'
   ]);
-  const categories = db.useCollection<AchievementCategory>(
-    'achievement_categories',
-    ['name']
-  );
 
   const { currentUser } = useActAuth();
   const defaultSelectedUser = currentUser
@@ -95,9 +91,8 @@ const CheckinBuilder: FC = () => {
                 </Card.Content>
               </Card>
               <Selector<Achievement, AchievementCategory>
-                data={achievements}
                 value={checkin?.achievementCounts}
-                categories={categories}
+                type={'TABBED_LIST'}
                 single="Achievement"
                 plural="Achievements"
                 icon="checkbox-multiple-marked-circle-outline"

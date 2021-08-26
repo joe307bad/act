@@ -16,9 +16,8 @@ import { Surface, useTheme } from 'react-native-paper';
 import { Rows, Row, Box } from '@mobily/stacks';
 
 import { Dropdown } from './Dropdown';
-import { useGlobalContext } from '../../App';
+import { useGlobalContext } from '../../core/providers/GlobalContextProvder';
 export type TabbedListProps<T, C> = {
-  categories: C[];
   optionTitleProperty: string;
   optionSubtitleProperty?: string;
   onChange?: (
@@ -71,7 +70,6 @@ export const TabbedListComponent: <
   onChange,
   initialSelected = new Map(),
   selectable = false,
-  categories,
   showCountDropdown = false,
   hiddenOptions,
   showInfoButton,
@@ -81,12 +79,14 @@ export const TabbedListComponent: <
   const [items, setItems] = useState<Map<string, Achievement>>(
     new Map()
   );
-  const { achievementsByCategory } = useGlobalContext();
+  const { achievementsByCategory, categoriesById } =
+    useGlobalContext();
   const [itemsCounts, setItemsCounts] = useState<Map<string, number>>(
     new Map()
   );
+  const categoryIds = Array.from(categoriesById.keys());
   const [selectedCategory, setSelectedCategory] = useState(
-    categories[0].id
+    categoryIds[0]
   );
   const theme = useTheme();
 
@@ -128,13 +128,10 @@ export const TabbedListComponent: <
             fullWidth
             value={selectedCategory}
             onValueChange={(v) => setSelectedCategory(v)}
-            items={[
-              ...categories.map((c) => ({
-                label: c.name,
-                value: c.id
-              })),
-              ...[{ label: 'All', value: 'all' }]
-            ]}
+            items={Array.from(categoriesById.values()).map((c) => ({
+              label: c.name,
+              value: c.id
+            }))}
             padding={3}
           />
         </Surface>

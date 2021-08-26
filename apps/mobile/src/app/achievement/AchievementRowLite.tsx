@@ -7,16 +7,12 @@ import { TouchableRipple } from 'react-native-paper';
 
 export class AchievementRowLite extends PureComponent<{
   item: Achievement;
-  isHidden: boolean;
   onPress: () => void;
   fixedCount?: number;
 }> {
   render() {
-    const { onPress, isHidden, item, fixedCount } = this.props;
+    const { onPress, item, fixedCount } = this.props;
     const { name, points } = item;
-    if (isHidden) {
-      return <Box></Box>;
-    }
     return (
       <TouchableRipple onPress={onPress}>
         <Box padding={2} alignX="center">

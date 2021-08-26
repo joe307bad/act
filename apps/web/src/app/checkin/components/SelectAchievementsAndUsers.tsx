@@ -178,24 +178,24 @@ export const SelectAchievementsAndUsersComponent = ({
                 selectedAchievements.get.keys()
               )}
               onSelectionModelChange={({ selectionModel }) => {
-                selectedAchievements.set(
-                  new Map(
-                    selectionModel.map((nsm) => {
-                      const a = achievements.find(
-                        (a) => a.id === nsm
-                      );
-                      return [
-                        nsm.toString(),
-                        {
-                          id: a.id,
-                          name: a.name,
-                          points: a.points,
-                          count: achievementCounts.get.get(a.id) ?? 1
-                        }
-                      ];
-                    })
-                  )
-                );
+                const sa = selectionModel.reduce((acc, nsm) => {
+                  const a = achievements.find((a) => a.id === nsm);
+
+                  if (!a) {
+                    return acc;
+                  }
+                  acc.push([
+                    nsm.toString(),
+                    {
+                      id: a.id,
+                      name: a.name,
+                      points: a.points,
+                      count: achievementCounts.get.get(a.id) ?? 1
+                    }
+                  ]);
+                  return acc;
+                }, []);
+                selectedAchievements.set(new Map(sa));
               }}
               checkboxSelection
             />

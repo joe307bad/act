@@ -28,7 +28,10 @@ const CheckinContext =
 const Checkins = ({ open, openCheckin, onDismiss }) => {
   const classes = useStyles();
 
-  let checkins: Checkin[] = db.useCollection('checkins', ['name']);
+  let checkins: Checkin[] = db.useCollection('checkins', [
+    'name',
+    'approved'
+  ]);
   const [selectedCheckin, setSelectedCheckin] =
     useState<string | undefined>();
 

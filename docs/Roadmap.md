@@ -52,8 +52,17 @@
 - ✅ **[OPS]** - Publicly accessible services behind HTTPS
 
 ## Alpha issues
-- [ ] **[MOBILE]** - Can we improve performance by doing a lot of the Achievement & Checkin mapping in a root level Context?
-- [ ] **[MOBILE]** - Use react-native-multithreading for leaderboard
+- [ ] **[MOBILE]** - iOS deployment
+- [ ] **[MOBILE]** - Only for admins (I think), does the CheckinBuilder not reset the selected users to the default users -> even though there is one user appearing as selced, internally the checkin has 0 users associated.
+- [ ] **[MOBILE]** - Allow for achievement photos to show in the SingleCheckin component of the Achievements screen
+- [ ] **[MOBILE]** - Sort achievements by point value across the app
+- [ ] **[MOBILE]** - Way of seeding Achievements newly added to JSON file (e.g. renaming categories, moving achievements to new categories, etc.)
+- [ ] **[MOBILE]** - Way of switching over to clean DB after launch
+    - inside the app, have a check isBeforeLaunchDate
+    - when user first installs app -> set installationDate
+    isBeforeLaunchDate = installationDate < launchDate
+    - try to sync -> isBeforeLaunchDate === true -> use couchdb1
+    - try to sync -> isBeforeLaunchDate === false -> force user to reinstall, use couchdb2
 - [ ] **[MOBILE]** - Run `sync` on every created checkin.
 - [ ] **[MOBILE]** - View Achievement detail from User Checkins screen
 - [ ] **[MOBILE]** - View Achievement detail Achievements by User on Leaderboard Screen
@@ -64,6 +73,11 @@
   - ✅ list of Achievements in UserCheckins
   - ✅ Points next to Achievements in Achievements list (and by extenstion the Checkin Builder)
 - ✅ **[MOBILE]** - Show ID on checkin for UserCheckins -> may be useful for inspecting a Checkin from mobile on the web client
+
+### Performance improvements
+- ✅ **[MOBILE]** - Map `achievementsByCategory` and `categoriesById` up front in a `GlobalContext` to make accessing this info much better for Achievement lists (CheckinBuilder + Achievements screens)
+- [ ] **[MOBILE]** - Can we improve performance by doing a lot of the Checkin mapping in `GlobalContext`?
+- [ ] **[MOBILE]** - Use react-native-multithreading for leaderboard
 
 ### Tabbed List issues
 

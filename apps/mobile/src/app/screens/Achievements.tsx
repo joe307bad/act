@@ -1,11 +1,6 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
-import {
-  Achievement,
-  AchievementCategory,
-  CreateCheckin
-} from '@act/data/core';
+import { Achievement, CreateCheckin } from '@act/data/core';
 import { FlatList } from 'react-native';
-import { TabbedList } from '../shared/components/TabbedList';
 import { SingleCheckin } from '../checkin/SingleCheckin';
 import db, { useActAuth } from '@act/data/rn';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
@@ -16,21 +11,12 @@ import { AchievementRowLite } from '../achievement/AchievementRowLite';
 import { Rows, Row, Box } from '@mobily/stacks';
 import { Surface } from 'react-native-paper';
 import { Dropdown } from '../shared/components/Dropdown';
+import { useGlobalContext } from '../core/providers/GlobalContextProvder';
 
 const Achievements: FC = () => {
-  const achievements = db.useCollection<Achievement>('achievements', [
-    'name',
-    'category_id'
-  ]);
-  const categories = [
-    { id: 'all', name: 'All' },
-    ...db
-      .useCollection<AchievementCategory>('achievement_categories', [
-        'name'
-      ])
-      .map((c) => ({ id: c.id, name: c.name })),
-    { id: 'noCategory', name: 'No Category' }
-  ];
+  const { achievementsByCategory, categoriesById } =
+    useGlobalContext();
+  const categories = Array.from(categoriesById.values());
 
   const { currentUser } = useActAuth();
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -46,29 +32,31 @@ const Achievements: FC = () => {
   );
 
   useEffect(() => {
-    if (isEmpty(debouncedSearchCriteria)) {
-      setHiddenOptions(new Set());
-    } else {
-      setHiddenOptions(
-        new Set(
-          achievements
-            .filter(
-              (a) =>
-                a.name
-                  .toUpperCase()
-                  .search(debouncedSearchCriteria.toUpperCase()) ===
-                -1
-            )
-            .map((a) => a.id)
-        )
-      );
+    if (achievementsByCategory.size > 0) {
+      if (isEmpty(debouncedSearchCriteria)) {
+        setHiddenOptions(new Set());
+      } else {
+        const achievements = Array.from(
+          achievementsByCategory.get('all').values()
+        );
+        setHiddenOptions(
+          new Set(
+            achievements
+              .filter(
+                (a) =>
+                  a.name
+                    .toUpperCase()
+                    .search(debouncedSearchCriteria.toUpperCase()) ===
+                  -1
+              )
+              .map((a) => a.id)
+          )
+        );
+      }
     }
-  }, [debouncedSearchCriteria, achievements]);
+  }, [debouncedSearchCriteria]);
 
-  const hideByCategory = (item) =>
-    item.category_id !== selectedCategory &&
-    selectedCategory !== 'all';
-
+  const achievements = achievementsByCategory?.get(selectedCategory);
   return (
     <>
       <Rows>
@@ -90,15 +78,17 @@ const Achievements: FC = () => {
           <Box padding={2} paddingBottom={0} paddingTop={0}>
             {achievements && (
               <FlatList
-                data={achievements}
+                data={
+                  hiddenOptions.size === 0
+                    ? Array.from(achievements.values())
+                    : Array.from(achievements.values()).filter(
+                        (a) => !hiddenOptions.has(a.id)
+                      )
+                }
                 renderItem={({ item }) => (
                   <AchievementRowLite
                     item={item}
                     onPress={() => setSelectedAchievement(item)}
-                    isHidden={
-                      hiddenOptions.has(item.id) ||
-                      hideByCategory(item)
-                    }
                   />
                 )}
                 keyExtractor={(item) => item.id}

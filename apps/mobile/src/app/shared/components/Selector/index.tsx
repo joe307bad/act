@@ -21,7 +21,7 @@ import { isEmpty } from 'lodash';
 import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useActAuth } from '@act/data/rn';
+import { useGlobalContext } from '../../../core/providers/GlobalContextProvder';
 
 export type SelectedOption = {
   id: string;
@@ -50,13 +50,14 @@ type CommonSelectorProps = Partial<{
     points?: number
   ) => void;
   value?: any;
+  type?: 'TABBED_LIST' | 'OPTIONS_LIST';
 }>;
 
 type TabbedSelectorProps<T extends BaseModel, C extends Category> =
   CommonSelectorProps & TLP<T, C>;
 
 type RegularSelectorProps<T> = CommonSelectorProps & {
-  data: T[];
+  data?: T[];
   optionTitleProperty: keyof T;
   optionSubtitleProperty?: keyof T;
 };
@@ -81,7 +82,6 @@ function Selector<T extends BaseModel, C extends Category = null>(
     icon,
     optionSubtitleProperty,
     optionTitleProperty,
-    categories = [],
     fullHeight,
     selectable,
     showCountDropdown,
@@ -90,7 +90,8 @@ function Selector<T extends BaseModel, C extends Category = null>(
     inlineTags,
     showInfoButton,
     onSelectorChange,
-    value
+    value,
+    type = 'OPTIONS_LIST'
   } = props;
 
   const theme = useTheme();
@@ -140,7 +141,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
     if (showPointCount) {
       const points = calculatePointsTotal(selected);
       setPointsCount(points);
-      listType === 'TABBED_LIST' &&
+      type === 'TABBED_LIST' &&
         onSelectorChange(
           new Map(
             Array.from(selected).map(([id, selectedOption]) => [
@@ -151,7 +152,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
           points
         );
     }
-    listType === 'OPTION_LIST' &&
+    type === 'OPTIONS_LIST' &&
       onSelectorChange(
         new Set(
           Array.from(selected).map(
@@ -164,7 +165,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
   useEffect(() => {
     if (
       typeof value !== 'undefined' &&
-      listType === 'TABBED_LIST' &&
+      type === 'TABBED_LIST' &&
       value?.size === 0
     ) {
       setResetting(true);
@@ -174,13 +175,18 @@ function Selector<T extends BaseModel, C extends Category = null>(
     }
   }, [value]);
 
+  const { achievementsByCategory } = useGlobalContext();
+
   useEffect(() => {
     if (isEmpty(debouncedSearchCriteria)) {
       setHiddenOptions(new Set());
     } else {
+      const achievements = Array.from(
+        achievementsByCategory.get('all').values()
+      );
       setHiddenOptions(
         new Set(
-          data
+          achievements
             .filter(
               (a) =>
                 a.name
@@ -192,10 +198,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
         )
       );
     }
-  }, [debouncedSearchCriteria, data]);
-
-  const listType =
-    categories.length === 0 ? 'OPTION_LIST' : 'TABBED_LIST';
+  }, [debouncedSearchCriteria]);
 
   const onTabbedListChange = (
     selectedAchievements: Map<string, Achievement>,
@@ -248,14 +251,14 @@ function Selector<T extends BaseModel, C extends Category = null>(
         fullHeight={fullHeight}
         showPointCount={showPointCount}
         pointsCount={pendingPointsCount}
-        showSearchBar={listType === 'TABBED_LIST'}
+        showSearchBar={type === 'TABBED_LIST'}
         searchCriteria={searchCriteria}
         onSearchChange={setSearchCriteria}
         selectedItemTitle={selectedInfo.name}
         selectedItemDescription={selectedInfo.description}
         closeSelectedItemInfo={() => setSelectedInfo({})}
       >
-        {listType === 'OPTION_LIST' && (
+        {type === 'OPTIONS_LIST' && (
           <OptionList
             onChange={onOptionsListChange}
             data={data as T[]}
@@ -268,12 +271,10 @@ function Selector<T extends BaseModel, C extends Category = null>(
             showCountDropdown={showCountDropdown}
           />
         )}
-        {listType === 'TABBED_LIST' && (
+        {type === 'TABBED_LIST' && (
           <TabbedList
             onChange={onTabbedListChange}
             initialSelected={selected}
-            data={data}
-            categories={categories}
             optionSubtitleProperty={optionSubtitleProperty || ''}
             selectable={selectable}
             optionTitleProperty={optionTitleProperty}

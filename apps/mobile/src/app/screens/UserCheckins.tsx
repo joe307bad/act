@@ -61,7 +61,11 @@ const UserCheckinsComponent: FC<{
       ? 0
       : Array.from(achievements).reduce(
           (acc, [achievementId, count]) => {
-            const { points } = a.get(achievementId);
+            const achievement = a.get(achievementId);
+            if (!achievement) {
+              return acc;
+            }
+            const { points } = achievement;
             return (acc += points * count);
           },
           0
@@ -122,39 +126,45 @@ const UserCheckinsComponent: FC<{
             </Row>
             {achievements && (
               <Row>
-                {Array.from(achievements).map(
-                  ([achievementId, count], i) => (
-                    <Columns
-                      key={i}
-                      space={2}
-                      alignY="center"
-                      style={{ padding: 4 }}
-                    >
-                      <Column
-                        width="content"
-                        height="fluid"
-                        style={{ justifyContent: 'center' }}
+                {Array.from(achievements).reduce(
+                  (acc, [achievementId, count], i) => {
+                    const achievement = a.get(achievementId);
+                    if (!achievement) {
+                      return acc;
+                    }
+                    return [
+                      ...acc,
+                      <Columns
+                        key={i}
+                        space={2}
+                        alignY="center"
+                        style={{ padding: 4 }}
                       >
-                        <MaterialCommunityIcons
-                          name={`numeric-${count}-box`}
-                          color={theme.colors.primary}
-                          size={25}
-                        />
-                      </Column>
-                      <Column style={{ justifyContent: 'center' }}>
-                        <Text numberOfLines={3}>
-                          {a.get(achievementId).name}
-                        </Text>
-                      </Column>
-                      <Column width="content">
-                        <Chip
-                          title={a
-                            .get(achievementId)
-                            .points.toLocaleString()}
-                        />
-                      </Column>
-                    </Columns>
-                  )
+                        <Column
+                          width="content"
+                          height="fluid"
+                          style={{ justifyContent: 'center' }}
+                        >
+                          <MaterialCommunityIcons
+                            name={`numeric-${count}-box`}
+                            color={theme.colors.primary}
+                            size={25}
+                          />
+                        </Column>
+                        <Column style={{ justifyContent: 'center' }}>
+                          <Text numberOfLines={3}>
+                            {achievement.name}
+                          </Text>
+                        </Column>
+                        <Column width="content">
+                          <Chip
+                            title={achievement.points.toLocaleString()}
+                          />
+                        </Column>
+                      </Columns>
+                    ];
+                  },
+                  []
                 )}
               </Row>
             )}

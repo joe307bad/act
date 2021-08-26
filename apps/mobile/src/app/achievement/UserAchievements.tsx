@@ -8,44 +8,16 @@ import { AchievementRowLite } from './AchievementRowLite';
 import { FlatList } from 'react-native';
 import { Surface } from 'react-native-paper';
 import { Dropdown } from '../shared/components/Dropdown';
+import { useGlobalContext } from '../core/providers/GlobalContextProvder';
 
 const UserAchievementsTabbedList: FC<{
-  achievementsById: Map<
-    string,
-    {
-      points: number;
-      name: string;
-      description: string;
-      category_id: string;
-    }
-  >;
+  achievements: Achievement[];
+  categories: AchievementCategory[];
   userAchievements: Map<string, number>;
   setSelectedInfo: (title: string, description: string) => void;
-}> = ({ achievementsById, userAchievements, setSelectedInfo }) => {
-  const achievements = Array.from(userAchievements).map(
-    ([achievementId, count]) => {
-      return {
-        ...achievementsById.get(achievementId),
-        fixedCount: count,
-        id: achievementId
-      };
-    }
-  );
-
-  const categories = [
-    { id: 'all', name: 'All' },
-    ...db
-      .useCollection<AchievementCategory>('achievement_categories', [
-        'name'
-      ])
-      .map((c) => ({ id: c.id, name: c.name })),
-    { id: 'noCategory', name: 'No Category' }
-  ];
+}> = ({ achievements, categories, setSelectedInfo }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const hideByCategory = (item) =>
-    item.category_id !== selectedCategory &&
-    selectedCategory !== 'all';
   return (
     <Rows>
       <Row height="content">
@@ -71,7 +43,6 @@ const UserAchievementsTabbedList: FC<{
                 <AchievementRowLite
                   item={item}
                   fixedCount={item.fixedCount}
-                  isHidden={hideByCategory(item)}
                 />
               )}
               keyExtractor={(item) => item.id}
@@ -86,15 +57,6 @@ const UserAchievementsTabbedList: FC<{
 export const UserAchievements: FC<{
   checkins: Set<string>;
   userCheckins: Map<string, Set<string>>;
-  achievementsById: Map<
-    string,
-    {
-      points: number;
-      name: string;
-      category_id: string;
-      description: string;
-    }
-  >;
   checkinAchievements: Map<string, Map<string, number>>;
   totalPoints?: number;
   userId?: string;
@@ -104,7 +66,6 @@ export const UserAchievements: FC<{
 }> = ({
   checkins,
   userCheckins,
-  achievementsById,
   checkinAchievements,
   totalPoints,
   userId,
@@ -119,6 +80,25 @@ export const UserAchievements: FC<{
     name?: string;
     description?: string;
   }>({});
+
+  const { achievementsByCategory, categoriesById } =
+    useGlobalContext();
+  const achievementsById = achievementsByCategory.get('all');
+  const achievements = Array.from(userAchievements).map(
+    ([achievementId, count]) => {
+      return {
+        ...achievementsById.get(achievementId),
+        fixedCount: count,
+        id: achievementId
+      };
+    }
+  );
+
+  const categories = Array.from(categoriesById.values()).map((c) => ({
+    id: c.id,
+    name: c.name
+  }));
+
   useEffect(() => {
     const checkinsForUser = userCheckins.get(userId);
     if (visible && checkinsForUser) {
