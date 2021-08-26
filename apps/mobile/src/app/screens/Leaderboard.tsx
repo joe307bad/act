@@ -18,13 +18,8 @@ import { widthPercentageToDP } from 'react-native-responsive-screen';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Chip from '../shared/components/Chip';
-import withObservables from '@nozbe/with-observables';
-import db from '@act/data/rn';
-import { Checkin, User } from '@act/data/core';
-import { map } from 'rxjs/operators';
 import { UserAchievements } from '../achievement/UserAchievements';
-import { checkinUsersAndAchievements } from '../shared/queries/checkinUsersAndAchievements';
-import { useGlobalContext } from '../core/providers/GlobalContextProvder';
+import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 
 const LeaderboardItem: FC<{
   name: string;
@@ -128,17 +123,22 @@ export const Leaderboard: FC = () => {
 
   const [leaderboard, setLeaderboard] =
     useState<LeaderboardItemData[]>();
-  const [selectedUser, setSelectedUser] =
-    useState<{ userId: string; name: string }>();
+  const [achievementsByUser, setAchievementsByUser] =
+    useState<Map<string, Map<string, number>>>();
+  const [selectedUser, setSelectedUser] = useState<string>();
   const [userAchievementsVisible, setUserAchievementsVisible] =
     useState(false);
 
   useEffect(() => {
     if (checkinsByUser.size > 0) {
-      setLeaderboard(
-        Array.from(checkinsByUser)
-          .reduce((acc, userCheckins) => {
+      const { leaderboardItems, achievementsByUser: abu } =
+        Array.from(checkinsByUser).reduce(
+          (acc, userCheckins) => {
             const [userId, checkins] = userCheckins;
+            acc.achievementsByUser.set(userId, new Map());
+            const userAchievements =
+              acc.achievementsByUser.get(userId);
+
             const totalForCheckins = checkins.reduce(
               (acc, checkinId) => {
                 const achievementsForCheckin =
@@ -160,21 +160,39 @@ export const Leaderboard: FC = () => {
                     return acc;
                   }
 
+                  const userAlreadyHasAchievement =
+                    userAchievements.get(achievementId);
+
+                  if (userAlreadyHasAchievement) {
+                    userAchievements.set(
+                      achievementId,
+                      userAlreadyHasAchievement + count
+                    );
+                  } else {
+                    userAchievements.set(achievementId, count);
+                  }
+
                   return accc + achievement.points * count;
                 }, 0);
                 return acc + totalForAchievements;
               },
               0
             );
-            acc.push({
+            acc.achievementsByUser.set(userId, userAchievements);
+            acc.leaderboardItems.push({
               id: userId,
               name: fullNamesByUser.get(userId),
               points: totalForCheckins
             });
             return acc;
-          }, [])
-          .sort((a, b) => b.points - a.points)
+          },
+          { leaderboardItems: [], achievementsByUser: new Map() }
+        );
+
+      setLeaderboard(
+        leaderboardItems.sort((a, b) => b.points - a.points)
       );
+      setAchievementsByUser(abu);
     }
   }, [
     achievementsByCategory,
@@ -199,28 +217,25 @@ export const Leaderboard: FC = () => {
                   i={i}
                   onPress={() => {
                     setUserAchievementsVisible(true);
-                    setSelectedUser({
-                      userId: user.id,
-                      name: user.name
-                    });
+                    setSelectedUser(user.id);
                   }}
                 />
               ))}
           </Rows>
         </Stack>
       </ScrollView>
-      {/* <UserAchievements
-        checkins={checkins}
-        checkinAchievements={checkinAchievements}
-        userCheckins={userCheckins}
-        visible={userAchievementsVisible}
-        name={selectedUser?.name}
-        userId={selectedUser?.userId}
-        onDismiss={() => setUserAchievementsVisible(false)}
-        totalPoints={
-          leaderboard.get(selectedUser?.userId)?.points || 0
-        }
-      /> */}
+      {achievementsByUser && (
+        <UserAchievements
+          userAchievementCounts={achievementsByUser.get(selectedUser)}
+          visible={userAchievementsVisible}
+          userId={selectedUser}
+          onDismiss={() => setUserAchievementsVisible(false)}
+          totalPoints={
+            leaderboard?.find((lu) => lu.id === selectedUser)
+              ?.points || 0
+          }
+        />
+      )}
     </>
   );
 };

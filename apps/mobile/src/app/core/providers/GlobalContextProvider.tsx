@@ -199,7 +199,7 @@ export const GlobalContextProvider = withObservables([''], () => ({
   achievements: db.get
     .get<Achievement>('achievements')
     .query()
-    .observeWithColumns(['name', 'points', 'category']),
+    .observeWithColumns(['name', 'points', 'category_id']),
   categories: db.get
     .get<AchievementCategory>('achievement_categories')
     .query()
@@ -215,6 +215,9 @@ export const GlobalContextProvider = withObservables([''], () => ({
   checkinAchievements: db.get
     .get<CheckinAchievement>('checkin_achievements')
     .query()
-    .observe(),
-  users: db.get.get<User>('users').query().observe()
+    .observeWithColumns(['count']),
+  users: db.get
+    .get<User>('users')
+    .query()
+    .observeWithColumns(['full_name'])
 }))(GlobalContextProviderComponent);

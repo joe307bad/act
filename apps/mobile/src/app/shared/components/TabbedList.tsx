@@ -16,7 +16,7 @@ import { Surface, useTheme } from 'react-native-paper';
 import { Rows, Row, Box } from '@mobily/stacks';
 
 import { Dropdown } from './Dropdown';
-import { useGlobalContext } from '../../core/providers/GlobalContextProvder';
+import { useGlobalContext } from '../../core/providers/GlobalContextProvider';
 export type TabbedListProps<T, C> = {
   optionTitleProperty: string;
   optionSubtitleProperty?: string;

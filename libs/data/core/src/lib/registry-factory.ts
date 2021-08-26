@@ -21,13 +21,13 @@ import { CheckinUsersService } from './services/checkin-users';
 import { CreateCheckinSeed } from './services/seed/CreateCheckinSeed';
 
 const seedWithMock = (seed: (args: SeedArgs) => void) => ({
-  achievements: () =>
+  achievements: (numberOfAchievements: number) =>
     seed({
       type: 'ACHIEVEMENTS',
       units: {
-        achievements: [
+        achievements: [...new Array(numberOfAchievements)].map(() =>
           MockFactory.create<AchievementSeed>(AchievementSeed)
-        ],
+        ),
         categories: Object.values(Categories).filter((c) =>
           isString(c)
         )

@@ -21,7 +21,7 @@ import { isEmpty } from 'lodash';
 import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useGlobalContext } from '../../../core/providers/GlobalContextProvder';
+import { useGlobalContext } from '../../../core/providers/GlobalContextProvider';
 
 export type SelectedOption = {
   id: string;

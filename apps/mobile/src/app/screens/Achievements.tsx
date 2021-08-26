@@ -11,7 +11,7 @@ import { AchievementRowLite } from '../achievement/AchievementRowLite';
 import { Rows, Row, Box } from '@mobily/stacks';
 import { Surface } from 'react-native-paper';
 import { Dropdown } from '../shared/components/Dropdown';
-import { useGlobalContext } from '../core/providers/GlobalContextProvder';
+import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 
 const Achievements: FC = () => {
   const { achievementsByCategory, categoriesById } =
