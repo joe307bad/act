@@ -17,25 +17,11 @@ import { getDefaultFont } from '../core/getDefaultFont';
 
 const CheckinBuilder: FC = () => {
   const users = db.useCollection<User>('users');
-  const achievements = db.useCollection<Achievement>('achievements', [
-    'name',
-    'category_id'
-  ]);
 
   const { currentUser } = useActAuth();
-  const defaultSelectedUser = currentUser
-    ? new Map([
-        [
-          currentUser.id,
-          { display: currentUser.username, id: currentUser.id }
-        ]
-      ])
-    : undefined;
 
   const [checkin, setCheckin] = useState<CreateCheckin>({
-    users: Array.from(defaultSelectedUser.values()).map(
-      ({ id }) => id
-    ),
+    users: [currentUser.id],
     isAdmin: currentUser.admin
   });
   const [checkinCreated, setCheckinCreated] = useState(false);
@@ -120,7 +106,6 @@ const CheckinBuilder: FC = () => {
                 <Selector<User>
                   data={users}
                   value={checkin?.users}
-                  defaultSelected={defaultSelectedUser}
                   single="User"
                   plural="Users"
                   icon="account-box-multiple-outline"
@@ -129,10 +114,10 @@ const CheckinBuilder: FC = () => {
                   title="Checkin Users"
                   subtitle="Select one or more users to checkin"
                   inlineTags={true}
-                  onSelectorChange={(selectedItems: Set<string>) =>
+                  onSelectorChange={(selectedItems: string[]) =>
                     setCheckin({
                       ...checkin,
-                      users: Array.from(selectedItems)
+                      users: selectedItems
                     })
                   }
                 />
@@ -144,7 +129,7 @@ const CheckinBuilder: FC = () => {
           <AwesomeButtonMedium
             onPress={async () => {
               const users = !currentUser.admin
-                ? Array.from(defaultSelectedUser.keys())
+                ? [currentUser.id]
                 : checkin.users;
               const newCheckinCreated =
                 await db.models.checkins.create({
@@ -168,9 +153,9 @@ const CheckinBuilder: FC = () => {
         onDismiss={() => {
           setCheckinCreated(false);
           setCheckin({
-            ...checkin,
+            isAdmin: currentUser.admin,
             achievementCounts: new Map(),
-            users: [],
+            users: [currentUser.id],
             points: 0,
             insertProps: undefined
           });

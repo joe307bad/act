@@ -4,7 +4,7 @@ import React, {
   ReactElement,
   useEffect
 } from 'react';
-import { Pressable, Text } from 'react-native';
+import { GestureResponderEvent, Pressable, Text } from 'react-native';
 import { Avatar, Card, Surface, useTheme } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../../AwesomeButton';
 import Modal from '../Modal';
@@ -40,13 +40,13 @@ type CommonSelectorProps = Partial<{
   fullHeight?: boolean;
   selectable?: boolean;
   showCountDropdown?: boolean;
-  defaultSelected?: Map<string, SelectedOption>;
+  defaultSelected?: string[];
   showPointCount?: boolean;
   inlineTags?: boolean;
   showInfoButton?: boolean;
   onInfoButtonPress?: () => void;
   onSelectorChange?: (
-    selectedItems: Set<string> | Map<string, number>,
+    selectedItems: string[] | Map<string, number>,
     points?: number
   ) => void;
   value?: any;
@@ -93,15 +93,15 @@ function Selector<T extends BaseModel, C extends Category = null>(
     value,
     type = 'OPTIONS_LIST'
   } = props;
-
   const theme = useTheme();
+  const { fullNamesByUser } = useGlobalContext();
   const [selectorModalVisible, setSelectorModalVisible] =
     useState(false);
   const [selected, setSelected] = useState<
-    Map<string, SelectedOption>
-  >(defaultSelected || new Map());
+    Map<string, SelectedOption> | string[]
+  >(value || []);
   const [pendingSelected, setPendingSelected] = useState<
-    Map<string, SelectedOption>
+    Map<string, SelectedOption> | string[]
   >(new Map());
   const [pendingPointsCount, setPendingPointsCount] =
     useState<number>(0);
@@ -118,7 +118,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
   const [resetting, setResetting] = useState(false);
 
   const calculatePointsTotal = (s: Map<string, SelectedOption>) =>
-    Array.from(s).reduce((acc, ps) => {
+    Array.from(s || []).reduce((acc, ps) => {
       const [id, selectedItem] = ps;
       return (acc +=
         (selectedItem.count || 1) * selectedItem?.points);
@@ -128,7 +128,11 @@ function Selector<T extends BaseModel, C extends Category = null>(
 
   useEffect(() => {
     if (showPointCount) {
-      setPendingPointsCount(calculatePointsTotal(pendingSelected));
+      setPendingPointsCount(
+        calculatePointsTotal(
+          pendingSelected as Map<string, SelectedOption>
+        )
+      );
     }
   }, [debouncedPendingSelected]);
 
@@ -139,27 +143,23 @@ function Selector<T extends BaseModel, C extends Category = null>(
     }
 
     if (showPointCount) {
-      const points = calculatePointsTotal(selected);
+      const achievementSelections = selected as Map<
+        string,
+        SelectedOption
+      >;
+      const points = calculatePointsTotal(achievementSelections);
       setPointsCount(points);
       type === 'TABBED_LIST' &&
         onSelectorChange(
           new Map(
-            Array.from(selected).map(([id, selectedOption]) => [
-              id,
-              selectedOption.count
-            ])
+            Array.from(achievementSelections).map(
+              ([id, selectedOption]) => [id, selectedOption.count]
+            )
           ),
           points
         );
     }
-    type === 'OPTIONS_LIST' &&
-      onSelectorChange(
-        new Set(
-          Array.from(selected).map(
-            ([id, selectedOption]) => selectedOption.id
-          )
-        )
-      );
+    type === 'OPTIONS_LIST' && onSelectorChange(selected as string[]);
   }, [selected]);
 
   useEffect(() => {
@@ -172,6 +172,10 @@ function Selector<T extends BaseModel, C extends Category = null>(
       setPointsCount(0);
       setPendingPointsCount(0);
       setSelected(new Map());
+    }
+
+    if (type === 'OPTIONS_LIST' && typeof value !== 'undefined') {
+      setSelected(value);
     }
   }, [value]);
 
@@ -221,20 +225,10 @@ function Selector<T extends BaseModel, C extends Category = null>(
     );
   };
 
-  const onOptionsListChange = (selectedOptions: Map<string, any>) => {
-    setPendingSelected(
-      new Map(
-        Array.from(selectedOptions).map(([id, a]) => {
-          return [
-            id,
-            {
-              id,
-              display: a.name
-            }
-          ];
-        })
-      )
-    );
+  const onOptionsListChange = (
+    selectedOptions: Map<string, any> | string[]
+  ) => {
+    setPendingSelected(selectedOptions);
   };
 
   return (
@@ -260,9 +254,9 @@ function Selector<T extends BaseModel, C extends Category = null>(
       >
         {type === 'OPTIONS_LIST' && (
           <OptionList
+            defaultSelected={value}
             onChange={onOptionsListChange}
             data={data as T[]}
-            initialSelected={selected || new Map()}
             optionSubtitleProperty={
               (optionSubtitleProperty as keyof T) || ''
             }
@@ -274,7 +268,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
         {type === 'TABBED_LIST' && (
           <TabbedList
             onChange={onTabbedListChange}
-            initialSelected={selected}
+            initialSelected={selected as Map<string, SelectedOption>}
             optionSubtitleProperty={optionSubtitleProperty || ''}
             selectable={selectable}
             optionTitleProperty={optionTitleProperty}
@@ -304,103 +298,116 @@ function Selector<T extends BaseModel, C extends Category = null>(
           }
         />
         <Card.Content style={{ display: 'flex' }}>
-          {inlineTags ? (
+          {type === 'OPTIONS_LIST' ? (
             <Inline space={2}>
-              {Array.from(selected).map((s, i) => (
-                <Surface key={i} style={{ elevation: 3 }}>
-                  <Columns
-                    space={1}
-                    style={{
-                      padding: 5
-                    }}
-                  >
-                    <Column width="content">
-                      <Text>{s[1].display}</Text>
-                    </Column>
-                    <Column
-                      width="content"
-                      height="fluid"
+              {((selected as string[]) || []).map((s, i) => {
+                return (
+                  <Surface key={i} style={{ elevation: 3 }}>
+                    <Columns
+                      space={1}
                       style={{
-                        justifyContent: 'center',
-                        paddingRight: 5
+                        padding: 5
                       }}
                     >
-                      <Pressable
-                        onPress={() => {
-                          setSelected((p) => {
-                            const newSelected = new Map(p);
-                            newSelected.delete(s[0]);
-                            return newSelected;
-                          });
-                        }}
-                      >
-                        <MaterialCommunityIcons
-                          name="close-circle"
-                          color={theme.colors.primary}
-                          size={20}
-                        />
-                      </Pressable>
-                    </Column>
-                  </Columns>
-                </Surface>
-              ))}
-            </Inline>
-          ) : (
-            <Stack space={2}>
-              {Array.from(selected).map((s, i) => (
-                <Surface key={i} style={{ elevation: 3 }}>
-                  <Columns
-                    space={2}
-                    style={{
-                      padding: 4
-                    }}
-                    alignY="center"
-                  >
-                    {showPointCount && (
+                      <Column width="content">
+                        <Text>{fullNamesByUser.get(s)}</Text>
+                      </Column>
                       <Column
                         width="content"
                         height="fluid"
                         style={{
-                          justifyContent: 'center'
+                          justifyContent: 'center',
+                          paddingRight: 5
                         }}
                       >
-                        <MaterialCommunityIcons
-                          name={`numeric-${s[1].count}-box`}
-                          color={theme.colors.primary}
-                          size={25}
-                        />
+                        <Pressable
+                          onPress={() => {
+                            setSelected((p) => {
+                              const newSelected = new Set(
+                                p as string[]
+                              );
+                              newSelected.delete(s);
+                              return Array.from(newSelected);
+                            });
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            name="close-circle"
+                            color={theme.colors.primary}
+                            size={20}
+                          />
+                        </Pressable>
                       </Column>
-                    )}
-                    <Column>
-                      <Text numberOfLines={3}>{s[1].display}</Text>
-                    </Column>
-                    <Column
-                      width="content"
-                      height="fluid"
+                    </Columns>
+                  </Surface>
+                );
+              })}
+            </Inline>
+          ) : (
+            <Stack space={2}>
+              {Array.from(
+                (selected as Map<string, SelectedOption>) || []
+              ).map((s, i) => {
+                const [display, count] = (() => {
+                  return [s[1].display, s[1].count];
+                })();
+                return (
+                  <Surface key={i} style={{ elevation: 3 }}>
+                    <Columns
+                      space={2}
                       style={{
-                        justifyContent: 'center',
-                        paddingRight: 5
+                        padding: 4
                       }}
+                      alignY="center"
                     >
-                      <Pressable
-                        onPress={() => {
-                          setSelected((p) => {
-                            const newSelected = new Map(p);
-                            newSelected.delete(s[0]);
-                            return newSelected;
-                          });
+                      {showPointCount && (
+                        <Column
+                          width="content"
+                          height="fluid"
+                          style={{
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            name={`numeric-${count}-box`}
+                            color={theme.colors.primary}
+                            size={25}
+                          />
+                        </Column>
+                      )}
+                      <Column>
+                        <Text numberOfLines={3}>{display}</Text>
+                      </Column>
+                      <Column
+                        width="content"
+                        height="fluid"
+                        style={{
+                          justifyContent: 'center',
+                          paddingRight: 5
                         }}
                       >
-                        <MaterialCommunityIcons
-                          name="close-circle"
-                          color={theme.colors.primary}
-                          size={20}
-                        />
-                      </Pressable>
-                    </Column>
-                  </Columns>
-                </Surface>
-              ))}
+                        <Pressable
+                          onPress={() => {
+                            setSelected((p) => {
+                              const newSelected = new Map(
+                                p as Map<string, SelectedOption>
+                              );
+                              newSelected.delete(s[0]);
+                              return newSelected;
+                            });
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            name="close-circle"
+                            color={theme.colors.primary}
+                            size={20}
+                          />
+                        </Pressable>
+                      </Column>
+                    </Columns>
+                  </Surface>
+                );
+              })}
             </Stack>
           )}
         </Card.Content>

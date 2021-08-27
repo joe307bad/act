@@ -16,11 +16,8 @@ import { Option } from './Option';
 
 type OptionListProps<T extends BaseModel> = {
   data: T[];
-  onChange?: (
-    selected: Map<string, any>,
-    itemsCounts?: Map<string, number>
-  ) => void;
-  initialSelected: Map<string, SelectedOption>;
+  onChange?: (items: Map<string, any> | string[]) => void;
+  initialSelected: string[];
   optionTitleProperty: keyof T;
   optionSubtitleProperty: keyof T;
   selectable?: boolean;
@@ -28,13 +25,14 @@ type OptionListProps<T extends BaseModel> = {
   onCheckButtonPress?: (id: string) => void;
   onDeleteButtonPress?: (id: string) => void;
   paddingTop?: number;
+  defaultSelected: Map<string, any> | string[];
 };
 const OptionListComponent: <T extends BaseModel>(
   p: PropsWithChildren<OptionListProps<T>>
 ) => ReactElement = ({
   data,
   onChange,
-  initialSelected = new Map(),
+  defaultSelected,
   optionSubtitleProperty,
   optionTitleProperty,
   selectable = true,
@@ -43,26 +41,14 @@ const OptionListComponent: <T extends BaseModel>(
   onDeleteButtonPress = undefined,
   paddingTop = undefined
 }) => {
-  const [items, setItems] = useState<Map<string, any>>(new Map());
+  const [items, setItems] = useState<Map<string, any> | string[]>(
+    defaultSelected || new Map()
+  );
   const theme = useTheme();
 
   useEffect(() => {
     onChange(items);
   }, [items]);
-
-  useEffect(() => {
-    setItems(
-      new Map(
-        Array.from(initialSelected.entries()).map(([id, a]) => [
-          a.id,
-          {
-            id: a.id,
-            name: a.display
-          } as Achievement
-        ])
-      )
-    );
-  }, []);
 
   const confirmDeletion = (confirmDelete) =>
     Alert.alert(
@@ -72,7 +58,11 @@ const OptionListComponent: <T extends BaseModel>(
     );
 
   const renderItem: FC<{ item: any }> = ({ item }) => {
-    const { id } = item;
+    const isUsersList = Array.isArray(items);
+    const id = item.id;
+    const checked = isUsersList
+      ? new Set(items as string[]).has(item.id)
+      : (items as Map<string, any>).has(item.id);
     return (
       <Box marginBottom={2}>
         <Surface style={{ elevation: 2 }}>
@@ -85,7 +75,7 @@ const OptionListComponent: <T extends BaseModel>(
             subtitle={
               item[snakeCase(optionSubtitleProperty as string)]
             }
-            checked={items.has(id)}
+            checked={checked}
             showCountDropdown={showCountDropdown}
             onDeleteButtonPress={
               onDeleteButtonPress
@@ -98,19 +88,29 @@ const OptionListComponent: <T extends BaseModel>(
                 : undefined
             }
             onPress={(e: GestureResponderEvent, count?: number) => {
-              const exists = items.has(id);
-              const newItems = new Map(items);
-              if (exists) {
-                newItems.delete(id);
+              if (isUsersList) {
+                const selectedUsers = new Set(items as string[]);
+                if (selectedUsers.has(id)) {
+                  selectedUsers.delete(id);
+                } else {
+                  selectedUsers.add(id);
+                }
+                setItems(Array.from(selectedUsers));
               } else {
-                newItems.set(id, {
-                  id,
-                  name: item[
-                    snakeCase(optionSubtitleProperty as string)
-                  ]
-                });
+                const exists = checked;
+                const newItems = new Map(items as Map<string, any>);
+                if (exists) {
+                  newItems.delete(id);
+                } else {
+                  newItems.set(id, {
+                    id,
+                    name: item[
+                      snakeCase(optionSubtitleProperty as string)
+                    ]
+                  });
+                }
+                setItems(newItems);
               }
-              setItems(newItems);
             }}
           />
         </Surface>
