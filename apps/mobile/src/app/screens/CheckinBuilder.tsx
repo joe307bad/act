@@ -131,17 +131,16 @@ const CheckinBuilder: FC = () => {
               const users = !currentUser.admin
                 ? [currentUser.id]
                 : checkin.users;
-              const newCheckinCreated =
-                await db.models.checkins.create({
-                  ...checkin,
-                  users
-                });
               setCheckin({
                 ...checkin,
                 users,
-                created: newCheckinCreated
+                created: new Date()
               });
               setCheckinCreated(true);
+              db.models.checkins.create({
+                ...checkin,
+                users
+              });
             }}
           >
             Create Checkin
