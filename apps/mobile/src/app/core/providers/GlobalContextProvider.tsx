@@ -19,10 +19,11 @@ const GlobalContext =
   createContext<{
     achievementsByCategory: Map<string, Map<string, Achievement>>;
     categoriesById: Map<string, AchievementCategory>;
-    checkinsByUser: Map<string, string[]>;
+    checkinsByUser: Map<string, Map<string, string>>;
     achievementsByCheckin: Map<string, Map<string, number>>;
     fullNamesByUser: Map<string, string>;
     checkinsById: Map<string, Checkin>;
+    usersByCheckin: Map<string, string[]>;
   }>(undefined);
 
 export const useGlobalContext = () => useContext(GlobalContext);
@@ -49,7 +50,7 @@ const GlobalContextProviderComponent: FC<{
     Map<string, AchievementCategory>
   >(new Map());
   const [checkinsByUser, setCheckinsByUser] = useState<
-    Map<string, string[]>
+    Map<string, Map<string, string>>
   >(new Map());
   const [achievementsByCheckin, setAchievementsByCheckins] = useState<
     Map<string, Map<string, number>>
@@ -59,6 +60,9 @@ const GlobalContextProviderComponent: FC<{
   >(new Map());
   const [checkinsById, setCheckinsById] = useState<
     Map<string, Checkin>
+  >(new Map());
+  const [usersByCheckin, setUsersByCheckin] = useState<
+    Map<string, string[]>
   >(new Map());
 
   useEffect(() => {
@@ -87,18 +91,26 @@ const GlobalContextProviderComponent: FC<{
                   .filter((ca) => ca.checkinId === checkin.id)
                   ?.map((ca) => [ca.achievementId, ca.count])
               )
+            ),
+            usersByCheckin: acc.usersByCheckin.set(
+              checkin.id,
+              checkinUsers
+                .filter((cu) => cu.checkinId === checkin.id)
+                ?.map((cu) => cu.userId)
             )
           };
         },
         {
           checkinsById: new Map(),
           checkinIds: new Set(),
-          achievementsByCheckin: new Map()
+          achievementsByCheckin: new Map(),
+          usersByCheckin: new Map()
         }
       );
 
       setAchievementsByCheckins(parsedCheckins.achievementsByCheckin);
       setCheckinsById(parsedCheckins.checkinsById);
+      setUsersByCheckin(parsedCheckins.usersByCheckin);
 
       setFullNamesByUser(
         users.reduce(
@@ -111,13 +123,16 @@ const GlobalContextProviderComponent: FC<{
         users.reduce((acc, user) => {
           return acc.set(
             user.id,
-            checkinUsers
-              .filter(
-                (cu) =>
-                  cu.userId === user.id &&
-                  parsedCheckins.checkinIds.has(cu.checkinId)
-              )
-              ?.map((cu) => cu.checkinId)
+            new Map(
+              checkinUsers
+                .filter(
+                  (cu) =>
+                    cu.userId === user.id &&
+                    parsedCheckins.checkinIds.has(cu.checkinId)
+                )
+                ?.sort((a, b) => b.createdAt - a.createdAt)
+                ?.map((cu) => [cu.checkinId, cu.id])
+            )
           );
         }, new Map())
       );
@@ -187,7 +202,8 @@ const GlobalContextProviderComponent: FC<{
         achievementsByCategory,
         categoriesById,
         fullNamesByUser,
-        checkinsById
+        checkinsById,
+        usersByCheckin
       }}
     >
       {children}

@@ -139,45 +139,44 @@ export const Leaderboard: FC = () => {
             const userAchievements =
               acc.achievementsByUser.get(userId);
 
-            const totalForCheckins = checkins.reduce(
-              (acc, checkinId) => {
-                const achievementsForCheckin =
-                  achievementsByCheckin.get(checkinId);
+            const totalForCheckins = Array.from(
+              checkins.keys()
+            ).reduce((acc, checkinId) => {
+              const achievementsForCheckin =
+                achievementsByCheckin.get(checkinId);
 
-                const checkinApproved =
-                  checkinsById.get(checkinId)?.approved;
+              const checkinApproved =
+                checkinsById.get(checkinId)?.approved;
 
-                if (!achievementsForCheckin || !checkinApproved) {
+              if (!achievementsForCheckin || !checkinApproved) {
+                return acc;
+              }
+
+              const totalForAchievements = Array.from(
+                achievementsForCheckin
+              ).reduce((accc, [achievementId, count]) => {
+                const achievement =
+                  achievementsById.get(achievementId);
+                if (!achievement) {
                   return acc;
                 }
 
-                const totalForAchievements = Array.from(
-                  achievementsForCheckin
-                ).reduce((accc, [achievementId, count]) => {
-                  const achievement =
-                    achievementsById.get(achievementId);
-                  if (!achievement) {
-                    return acc;
-                  }
+                const userAlreadyHasAchievement =
+                  userAchievements.get(achievementId);
 
-                  const userAlreadyHasAchievement =
-                    userAchievements.get(achievementId);
+                if (userAlreadyHasAchievement) {
+                  userAchievements.set(
+                    achievementId,
+                    userAlreadyHasAchievement + count
+                  );
+                } else {
+                  userAchievements.set(achievementId, count);
+                }
 
-                  if (userAlreadyHasAchievement) {
-                    userAchievements.set(
-                      achievementId,
-                      userAlreadyHasAchievement + count
-                    );
-                  } else {
-                    userAchievements.set(achievementId, count);
-                  }
-
-                  return accc + achievement.points * count;
-                }, 0);
-                return acc + totalForAchievements;
-              },
-              0
-            );
+                return accc + achievement.points * count;
+              }, 0);
+              return acc + totalForAchievements;
+            }, 0);
             acc.achievementsByUser.set(userId, userAchievements);
             acc.leaderboardItems.push({
               id: userId,

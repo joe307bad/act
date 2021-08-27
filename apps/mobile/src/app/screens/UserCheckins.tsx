@@ -3,47 +3,31 @@ import {
   Surface,
   TouchableRipple
 } from 'react-native-paper';
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Column, Columns, Row, Rows } from '@mobily/stacks';
-import withObservables from '@nozbe/with-observables';
 import db, { useActAuth } from '@act/data/rn';
-import {
-  Achievement,
-  Checkin,
-  CheckinAchievement,
-  CheckinUser,
-  User
-} from '@act/data/core';
 import { Alert, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
-import { map } from 'rxjs/operators';
-import { Q } from '@nozbe/watermelondb';
 import { format } from 'date-fns';
 import Chip from '../shared/components/Chip';
 import { isEmpty } from 'lodash';
 import { Dropdown } from '../shared/components/Dropdown';
+import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 
-const UserCheckinsComponent: FC<{
-  users: User[];
-  userCheckins: Map<string, Map<string, string>>;
-  checkinAchievements: Map<string, Map<string, number>>;
-  checkins: Map<
-    string,
-    { createdAt: Date; note: string; approved: boolean }
-  >;
-  achievements: Map<string, { name: string; points: number }>;
-}> = ({
-  users,
-  userCheckins,
-  checkins,
-  checkinAchievements,
-  achievements: a
-}) => {
+export const UserCheckins = () => {
   const { currentUser } = useActAuth();
   const theme = useTheme();
   const [selectedUser, setSelectedUser] = useState(currentUser.id);
+  const {
+    achievementsByCategory,
+    checkinsByUser,
+    fullNamesByUser,
+    checkinsById,
+    achievementsByCheckin
+  } = useGlobalContext();
+  const achievementsById = achievementsByCategory.get('all');
 
   const confirmDeletion = (confirmDelete) =>
     Alert.alert(
@@ -54,14 +38,14 @@ const UserCheckinsComponent: FC<{
 
   const RenderItem = ({ item }) => {
     const [checkinId, checkinUserId] = item;
-    const achievements = checkinAchievements.get(checkinId);
-    const checkin = checkins.get(checkinId);
+    const achievements = achievementsByCheckin.get(checkinId);
+    const checkin = checkinsById.get(checkinId);
 
     const total = !achievements
       ? 0
       : Array.from(achievements).reduce(
           (acc, [achievementId, count]) => {
-            const achievement = a.get(achievementId);
+            const achievement = achievementsById.get(achievementId);
             if (!achievement) {
               return acc;
             }
@@ -128,7 +112,8 @@ const UserCheckinsComponent: FC<{
               <Row>
                 {Array.from(achievements).reduce(
                   (acc, [achievementId, count], i) => {
-                    const achievement = a.get(achievementId);
+                    const achievement =
+                      achievementsById.get(achievementId);
                     if (!achievement) {
                       return acc;
                     }
@@ -193,7 +178,7 @@ const UserCheckinsComponent: FC<{
     );
   };
 
-  const checkinsForUser = userCheckins.get(selectedUser);
+  const checkinsForUser = checkinsByUser.get(selectedUser);
 
   return (
     <Rows>
@@ -203,10 +188,12 @@ const UserCheckinsComponent: FC<{
             fullWidth
             value={selectedUser}
             onValueChange={(v) => setSelectedUser(v)}
-            items={users.map((u) => ({
-              label: u.fullName,
-              value: u.id
-            }))}
+            items={Array.from(fullNamesByUser).map(
+              ([userId, fullName]) => ({
+                label: fullName,
+                value: userId
+              })
+            )}
             padding={3}
           />
         </Surface>
@@ -215,9 +202,7 @@ const UserCheckinsComponent: FC<{
         <Box padding={2} paddingBottom={0} paddingTop={0}>
           {checkinsForUser && (
             <FlatList
-              data={Array.from(checkinsForUser).filter(([uc]) =>
-                checkins.has(uc)
-              )}
+              data={Array.from(checkinsForUser)}
               contentContainerStyle={{
                 paddingTop: 5
               }}
@@ -230,90 +215,3 @@ const UserCheckinsComponent: FC<{
     </Rows>
   );
 };
-
-export const UserCheckins = withObservables([''], () => ({
-  users: db.get.get('users').query().observe(),
-  achievements: db.get
-    .get<Achievement>('achievements')
-    .query()
-    .observe()
-    .pipe(
-      map(
-        (as) =>
-          new Map(
-            as.map((a) => [a.id, { name: a.name, points: a.points }])
-          )
-      )
-    ),
-  checkins: db.get
-    .get<Checkin>('checkins')
-    .query()
-    .observeWithColumns(['approved'])
-    .pipe(
-      map(
-        (cs) =>
-          new Map(
-            cs.map((c) => [
-              c.id,
-              {
-                createdAt: c.createdAt,
-                note: c.note,
-                approved: c.approved
-              }
-            ])
-          )
-      )
-    ),
-  userCheckins: db.get
-    .get<CheckinUser>('checkin_users')
-    .query()
-    .observeWithColumns(['approved'])
-    .pipe(
-      map((ucs) =>
-        ucs
-          .sort((a, b) => b.createdAt - a.createdAt)
-          .reduce((acc, item) => {
-            const exists = acc.get(item.userId);
-            if (exists) {
-              return acc.set(
-                item.userId,
-                new Map([
-                  ...exists,
-                  ...new Map([[item.checkinId, item.id]])
-                ])
-              );
-            } else {
-              return acc.set(
-                item.userId,
-                new Map([[item.checkinId, item.id]])
-              );
-            }
-          }, new Map<string, Map<string, string>>())
-      )
-    ),
-  checkinAchievements: db.get
-    .get<CheckinAchievement>('checkin_achievements')
-    .query()
-    .observeWithColumns(['count'])
-    .pipe(
-      map((cas) =>
-        cas.reduce((acc, item) => {
-          const exists = acc.get(item.checkinId);
-          if (exists) {
-            return acc.set(
-              item.checkinId,
-              new Map([
-                ...exists,
-                ...new Map([[item.achievementId, item.count]])
-              ])
-            );
-          } else {
-            return acc.set(
-              item.checkinId,
-              new Map([[item.achievementId, item.count]])
-            );
-          }
-        }, new Map<string, Map<string, number>>())
-      )
-    )
-}))(UserCheckinsComponent);

@@ -4,81 +4,78 @@ import withObservables, {
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { OptionList } from '../shared/components/Selector/OptionList';
 import db from '@act/data/rn';
-import {
-  Achievement,
-  Checkin,
-  CheckinUser,
-  User
-} from '@act/data/core';
-import { Q } from '@nozbe/watermelondb';
+import { Checkin } from '@act/data/core';
 import { Box, Row, Rows } from '@mobily/stacks';
-import { map } from 'rxjs/operators';
-import { CheckinAchievement } from '@act/data/core';
 import { HeaderContext } from '../Entry';
-import { format } from 'date-fns';
 import { Headline } from 'react-native-paper';
+import { useGlobalContext } from '../core/providers/GlobalContextProvider';
+import { Q } from '@nozbe/watermelondb';
+import { format } from 'date-fns';
 
 type PendingApproval = {
   id: string;
-  users: string;
+  title: string;
   subtitle: string;
 };
 
 const PendingApprovalsComponent: FC<{
-  checkinsPendingApproval: Checkin[];
-  checkinUsers: Map<string, Set<string>>;
-  checkinAchievements: Map<string, Set<string>>;
-  users: Map<string, string>;
-  achievements: Map<string, string>;
-}> = ({
-  achievements,
-  checkinsPendingApproval,
-  checkinUsers,
-  checkinAchievements,
-  users
-}) => {
+  checkinsAwaitingApproval: Checkin[];
+}> = ({ checkinsAwaitingApproval }) => {
   const [pendingApprovals, setPendingApprovals] = useState<
     PendingApproval[]
   >([]);
   const { setExcludedPendingApprovals } = useContext(HeaderContext);
+  const {
+    achievementsByCategory,
+    achievementsByCheckin,
+    fullNamesByUser,
+    usersByCheckin
+  } = useGlobalContext();
+  const achievements = achievementsByCategory.get('all');
 
   useEffect(() => {
-    if (checkinUsers && checkinAchievements) {
+    if (checkinsAwaitingApproval?.length > 0) {
       setPendingApprovals(
-        checkinsPendingApproval.reduce((acc, cpa) => {
-          const usersForCheckin = checkinUsers.get(cpa.id) || [];
-          const achievementsForCheckin =
-            checkinAchievements.get(cpa.id) || [];
+        checkinsAwaitingApproval.map((checkin) => {
+          const usersForCheckin = usersByCheckin.get(checkin.id);
 
-          acc.push({
-            id: cpa.id.toString(),
-            users: Array.from(usersForCheckin)
-              .map((uid) => users.get(uid))
-              .join(', '),
+          return {
+            id: checkin.id,
             subtitle: `${format(
-              cpa.createdAt,
+              checkin.createdAt,
               'E M/d @ p'
-            )} • ${Array.from(achievementsForCheckin)
-              .map((aid) => achievements.get(aid))
-              .join(', ')}`
-          });
-          return acc;
-        }, [])
+            )} • ${Array.from(
+              achievementsByCheckin.get(checkin.id) || []
+            )
+              .map(
+                ([aid, count]) =>
+                  `${count} • ${achievements.get(aid).name}`
+              )
+              .join(', ')}`,
+            title: usersForCheckin.reduce(
+              (acc, userId, i) =>
+                (acc += `${fullNamesByUser.get(userId)} ${
+                  i === usersForCheckin.length - 1 ? '' : ','
+                } `),
+              ''
+            )
+          };
+        })
       );
     }
-  }, [checkinsPendingApproval, checkinUsers]);
+  }, [checkinsAwaitingApproval]);
 
   return (
     <Rows>
       <Row padding={2} height="content">
         <Headline>
-          {checkinsPendingApproval.length} Checkins Pending Approval
+          {pendingApprovals.length} Checkins Pending Approval
         </Headline>
       </Row>
       <Row>
         <OptionList<Checkin>
           initialSelected={new Map()}
-          optionTitleProperty="users"
+          optionTitleProperty="title"
           optionSubtitleProperty="subtitle"
           data={pendingApprovals}
           paddingTop={2}
@@ -97,69 +94,9 @@ const PendingApprovalsComponent: FC<{
   );
 };
 
-export const PendingApprovals = withObservables([''], () => {
-  return {
-    users: db.get
-      .get<User>('users')
-      .query()
-      .observe()
-      .pipe(
-        map((us) =>
-          us.reduce((acc, u) => acc.set(u.id, u.fullName), new Map())
-        )
-      ),
-    achievements: db.get
-      .get<Achievement>('achievements')
-      .query()
-      .observe()
-      .pipe(
-        map((us) =>
-          us.reduce((acc, u) => acc.set(u.id, u.name), new Map())
-        )
-      ),
-    checkinUsers: db.get
-      .get<CheckinUser>('checkin_users')
-      .query()
-      .observe()
-      .pipe(
-        map((cus) =>
-          cus.reduce<Map<string, Set<string>>>((acc, cu) => {
-            const exists = acc.get(cu.checkinId);
-            if (exists) {
-              acc.set(cu.checkinId, new Set([...exists, cu.userId]));
-            } else {
-              acc.set(cu.checkinId, new Set([cu.userId]));
-            }
-
-            return acc;
-          }, new Map())
-        )
-      ),
-    checkinsPendingApproval: db.get
-      .get<Checkin>('checkins')
-      .query(Q.where('approved', false))
-      .observeWithColumns(['approved']),
-    checkinAchievements: db.get
-      .get<CheckinAchievement>('checkin_achievements')
-      .query()
-      .observe()
-      .pipe(
-        map((cas) =>
-          cas.reduce((acc, item) => {
-            const exists = acc.get(item.checkinId);
-            if (exists) {
-              return acc.set(
-                item.checkinId,
-                new Set([...exists, item.achievementId])
-              );
-            } else {
-              return acc.set(
-                item.checkinId,
-                new Set([item.achievementId])
-              );
-            }
-          }, new Map<string, Set<string>>())
-        )
-      )
-  };
-})(PendingApprovalsComponent);
+export const PendingApprovals = withObservables([''], () => ({
+  checkinsAwaitingApproval: db.get
+    .get<Checkin>('checkins')
+    .query(Q.where('approved', false))
+    .observeWithColumns(['approved'])
+}))(PendingApprovalsComponent);
