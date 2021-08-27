@@ -1,6 +1,4 @@
-import withObservables, {
-  ExtractedObservables
-} from '@nozbe/with-observables';
+import withObservables from '@nozbe/with-observables';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { OptionList } from '../shared/components/Selector/OptionList';
 import db from '@act/data/rn';
@@ -20,7 +18,7 @@ type PendingApproval = {
 
 const PendingApprovalsComponent: FC<{
   checkinsAwaitingApproval: Checkin[];
-}> = ({ checkinsAwaitingApproval }) => {
+}> = ({ checkinsAwaitingApproval = [] }) => {
   const [pendingApprovals, setPendingApprovals] = useState<
     PendingApproval[]
   >([]);
@@ -34,36 +32,38 @@ const PendingApprovalsComponent: FC<{
   const achievements = achievementsByCategory.get('all');
 
   useEffect(() => {
-    if (checkinsAwaitingApproval?.length > 0) {
-      setPendingApprovals(
-        checkinsAwaitingApproval.map((checkin) => {
-          const usersForCheckin = usersByCheckin.get(checkin.id);
+    setPendingApprovals(
+      checkinsAwaitingApproval.map((checkin) => {
+        const usersForCheckin = usersByCheckin.get(checkin.id);
 
-          return {
-            id: checkin.id,
-            subtitle: `${format(
-              checkin.createdAt,
-              'E M/d @ p'
-            )} • ${Array.from(
-              achievementsByCheckin.get(checkin.id) || []
+        return {
+          id: checkin.id,
+          subtitle: `${format(
+            checkin.createdAt,
+            'E M/d @ p'
+          )} • ${Array.from(
+            achievementsByCheckin.get(checkin.id) || []
+          )
+            .map(
+              ([aid, count]) =>
+                `${count} • ${achievements.get(aid).name}`
             )
-              .map(
-                ([aid, count]) =>
-                  `${count} • ${achievements.get(aid).name}`
-              )
-              .join(', ')}`,
-            title: usersForCheckin.reduce(
-              (acc, userId, i) =>
-                (acc += `${fullNamesByUser.get(userId)} ${
-                  i === usersForCheckin.length - 1 ? '' : ','
-                } `),
-              ''
-            )
-          };
-        })
-      );
-    }
-  }, [checkinsAwaitingApproval]);
+            .join(', ')}`,
+          title: usersForCheckin.reduce(
+            (acc, userId, i) =>
+              (acc += `${fullNamesByUser.get(userId)} ${
+                i === usersForCheckin.length - 1 ? '' : ','
+              } `),
+            ''
+          )
+        };
+      })
+    );
+  }, [
+    checkinsAwaitingApproval,
+    achievementsByCheckin,
+    usersByCheckin
+  ]);
 
   return (
     <Rows>
