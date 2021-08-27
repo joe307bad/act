@@ -78,7 +78,6 @@ export const AwesomeButtonSmall = ({
       backgroundColor={disabled ? '#676B6D' : colors.primary}
       backgroundDarker="#3809C3"
       onNativePress={() => !disabled && onPress()}
-      height={30}
       style={style}
       disabled={disabled}
       {...(outlined

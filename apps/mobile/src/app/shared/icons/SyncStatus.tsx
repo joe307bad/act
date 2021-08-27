@@ -1,23 +1,11 @@
 import { useActAuth } from '@act/data/rn';
 import React from 'react';
-import {
-  useTheme,
-  ActivityIndicator,
-  Card,
-  Surface
-} from 'react-native-paper';
-import { View, Text } from 'react-native';
+import { useTheme, ActivityIndicator } from 'react-native-paper';
+import { Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AwesomeButtonSmall } from '../../AwesomeButton';
 import db from '@act/data/rn';
-import {
-  Box,
-  Column,
-  Columns,
-  FillView,
-  Row,
-  Rows
-} from '@mobily/stacks';
+import { Column, Columns, FillView } from '@mobily/stacks';
 
 const Icon = () => {
   const theme = useTheme();
@@ -57,42 +45,32 @@ const SyncStatus = () => {
     : 'Performing synchronization...';
   return (
     <FillView alignX="bottom" alignY="bottom">
-      <Columns alignX="center">
-        <Column height={'1/2'} width={'1/2'}>
-          <Rows space={2} alignX="center">
-            <Row height="content" padding={2}>
-              <Text style={{ textAlign: 'center' }}>
-                {syncStatus}
-              </Text>
-            </Row>
-            <Row height="content">
-              <View style={{ alignItems: 'center' }}>
-                <Icon />
-              </View>
-            </Row>
-            <Row width="1/2" height="content">
-              <Box margin={2}>
-                <AwesomeButtonSmall
-                  disabled={!syncFailed}
-                  onPress={() => {
-                    setSyncFailed(false);
+      <Columns alignY="center" alignX="center">
+        <Column width="content">
+          <Text>{syncStatus}</Text>
+        </Column>
+        <Column padding={2}>
+          <Icon />
+        </Column>
+        <Column width="1/5">
+          <AwesomeButtonSmall
+            disabled={!syncFailed}
+            onPress={() => {
+              setSyncFailed(false);
 
-                    db.sync()
-                      .then(() => {
-                        setSyncFailed(false);
-                        setInitialSyncComplete(true);
-                      })
-                      .catch((e) => {
-                        setSyncFailed(true);
-                        setInitialSyncComplete(false);
-                      });
-                  }}
-                >
-                  Retry
-                </AwesomeButtonSmall>
-              </Box>
-            </Row>
-          </Rows>
+              db.sync()
+                .then(() => {
+                  setSyncFailed(false);
+                  setInitialSyncComplete(true);
+                })
+                .catch((e) => {
+                  setSyncFailed(true);
+                  setInitialSyncComplete(false);
+                });
+            }}
+          >
+            Retry
+          </AwesomeButtonSmall>
         </Column>
       </Columns>
     </FillView>
