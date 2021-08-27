@@ -53,9 +53,9 @@
 
 ## Alpha issues
 - [ ] **[MOBILE]** - iOS deployment
-- [ ] **[MOBILE]** - Only for admins (I think), does the CheckinBuilder not reset the selected users to the default users -> even though there is one user appearing as selced, internally the checkin has 0 users associated.
+- ✅ **[MOBILE]** - Only for admins (I think), does the CheckinBuilder not reset the selected users to the default users -> even though there is one user appearing as selced, internally the checkin has 0 users associated.
 - [ ] **[MOBILE]** - Allow for achievement photos to show in the SingleCheckin component of the Achievements screen
-- [ ] **[MOBILE]** - Sort achievements by point value across the app
+- ✅ **[MOBILE]** - Sort achievements by point value across the app
 - [ ] **[MOBILE]** - Way of seeding Achievements newly added to JSON file (e.g. renaming categories, moving achievements to new categories, etc.)
 - [ ] **[MOBILE]** - Way of switching over to clean DB after launch
     - inside the app, have a check isBeforeLaunchDate

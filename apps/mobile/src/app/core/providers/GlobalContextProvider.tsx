@@ -15,6 +15,7 @@ import React, {
 } from 'react';
 import db from '@act/data/rn';
 import withObservables from '@nozbe/with-observables';
+import { map } from 'rxjs/operators';
 const GlobalContext =
   createContext<{
     achievementsByCategory: Map<string, Map<string, Achievement>>;
@@ -215,7 +216,8 @@ export const GlobalContextProvider = withObservables([''], () => ({
   achievements: db.get
     .get<Achievement>('achievements')
     .query()
-    .observeWithColumns(['name', 'points', 'category_id']),
+    .observeWithColumns(['name', 'points', 'category_id'])
+    .pipe(map((as) => as.sort((a, b) => b.points - a.points))),
   categories: db.get
     .get<AchievementCategory>('achievement_categories')
     .query()
