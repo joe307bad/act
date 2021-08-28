@@ -52,7 +52,6 @@
 - ✅ **[OPS]** - Publicly accessible services behind HTTPS
 
 ## Alpha issues
-- ✅ **[MOBILE]** - iOS deployment
 - [ ] **[MOBILE]** - Way of switching over to clean DB after launch
     - inside the app, have a check isBeforeLaunchDate
     - when user first installs app -> set installationDate
@@ -63,9 +62,11 @@
 - [ ] **[MOBILE]** - View Achievement detail from User Checkins screen
 - [ ] **[MOBILE]** - View Achievement detail Achievements by User on Leaderboard Screen
 - [ ] **[MOBILE]** - Side menu shows last synced timestamp and loading icon when syncing (should not be able to run concurrent sync commands)
+- [ ] **[MOBILE]** - Way of seeding Achievements newly added to JSON file (e.g. renaming categories, moving achievements to new categories, etc.)
+- [ ] **[MOBILE]** - Show users asociated with checkins in UserCheckins. So when there are group checkins, a user can see what other users were grouped into that checkin when they're viewing their checkins on UserCheckins.
+- ✅ **[MOBILE]** - iOS deployment
 - ✅ **[MOBILE]** - Only for admins (I think), does the CheckinBuilder not reset the selected users to the default users -> even though there is one user appearing as selced, internally the checkin has 0 users associated.
 - ✅ **[MOBILE]** - Sort achievements by point value across the app
-- [ ] **[MOBILE]** - Way of seeding Achievements newly added to JSON file (e.g. renaming categories, moving achievements to new categories, etc.)
 - ✅ **[MOBILE]** - Run `sync` on every created checkin.
 - ✅ **[MOBILE]** - Remove TabbedList from Achievements in favor of category dropdown
 - ✅ **[MOBILE]** - Remove TabbedList from CheckinBuilder in favor of category dropdown
