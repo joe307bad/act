@@ -2,7 +2,7 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import { Achievement, CreateCheckin } from '@act/data/core';
 import { FlatList } from 'react-native';
 import { SingleCheckin } from '../checkin/SingleCheckin';
-import db, { useActAuth } from '@act/data/rn';
+import db, { useActAuth, useSync } from '@act/data/rn';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
 import { HeaderContext } from '../Entry';
 import { useDebounce } from '../shared/hooks/useDebounce';
@@ -16,6 +16,8 @@ import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 const Achievements: FC = () => {
   const { achievementsByCategory, categoriesById } =
     useGlobalContext();
+  const sync = useSync();
+  const [enableCheckin, setEnableCheckin] = useState(true);
   const categories = Array.from(categoriesById.values());
 
   const { currentUser } = useActAuth();
@@ -30,6 +32,7 @@ const Achievements: FC = () => {
   const [hiddenOptions, setHiddenOptions] = useState(
     new Set<string>()
   );
+  const [note, setNote] = useState('');
 
   useEffect(() => {
     if (achievementsByCategory.size > 0) {
@@ -100,7 +103,11 @@ const Achievements: FC = () => {
       <SingleCheckin
         visible={!!selectedAchievement && !confirmedCheckin}
         achievement={selectedAchievement}
+        disableSubmit={!enableCheckin}
+        note={note}
+        setNote={setNote}
         onConfirm={async (note: string) => {
+          setEnableCheckin(false);
           const checkin: CreateCheckin = {
             achievementCounts: new Map([[selectedAchievement.id, 1]]),
             insertProps: { note },
@@ -109,17 +116,20 @@ const Achievements: FC = () => {
             users: [currentUser.id]
           };
 
-          const created = await db.models.checkins.create(checkin);
           setConfirmedCheckin({
             ...checkin,
-            created
+            created: new Date()
           });
+          db.models.checkins
+            .create(checkin)
+            .then(() => sync().finally(() => setEnableCheckin(true)));
         }}
         onDismiss={() => setSelectedAchievement(undefined)}
       />
       <CheckinSuccess
         visible={!!confirmedCheckin}
         onDismiss={() => {
+          setNote('');
           setConfirmedCheckin(undefined);
           setSelectedAchievement(undefined);
         }}

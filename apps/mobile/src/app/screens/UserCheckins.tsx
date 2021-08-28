@@ -110,8 +110,20 @@ export const UserCheckins = () => {
             </Row>
             {achievements && (
               <Row>
-                {Array.from(achievements).reduce(
-                  (acc, [achievementId, count], i) => {
+                {Array.from(achievements)
+                  .sort((a, b) => {
+                    const prevAachievement = achievementsById.get(
+                      b[0]
+                    );
+                    const achievement = achievementsById.get(a[0]);
+                    if (!prevAachievement || !achievement) {
+                      return 0;
+                    }
+                    return (
+                      prevAachievement.points - achievement.points
+                    );
+                  })
+                  .reduce((acc, [achievementId, count], i) => {
                     const achievement =
                       achievementsById.get(achievementId);
                     if (!achievement) {
@@ -148,9 +160,7 @@ export const UserCheckins = () => {
                         </Column>
                       </Columns>
                     ];
-                  },
-                  []
-                )}
+                  }, [])}
               </Row>
             )}
             <Row paddingTop={2}>

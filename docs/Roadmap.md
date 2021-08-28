@@ -52,21 +52,21 @@
 - ✅ **[OPS]** - Publicly accessible services behind HTTPS
 
 ## Alpha issues
-- [ ] **[MOBILE]** - iOS deployment
-- ✅ **[MOBILE]** - Only for admins (I think), does the CheckinBuilder not reset the selected users to the default users -> even though there is one user appearing as selced, internally the checkin has 0 users associated.
-- [ ] **[MOBILE]** - Allow for achievement photos to show in the SingleCheckin component of the Achievements screen
-- ✅ **[MOBILE]** - Sort achievements by point value across the app
-- [ ] **[MOBILE]** - Way of seeding Achievements newly added to JSON file (e.g. renaming categories, moving achievements to new categories, etc.)
+- ✅ **[MOBILE]** - iOS deployment
 - [ ] **[MOBILE]** - Way of switching over to clean DB after launch
     - inside the app, have a check isBeforeLaunchDate
     - when user first installs app -> set installationDate
     isBeforeLaunchDate = installationDate < launchDate
     - try to sync -> isBeforeLaunchDate === true -> use couchdb1
     - try to sync -> isBeforeLaunchDate === false -> force user to reinstall, use couchdb2
-- [ ] **[MOBILE]** - Run `sync` on every created checkin.
+- [ ] **[MOBILE]** - Allow for achievement photos to show in the SingleCheckin component of the Achievements screen
 - [ ] **[MOBILE]** - View Achievement detail from User Checkins screen
 - [ ] **[MOBILE]** - View Achievement detail Achievements by User on Leaderboard Screen
 - [ ] **[MOBILE]** - Side menu shows last synced timestamp and loading icon when syncing (should not be able to run concurrent sync commands)
+- ✅ **[MOBILE]** - Only for admins (I think), does the CheckinBuilder not reset the selected users to the default users -> even though there is one user appearing as selced, internally the checkin has 0 users associated.
+- ✅ **[MOBILE]** - Sort achievements by point value across the app
+- [ ] **[MOBILE]** - Way of seeding Achievements newly added to JSON file (e.g. renaming categories, moving achievements to new categories, etc.)
+- ✅ **[MOBILE]** - Run `sync` on every created checkin.
 - ✅ **[MOBILE]** - Remove TabbedList from Achievements in favor of category dropdown
 - ✅ **[MOBILE]** - Remove TabbedList from CheckinBuilder in favor of category dropdown
 - ✅ **[MOBILE]** - toLocaleString on

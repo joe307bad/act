@@ -16,14 +16,18 @@ const CardActions = ({
   apply,
   onDismiss,
   dismissText = undefined,
-  applyText = undefined
+  applyText = undefined,
+  disableSubmit = undefined
 }) => {
   return (
     <Card.Actions>
       <Columns space={2}>
         {apply && (
           <Column>
-            <AwesomeButtonMedium onPress={apply}>
+            <AwesomeButtonMedium
+              onPress={apply}
+              disabled={disableSubmit}
+            >
               {applyText || 'Apply'}
             </AwesomeButtonMedium>
           </Column>
@@ -56,6 +60,7 @@ type ModalProps = {
   dismissText?: string;
   applyText?: string;
   showEntireHeadline?: boolean;
+  disableSubmit?: boolean;
 };
 const Modal: FC<ModalProps> = ({
   visible,
@@ -75,7 +80,8 @@ const Modal: FC<ModalProps> = ({
   closeSelectedItemInfo,
   dismissText,
   applyText,
-  showEntireHeadline
+  showEntireHeadline,
+  disableSubmit
 }) => {
   return (
     <Portal>
@@ -183,6 +189,7 @@ const Modal: FC<ModalProps> = ({
               </Row>
               <Row height="content">
                 <CardActions
+                  disableSubmit={disableSubmit}
                   applyText={applyText}
                   dismissText={dismissText}
                   apply={apply}

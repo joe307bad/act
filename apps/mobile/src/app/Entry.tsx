@@ -16,7 +16,7 @@ import {
 import { Appbar, useTheme } from 'react-native-paper';
 import CheckinBuilder from './screens/CheckinBuilder';
 import Achievements from './screens/Achievements';
-import db from '@act/data/rn';
+import db, { useSync } from '@act/data/rn';
 import { Provider } from 'react-native-paper';
 import { Leaderboard } from './screens/Leaderboard';
 import { StacksProvider } from '@mobily/stacks';
@@ -124,6 +124,7 @@ const NavBar: (
     searchCriteria,
     setSearchCriteria
   } = useContext(HeaderContext);
+  const sync = useSync();
 
   const { options } = scene.descriptor;
   const title =
@@ -182,10 +183,7 @@ const NavBar: (
           }
         />
       )}
-      <Appbar.Action
-        icon="refresh-circle"
-        onPress={() => db.sync()}
-      />
+      <Appbar.Action icon="refresh-circle" onPress={() => sync()} />
       <Appbar.Action
         icon="menu"
         onPress={() => (navigation as any).openDrawer()}

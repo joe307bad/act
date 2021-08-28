@@ -174,7 +174,7 @@ export class CheckinsService extends BaseService<Checkin> {
 
   find = async (id: string) => this._collection.find(id);
 
-  create = async (args: CreateCheckin): Promise<Date> =>
+  create = (args: CreateCheckin): Promise<Date> =>
     this._db.action(async (action) => {
       const {
         insertProps,

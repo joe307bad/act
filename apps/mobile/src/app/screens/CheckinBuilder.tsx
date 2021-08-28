@@ -3,7 +3,7 @@ import {
   AchievementCategory,
   User
 } from '@act/data/core';
-import db, { useActAuth } from '@act/data/rn';
+import db, { useActAuth, useSync } from '@act/data/rn';
 import Selector from '../shared/components/Selector';
 import React, { FC, useEffect, useState } from 'react';
 import { groupBy, toPairs } from 'lodash';
@@ -19,6 +19,7 @@ const CheckinBuilder: FC = () => {
   const users = db.useCollection<User>('users');
 
   const { currentUser } = useActAuth();
+  const sync = useSync();
 
   const [checkin, setCheckin] = useState<CreateCheckin>({
     users: [currentUser.id],
@@ -26,6 +27,7 @@ const CheckinBuilder: FC = () => {
   });
   const [checkinCreated, setCheckinCreated] = useState(false);
   const [numberOfAchievements, setNumberOfAchievements] = useState(0);
+  const [enableCheckin, setEnableCheckin] = useState(true);
 
   useEffect(() => {
     checkin?.achievementCounts &&
@@ -127,6 +129,7 @@ const CheckinBuilder: FC = () => {
         </Row>
         <Row padding={1} height="content">
           <AwesomeButtonMedium
+            disabled={!enableCheckin}
             onPress={async () => {
               const users = !currentUser.admin
                 ? [currentUser.id]
@@ -137,10 +140,15 @@ const CheckinBuilder: FC = () => {
                 created: new Date()
               });
               setCheckinCreated(true);
-              db.models.checkins.create({
-                ...checkin,
-                users
-              });
+              setEnableCheckin(false);
+              db.models.checkins
+                .create({
+                  ...checkin,
+                  users
+                })
+                .then(() =>
+                  sync().finally(() => setEnableCheckin(true))
+                );
             }}
           >
             Create Checkin

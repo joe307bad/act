@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import db from './';
 import { Platform } from 'react-native';
 import Config from 'react-native-config';
+import { useSync } from './SyncProvider';
 
 const keycloak = new RNKeycloak({
   url: `${Config.KEYCLOAK_URL ?? 'http://192.168.0.4:8080'}/auth`,
@@ -45,6 +46,7 @@ const KeycloakProvider: FC = ({ children }) => {
     useState<boolean | undefined>();
   const [syncFailed, setSyncFailed] = useState<boolean | undefined>();
   const loggingOut = useRef(false);
+  const sync = useSync();
 
   useEffect(() => {
     if (forceLogout === true && loggingOut.current === false) {
@@ -59,8 +61,11 @@ const KeycloakProvider: FC = ({ children }) => {
   }, [forceLogout]);
 
   useEffect(() => {
-    db.sync()
-      .then(() => {
+    sync()
+      .then(({ rejectSyncGracefully }) => {
+        if (rejectSyncGracefully) {
+          return;
+        }
         setSyncFailed(false);
         setInitialSyncComplete(true);
       })

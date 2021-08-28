@@ -1,10 +1,9 @@
-import { useActAuth } from '@act/data/rn';
+import { useActAuth, useSync } from '@act/data/rn';
 import React from 'react';
 import { useTheme, ActivityIndicator } from 'react-native-paper';
 import { Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AwesomeButtonSmall } from '../../AwesomeButton';
-import db from '@act/data/rn';
 import { Column, Columns, FillView } from '@mobily/stacks';
 
 const Icon = () => {
@@ -43,6 +42,7 @@ const SyncStatus = () => {
     : initialSyncComplete
     ? 'Sync Successful'
     : 'Performing synchronization...';
+  const sync = useSync();
   return (
     <FillView alignX="bottom" alignY="bottom">
       <Columns alignY="center" alignX="center">
@@ -58,8 +58,11 @@ const SyncStatus = () => {
             onPress={() => {
               setSyncFailed(false);
 
-              db.sync()
-                .then(() => {
+              sync()
+                .then(({ rejectSyncGracefully }) => {
+                  if (rejectSyncGracefully) {
+                    return;
+                  }
                   setSyncFailed(false);
                   setInitialSyncComplete(true);
                 })

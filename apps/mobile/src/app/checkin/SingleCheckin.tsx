@@ -11,9 +11,19 @@ export const SingleCheckin: FC<{
   visible: boolean;
   onDismiss: () => void;
   onConfirm: (note: string) => void;
-}> = ({ achievement = {}, visible, onConfirm, onDismiss }) => {
+  disableSubmit?: boolean;
+  note?: string;
+  setNote?: (note: string) => void;
+}> = ({
+  achievement = {},
+  visible,
+  onConfirm,
+  onDismiss,
+  disableSubmit,
+  note,
+  setNote
+}) => {
   const { name, description, points } = achievement;
-  const [note, setNote] = useState('');
   return (
     <Modal
       title={name}
@@ -21,6 +31,7 @@ export const SingleCheckin: FC<{
       pointsCount={points}
       dismissText="Cancel"
       showEntireHeadline={true}
+      disableSubmit={disableSubmit}
       onDismiss={() => {
         onDismiss();
         setNote('');

@@ -8,7 +8,7 @@ import {
   DrawerContentOptions
 } from '@react-navigation/drawer';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
-import db, { useActAuth } from '@act/data/rn';
+import db, { useActAuth, useSync } from '@act/data/rn';
 import { Box, Stack } from '@mobily/stacks';
 import { useKeycloak } from '@react-keycloak/native';
 import KeycloakReactNativeClient from '@react-keycloak/native/lib/typescript/src/keycloak/client';
@@ -23,6 +23,7 @@ const DrawerList: FC<
   }
 > = ({ navigation, theme, keycloak, setForceLogout }) => {
   const { currentUser } = useActAuth();
+  const sync = useSync();
 
   return (
     <>
@@ -186,7 +187,7 @@ const DrawerList: FC<
       )}
       <Stack space={2} padding={5}>
         <Box>
-          <AwesomeButtonMedium onPress={() => db.sync()}>
+          <AwesomeButtonMedium onPress={() => sync()}>
             Sync
           </AwesomeButtonMedium>
         </Box>
