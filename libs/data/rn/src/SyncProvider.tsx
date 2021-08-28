@@ -27,7 +27,7 @@ export const SyncProvider: FC = ({ children }) => {
       .sync()
       .then(() => {
         syncProcessing.current = false;
-        return Promise.resolve();
+        return Promise.resolve({ rejectSyncGracefully: false });
       })
       .catch(() => {
         if (retryCount === 0) {
