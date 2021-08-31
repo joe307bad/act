@@ -11,8 +11,12 @@ module AwesomeButton = {
     ~disabled: bool=?,
   ) => React.element = "default"
 }
-module SyncStatus = {
-  @module("../src/app/shared/icons/SyncStatus") @react.component
+module Onboarding = {
+  @module("../src/app/shared/components/Onboarding") @react.component
+  external make: unit => React.element = "default"
+}
+module Logo = {
+  @module("../src/app/shared/components/Logo") @react.component
   external make: unit => React.element = "default"
 }
 
@@ -73,35 +77,9 @@ module Login = {
     let {keycloak} = Keycloak.useKeycloak()
     let {initialSyncComplete} = ActData.useActAuth()
     <Rows padding=[2.] space=[2.]>
+      <Row height=[#x13]> <Logo /> </Row>
+      <Row height=[#x13]> <Onboarding /> </Row>
       <Row height=[#x13]> {<> </>} </Row>
-      <Row height=[#x13]>
-        <Box flex=[#fluid] alignY=[#center]>
-          <Card elevation=5>
-            <Box padding=[2.]>
-              <View>
-                <Headline> {"Welcome to the Act App"->React.string} </Headline>
-                <Paper.Text
-                  style={Style.style(
-                    ~fontFamily={Platform.os === Platform.ios ? "Arial" : "sans-serif"},
-                    ~paddingBottom=5.->ReactNative.Style.dp,
-                    (),
-                  )}>
-                  {"Authorize using Keycloak"->React.string}
-                </Paper.Text>
-              </View>
-              <AwesomeButton
-                disabled={!initialSyncComplete}
-                onPress={() => keycloak.login(.)->Js.Promise.catch(result => {
-                    Js.log(result)
-                    Js.Promise.resolve()
-                  }, _)}>
-                {"Authorize"->React.string}
-              </AwesomeButton>
-            </Box>
-          </Card>
-        </Box>
-      </Row>
-      <Row height=[#x13]> <SyncStatus /> </Row>
     </Rows>
   }
 }

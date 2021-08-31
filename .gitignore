@@ -111,3 +111,4 @@ apps/mobile/android/.idea
 apps/mobile/.env
 apps/mobile/.env.prod
 lib
+deploy/.env.launch-test

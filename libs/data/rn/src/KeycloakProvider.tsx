@@ -34,17 +34,12 @@ export const AuthContext = React.createContext<{
   setForceLogout?: (forceLogout: boolean) => void;
   initialSyncComplete?: boolean;
   setInitialSyncComplete?: (initialSyncComplete?: boolean) => void;
-  syncFailed?: boolean;
-  setSyncFailed?: (syncFailed: boolean) => void;
 }>({});
 
 const KeycloakProvider: FC = ({ children }) => {
-  const [initialSyncComplete, setInitialSyncComplete] =
-    useState(false);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [forceLogout, setForceLogout] =
     useState<boolean | undefined>();
-  const [syncFailed, setSyncFailed] = useState<boolean | undefined>();
   const loggingOut = useRef(false);
   const sync = useSync();
 
@@ -61,19 +56,6 @@ const KeycloakProvider: FC = ({ children }) => {
   }, [forceLogout]);
 
   useEffect(() => {
-    sync()
-      .then(({ rejectSyncGracefully }) => {
-        if (rejectSyncGracefully) {
-          return;
-        }
-        setSyncFailed(false);
-        setInitialSyncComplete(true);
-      })
-      .catch((e) => {
-        setSyncFailed(true);
-        setInitialSyncComplete(false);
-      });
-
     AsyncStorage.getItem('currentUserId')
       .then((id) => {
         !id && setForceLogout(true);
@@ -141,11 +123,7 @@ const KeycloakProvider: FC = ({ children }) => {
         value={{
           currentUser,
           status,
-          setForceLogout,
-          initialSyncComplete,
-          setInitialSyncComplete,
-          syncFailed,
-          setSyncFailed
+          setForceLogout
         }}
       >
         {children}

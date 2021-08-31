@@ -8,8 +8,9 @@ import { debounce } from 'lodash';
 export class SyncService {
   constructor(@inject('ActContext') private _context?: ActContext) {}
 
-  sync = () =>
-    synchronize({
+  sync = (apiUrlOverride?: string) => {
+    const apiUrl = apiUrlOverride ?? this._context.getActApiUrl();
+    return synchronize({
       database: this._context.get(),
       pullChanges: async ({
         lastPulledAt,
@@ -23,10 +24,8 @@ export class SyncService {
         )}`;
 
         const response = await fetch(
-          `${this._context.getActApiUrl()}/sync?${urlParams}`
-        ).catch((e) => {
-          return Promise.reject();
-        });
+          `${apiUrl}/sync?${urlParams}`
+        ).catch((e) => Promise.reject());
         if (!response.ok) {
           return Promise.reject();
         }
@@ -35,18 +34,14 @@ export class SyncService {
         return { changes, timestamp };
       },
       pushChanges: async ({ changes, lastPulledAt }) =>
-        fetch(
-          `${this._context.getActApiUrl()}/sync?last_pulled_at=${lastPulledAt}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(changes)
-          }
-        ).catch((e) => {
-          return Promise.reject();
-        }),
+        fetch(`${apiUrl}}/sync?last_pulled_at=${lastPulledAt}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(changes)
+        }).catch((e) => Promise.reject()),
       migrationsEnabledAtVersion: 1
     });
+  };
 }

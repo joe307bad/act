@@ -31,6 +31,7 @@
     "re:build": "rescript build -with-deps",
     "re:help": "bsb -h",
     "serve:api": "nx serve api",
+    "serve:launch-api": "export COUCHDB_URL=http://localhost:5985 && export PORT=3080 && yarn serve:api",
     "dev:web": "webpack serve",
     "tunnel": "adb reverse tcp:3000 tcp:3000 && adb reverse tcp:8081 tcp:8081 && adb reverse tcp:4000 tcp:4000 && adb reverse tcp:9090 tcp:9090"
   },
@@ -164,6 +165,7 @@
     "metro-react-native-babel-preset": "0.63.0",
     "metro-resolver": "0.59.0",
     "prettier": "2.2.1",
+    "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "17.0.1",
     "ts-jest": "26.4.0",
     "ts-node": "~9.1.1",

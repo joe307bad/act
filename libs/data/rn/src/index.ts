@@ -4,7 +4,10 @@ import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import { registryFactory, schemaAndMigrations } from '@act/data/core';
 import KeycloakProvider, { AuthContext } from './KeycloakProvider';
 import Config from 'react-native-config';
-import { InstallManagerProvider } from './InstallManagerProvider';
+import {
+  useEnvironment,
+  EnvironmentProvider
+} from './EnvironmentProvider';
 import { useSync, SyncProvider } from './SyncProvider';
 
 export default registryFactory(
@@ -17,7 +20,8 @@ const useActAuth = () => useContext(AuthContext);
 export {
   KeycloakProvider,
   useActAuth,
-  InstallManagerProvider,
+  useEnvironment,
+  EnvironmentProvider,
   useSync,
   SyncProvider
 };

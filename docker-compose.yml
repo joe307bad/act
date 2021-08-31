@@ -1,5 +1,18 @@
 version: '2'
 services:
+  launch_couchdb:
+    container_name: launch_couchdb
+    image: couchdb
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=password
+    ports:
+      - '5985:5984'
+      - '4370:4369'
+      - '9101:9100'
+    volumes:
+      - couchdb_data:/bitnami/couchdb
+      - /Users/jbadaczewski/Source/other/act/apps/api/couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
   couchdb:
     image: couchdb
     environment:

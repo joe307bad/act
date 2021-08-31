@@ -75,11 +75,16 @@ const GlobalContextProviderComponent: FC<{
   }, [categories]);
 
   useEffect(() => {
-    if (
-      [users, checkinUsers, checkinAchievements].every(
-        (u) => u?.length > 0
-      )
-    ) {
+    if (users.length > 0) {
+      setFullNamesByUser(
+        users.reduce(
+          (acc, user) => acc.set(user.id, user.fullName),
+          new Map()
+        )
+      );
+    }
+
+    if (checkinUsers) {
       const parsedCheckins = checkins.reduce(
         (acc, checkin) => {
           return {
@@ -113,13 +118,6 @@ const GlobalContextProviderComponent: FC<{
       setCheckinsById(parsedCheckins.checkinsById);
       setUsersByCheckin(parsedCheckins.usersByCheckin);
 
-      setFullNamesByUser(
-        users.reduce(
-          (acc, user) => acc.set(user.id, user.fullName),
-          new Map()
-        )
-      );
-
       setCheckinsByUser(
         users.reduce((acc, user) => {
           return acc.set(
@@ -141,8 +139,8 @@ const GlobalContextProviderComponent: FC<{
   }, [users, checkins, checkinUsers, checkinAchievements]);
 
   useEffect(() => {
-    setAchievementsByCategory(
-      achievements?.length > 0 &&
+    achievements?.length > 0 &&
+      setAchievementsByCategory(
         achievements.reduce((acc, achievement: Achievement) => {
           const categoryExists = acc.get(achievement.category?.id);
 
@@ -192,7 +190,7 @@ const GlobalContextProviderComponent: FC<{
             new Map([[achievement.id, achievement]])
           );
         }, new Map())
-    );
+      );
   }, [achievements]);
 
   return (

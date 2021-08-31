@@ -1,8 +1,8 @@
 import React, { FC, createContext, useRef, useContext } from 'react';
-import { useInstallManagerContext } from './InstallManagerProvider';
 import db from './index';
+import { useEnvironment } from './EnvironmentProvider';
 
-const SyncProviderContext =
+export const SyncProviderContext =
   createContext<() => Promise<{ rejectSyncGracefully?: boolean }>>(
     undefined
   );
@@ -10,21 +10,17 @@ const SyncProviderContext =
 export const useSync = () => useContext(SyncProviderContext);
 
 export const SyncProvider: FC = ({ children }) => {
-  const { forceReinstall } = useInstallManagerContext();
   const syncProcessing = useRef(false);
+  const { apiUrl } = useEnvironment();
 
   const sync = (retryCount = 0) => {
-    if (forceReinstall) {
-      return Promise.resolve({ rejectSyncGracefully: true });
-    }
-
     if (syncProcessing.current && retryCount === 0) {
       return Promise.resolve({ rejectSyncGracefully: true });
     }
     syncProcessing.current = true;
 
     return db
-      .sync()
+      .sync(apiUrl)
       .then(() => {
         syncProcessing.current = false;
         return Promise.resolve({ rejectSyncGracefully: false });

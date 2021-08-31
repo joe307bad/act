@@ -64,6 +64,9 @@
     - name: Create act database in couchdb
       shell: 'docker run --network {{network}} --rm curlimages/curl:7.78.0 -L -v -X PUT http://{{couchdb_user}}:{{couchdb_password}}@couchdb:5984/act'
       tags: act-create-couchdb-db
+    - name: Create act database in launch-couchdb
+      shell: 'docker run --network {{network}} --rm curlimages/curl:7.78.0 -L -v -X PUT http://{{couchdb_user}}:{{couchdb_password}}@launch_couchdb:5984/act'
+      tags: act-create-launch-couchdb-db
     - name: Start node container for act API
       docker_container:
         name: act-api
@@ -91,3 +94,30 @@
         network_mode: bridge
         command: node /home/node/app/dist/apps/api/main.js
       tags: act-api
+    - name: Start node container for launch act API
+      docker_container:
+        name: act-api
+        image: node:8
+        state: started
+        restart_policy: always
+        restart: yes
+        working_dir: /home/node/app/
+        env:
+          NODE_ENV: production
+          VIRTUAL_HOST: 'launch-act.{{base_url}}'
+          LETSENCRYPT_HOST: 'launch-act.{{base_url}}'
+          VIRTUAL_PORT: '3333'
+          COUCHDB_PASSWORD: '{{couchdb_password}}'
+          COUCHDB_USER: '{{couchdb_user}}'
+          COUCHDB_URL: http://launch_couchdb:5984
+        links:
+          - launch_couchdb
+        expose:
+          - 3333
+        volumes:
+          - '{{api}}/src/:/home/node/app'
+        networks:
+          - name: '{{network}}'
+        network_mode: bridge
+        command: node /home/node/app/dist/apps/api/main.js
+      tags: launch-act-api

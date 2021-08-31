@@ -2,8 +2,8 @@ import React from 'react';
 import { Root } from '../../re/Index.bs';
 import {
   KeycloakProvider,
-  InstallManagerProvider,
-  SyncProvider
+  SyncProvider,
+  EnvironmentProvider
 } from '@act/data/rn';
 import Bugsnag from '@bugsnag/react-native';
 import Config from 'react-native-config';
@@ -14,7 +14,7 @@ if (Config.ENABLE_BUGSNAG) {
 }
 
 export default () => (
-  <InstallManagerProvider>
+  <EnvironmentProvider>
     <SyncProvider>
       <GlobalContextProvider>
         <KeycloakProvider>
@@ -22,5 +22,5 @@ export default () => (
         </KeycloakProvider>
       </GlobalContextProvider>
     </SyncProvider>
-  </InstallManagerProvider>
+  </EnvironmentProvider>
 );

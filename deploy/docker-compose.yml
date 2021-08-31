@@ -48,6 +48,26 @@ services:
     networks:
       - act-network
     restart: always
+  launch_couchdb:
+    container_name: launch_couchdb
+    image: couchdb
+    environment:
+      PROXY_ADDRESS_FORWARDING: 'true'
+      VIRTUAL_HOST: launch-couchdb.${base_url}
+      LETSENCRYPT_HOST: launch-couchdb.${base_url}
+      VIRTUAL_PORT: 5984
+      COUCHDB_USER: ${COUCHDB_USER}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+    expose:
+      - '5984'
+      - '4369'
+      - '9100'
+    volumes:
+      - '${LAUNCH_COUCHDB_DATA}:/bitnami/couchdb'
+      - ./couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
+    networks:
+      - act-network
+    restart: always
   postgres:
     image: postgres
     volumes:
