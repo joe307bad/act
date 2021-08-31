@@ -75,6 +75,7 @@ export const AwesomeButtonSmall = ({
   return (
     <ReallyAwesomeButton
       stretch
+      springRelease={false}
       backgroundColor={disabled ? '#676B6D' : colors.primary}
       backgroundDarker="#3809C3"
       onNativePress={() => !disabled && onPress()}

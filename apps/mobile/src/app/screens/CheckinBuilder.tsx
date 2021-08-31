@@ -6,7 +6,7 @@ import {
 import db, { useActAuth, useSync } from '@act/data/rn';
 import Selector from '../shared/components/Selector';
 import React, { FC, useEffect, useState } from 'react';
-import { groupBy, toPairs } from 'lodash';
+import { groupBy, sample, toPairs } from 'lodash';
 import { ScrollView } from 'react-native';
 import { Row, Rows, Stack } from '@mobily/stacks';
 import { Avatar, Card, TextInput } from 'react-native-paper';
@@ -14,6 +14,8 @@ import { AwesomeButtonMedium } from '../AwesomeButton';
 import { CreateCheckin } from '@act/data/core';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
 import { getDefaultFont } from '../core/getDefaultFont';
+import Config from 'react-native-config';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CheckinBuilder: FC = () => {
   const users = db.useCollection<User>('users');
@@ -38,6 +40,17 @@ const CheckinBuilder: FC = () => {
         }, 0)
       );
   }, [checkin?.achievementCounts]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setCheckin({
+        ...checkin,
+        insertProps: {
+          note: sample(Config.RANDOM_CHECKIN_NOTE.split('|'))
+        }
+      });
+    }, [])
+  );
 
   return (
     <>
