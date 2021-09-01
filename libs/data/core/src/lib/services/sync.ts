@@ -34,7 +34,7 @@ export class SyncService {
         return { changes, timestamp };
       },
       pushChanges: async ({ changes, lastPulledAt }) =>
-        fetch(`${apiUrl}}/sync?last_pulled_at=${lastPulledAt}`, {
+        fetch(`${apiUrl}/sync?last_pulled_at=${lastPulledAt}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

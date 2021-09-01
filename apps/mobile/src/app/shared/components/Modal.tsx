@@ -1,16 +1,19 @@
 import { Column, Columns, FillView, Row, Rows } from '@mobily/stacks';
+import { isEmpty } from 'lodash';
 import React, { FC } from 'react';
-import { Text } from 'react-native';
+import { Text, Image } from 'react-native';
 import {
   Modal as PaperModal,
   Portal,
   Card,
   Searchbar,
   Title,
-  TouchableRipple
+  TouchableRipple,
+  Headline
 } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Chip from './Chip';
+import Config from 'react-native-config';
 
 const CardActions = ({
   apply,
@@ -61,6 +64,7 @@ type ModalProps = {
   applyText?: string;
   showEntireHeadline?: boolean;
   disableSubmit?: boolean;
+  thumbnail?: string;
 };
 const Modal: FC<ModalProps> = ({
   visible,
@@ -81,7 +85,8 @@ const Modal: FC<ModalProps> = ({
   dismissText,
   applyText,
   showEntireHeadline,
-  disableSubmit
+  disableSubmit,
+  thumbnail
 }) => {
   return (
     <Portal>
@@ -165,16 +170,30 @@ const Modal: FC<ModalProps> = ({
         >
           <Card style={{ margin: 10 }}>
             {title && (
-              <Columns alignY="center" paddingRight={5}>
+              <Columns alignY="center" padding={2} space={2}>
                 <Column
-                  paddingRight={2}
+                  paddingLeft={thumbnail ? 0 : 2}
                   paddingTop={showEntireHeadline ? 2 : 0}
                 >
-                  <Card.Title
-                    title={title}
-                    subtitle={subtitle}
-                    titleNumberOfLines={showEntireHeadline ? 99 : 1}
-                  />
+                  <Columns alignX="center" alignY="center" space={2}>
+                    {!isEmpty(thumbnail) && (
+                      <Column width="content">
+                        <Image
+                          source={{
+                            uri: `${Config.THUMBNAIL_URL}/${thumbnail}`
+                          }}
+                          style={{
+                            width: 50,
+                            height: 50,
+                            borderRadius: 50 / 2
+                          }}
+                        />
+                      </Column>
+                    )}
+                    <Column>
+                      <Headline>{title}</Headline>
+                    </Column>
+                  </Columns>
                 </Column>
                 {showPointCount && (
                   <Column width="content">

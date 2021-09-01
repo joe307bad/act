@@ -52,7 +52,6 @@ const Onboarding = () => {
       <FillView style={{ justifyContent: 'flex-end' }}>
         <Card elevation={5}>
           <Stack padding={2} space={2}>
-            <Box></Box>
             <Headline>Welcome to the Act App</Headline>
             <Columns paddingTop={2} paddingBottom={2} alignY="center">
               <Column paddingRight={2} width="content">

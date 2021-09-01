@@ -45,7 +45,7 @@ export const UserCheckins = () => {
       ? 0
       : Array.from(achievements).reduce(
           (acc, [achievementId, count]) => {
-            const achievement = achievementsById.get(achievementId);
+            const achievement = achievementsById?.get(achievementId);
             if (!achievement) {
               return acc;
             }
@@ -112,10 +112,10 @@ export const UserCheckins = () => {
               <Row>
                 {Array.from(achievements)
                   .sort((a, b) => {
-                    const prevAachievement = achievementsById.get(
+                    const prevAachievement = achievementsById?.get(
                       b[0]
                     );
-                    const achievement = achievementsById.get(a[0]);
+                    const achievement = achievementsById?.get(a[0]);
                     if (!prevAachievement || !achievement) {
                       return 0;
                     }
@@ -125,7 +125,7 @@ export const UserCheckins = () => {
                   })
                   .reduce((acc, [achievementId, count], i) => {
                     const achievement =
-                      achievementsById.get(achievementId);
+                      achievementsById?.get(achievementId);
                     if (!achievement) {
                       return acc;
                     }

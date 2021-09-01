@@ -11,6 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import db from '@act/data/web';
 import { Achievement, AchievementCategory } from '@act/data/core';
 import { GridContainer } from '../shared/components/TableContainer';
+import { isEmpty } from 'lodash';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,6 +87,12 @@ const columns: GridColDef[] = [
     width: 200
   },
   {
+    field: 'photo',
+    editable: true,
+    headerName: 'Photo',
+    width: 200
+  },
+  {
     field: 'created_at',
     headerName: 'Created',
     width: 200
@@ -124,10 +131,15 @@ const columns: GridColDef[] = [
 const Achievements = () => {
   const classes = useStyles();
 
-  let achievements = db.useCollection<Achievement>('achievements', [
-    'name',
-    'category_id'
-  ]);
+  let achievements = db
+    .useCollection<Achievement>('achievements', [
+      'name',
+      'category_id'
+    ])
+    .map((a) => {
+      a.photo = isEmpty(a.photo) ? '' : a.photo;
+      return a;
+    });
 
   const handleEditCellChangeCommitted = React.useCallback(
     async ({ id, field, props }) => {

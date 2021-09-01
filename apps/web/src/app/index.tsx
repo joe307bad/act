@@ -152,7 +152,7 @@ const ToolBarAndSideBar = ({ onClick }) => {
             style={{ marginLeft: 10 }}
             variant="contained"
             color="default"
-            onClick={db.sync}
+            onClick={() => db.sync()}
           >
             Sync
           </Button>

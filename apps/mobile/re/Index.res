@@ -77,7 +77,7 @@ module Login = {
     let {keycloak} = Keycloak.useKeycloak()
     let {initialSyncComplete} = ActData.useActAuth()
     <Rows padding=[2.] space=[2.]>
-      <Row height=[#x13]> <Logo /> </Row>
+      <Row height=[#x13]> {<> </>} </Row>
       <Row height=[#x13]> <Onboarding /> </Row>
       <Row height=[#x13]> {<> </>} </Row>
     </Rows>

@@ -46,6 +46,7 @@ export const SingleCheckin: FC<{
       visible={visible}
       apply={() => onConfirm(note)}
       applyText="Confirm"
+      thumbnail={achievement.photo}
     >
       <Rows>
         <Row paddingBottom={5}>

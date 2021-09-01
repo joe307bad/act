@@ -14,7 +14,7 @@ export class AchievementSeed {
   @Mock()
   readonly points: number;
 
-  @Mock()
+  @Mock((faker) => null)
   readonly photo: string;
 
   @Mock()

@@ -96,7 +96,7 @@
       tags: act-api
     - name: Start node container for launch act API
       docker_container:
-        name: act-api
+        name: launch-act-api
         image: node:8
         state: started
         restart_policy: always

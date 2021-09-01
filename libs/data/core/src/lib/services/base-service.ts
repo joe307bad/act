@@ -53,6 +53,19 @@ export abstract class BaseService<T extends Model> {
     });
   };
 
+  deleteAll = () =>
+    this._db.action(async () => {
+      const all = await this._collection.query().fetch();
+      await this._db.batch(
+        ...all.map((a) =>
+          this._deletedCollection.prepareCreate((deletedUnit) => {
+            deletedUnit.deletedId = a.id;
+          })
+        ),
+        ...all.map((a) => a.prepareMarkAsDeleted())
+      );
+    });
+
   updateWithProps = async (
     id,
     updateProps: { [key: string]: string | boolean }

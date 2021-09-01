@@ -43,12 +43,13 @@ const CheckinBuilder: FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setCheckin({
-        ...checkin,
-        insertProps: {
-          note: sample(Config.RANDOM_CHECKIN_NOTE.split('|'))
-        }
-      });
+      Config.RANDOM_CHECKIN_NOTE &&
+        setCheckin({
+          ...checkin,
+          insertProps: {
+            note: sample(Config.RANDOM_CHECKIN_NOTE.split('|'))
+          }
+        });
     }, [])
   );
 
@@ -177,7 +178,11 @@ const CheckinBuilder: FC = () => {
             achievementCounts: new Map(),
             users: [currentUser.id],
             points: 0,
-            insertProps: undefined
+            insertProps: {
+              note:
+                Config.RANDOM_CHECKIN_NOTE &&
+                sample(Config.RANDOM_CHECKIN_NOTE.split('|'))
+            }
           });
         }}
         numberOfAchievements={numberOfAchievements || 0}
