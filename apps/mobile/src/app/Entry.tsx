@@ -34,86 +34,6 @@ export const HeaderContext =
     setSearchCriteria: React.Dispatch<React.SetStateAction<string>>;
   }>(undefined);
 
-var fontFamily = 'Bebas-Regular';
-var fonts = configureFonts({
-  default: {
-    regular: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    thin: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    medium: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    light: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    }
-  },
-  ios: {
-    regular: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    thin: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    medium: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    light: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    }
-  },
-  android: {
-    regular: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    thin: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    medium: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    },
-    light: {
-      fontFamily: fontFamily,
-      fontWeight: 'normal'
-    }
-  }
-});
-var animation = {
-  scale: 1
-};
-var colors = {
-  primary: '#470FF4',
-  accent: '#87FF65',
-  background: '#eae8ff',
-  surface: 'white',
-  error: '#c83e4d',
-  text: 'black',
-  disabled: '#adacb5',
-  placeholder: '#470FF4',
-  backdrop: 'rgba(0, 0, 0, 0.33)'
-};
-
-var theme = {
-  roundness: 0,
-  dark: false,
-  colors: colors,
-  fonts: fonts,
-  animation: animation
-};
-
 const NavBar: (
   props: StackHeaderProps & { theme: ReactNativePaper.Theme }
 ) => ReactElement = ({ scene, previous, navigation }) => {
@@ -244,13 +164,7 @@ const EntryStack = () => {
 };
 
 const Entry = () => {
-  return (
-    <StacksProvider debug={false}>
-      <Provider theme={theme}>
-        <EntryStack />
-      </Provider>
-    </StacksProvider>
-  );
+  return <EntryStack />;
 };
 
 export default Entry;

@@ -138,34 +138,28 @@ module Root = {
 
     let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
     let {status} = ActData.useActAuth()
-    <StacksProvider debug={false}>
-      <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
-        <Paper.PaperProvider theme>
-          <Native.NavigationContainer
-            linking={
-              prefixes: [`io.act.auth://${Platform.os === Platform.ios ? "" : "io.act.host/"}`],
-              config: {screens: screens},
-            }>
-            <ActDrawer>
-              {
-                // This approach of rendering the screens based on auth status throws a
-                // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
-                // because the component itself is not rendered due to this instance of pattern matching
-                switch status {
-                | Authenticated => <Screen name="Entry" component=EntryComponent.make />
-                | Unauthenticated =>
-                  <Screen
-                    name="Login"
-                    options={_ => options(~gestureEnabled=false, ())}
-                    component=Login.make
-                  />
-                | _ => <Screen name="Pending" component=Pending.make />
-                }
-              }
-            </ActDrawer>
-          </Native.NavigationContainer>
-        </Paper.PaperProvider>
-      </FillView>
-    </StacksProvider>
+    <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
+      <Native.NavigationContainer
+        linking={
+          prefixes: [`io.act.auth://${Platform.os === Platform.ios ? "" : "io.act.host/"}`],
+          config: {screens: screens},
+        }>
+        <ActDrawer>
+          {
+            // This approach of rendering the screens based on auth status throws a
+            // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
+            // because the component itself is not rendered due to this instance of pattern matching
+            switch status {
+            | Authenticated => <Screen name="Entry" component=EntryComponent.make />
+            | Unauthenticated =>
+              <Screen
+                name="Login" options={_ => options(~gestureEnabled=false, ())} component=Login.make
+              />
+            | _ => <Screen name="Pending" component=Pending.make />
+            }
+          }
+        </ActDrawer>
+      </Native.NavigationContainer>
+    </FillView>
   }
 }
