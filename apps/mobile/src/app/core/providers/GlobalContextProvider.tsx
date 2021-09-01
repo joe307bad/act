@@ -16,19 +16,21 @@ import React, {
 import db from '@act/data/rn';
 import withObservables from '@nozbe/with-observables';
 import { map } from 'rxjs/operators';
-const GlobalContext =
-  createContext<{
-    achievementsByCategory: Map<
-      string,
-      Map<string, Achievement> | undefined
-    >;
-    categoriesById: Map<string, AchievementCategory>;
-    checkinsByUser: Map<string, Map<string, string>>;
-    achievementsByCheckin: Map<string, Map<string, number>>;
-    fullNamesByUser: Map<string, string>;
-    checkinsById: Map<string, Checkin>;
-    usersByCheckin: Map<string, string[]>;
-  }>(undefined);
+
+type GlobalContext = {
+  achievementsByCategory: Map<
+    string,
+    Map<string, Achievement> | undefined
+  >;
+  categoriesById: Map<string, AchievementCategory>;
+  checkinsByUser: Map<string, Map<string, string>>;
+  achievementsByCheckin: Map<string, Map<string, number>>;
+  fullNamesByUser: Map<string, string>;
+  checkinsById: Map<string, Checkin>;
+  usersByCheckin: Map<string, string[]>;
+};
+
+const GlobalContext = createContext<Partial<GlobalContext>>({});
 
 export const useGlobalContext = () => useContext(GlobalContext);
 

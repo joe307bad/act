@@ -247,6 +247,7 @@ apply plugin: "com.bugsnag.android.gradle"
 
 bugsnag {
     nodeModulesDir = new File(rootProject.projectDir, "../../../node_modules")
+  uploadReactNativeMappings = true
 }
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
