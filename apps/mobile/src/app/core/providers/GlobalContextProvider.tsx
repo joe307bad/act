@@ -152,57 +152,58 @@ const GlobalContextProviderComponent: FC<{
   }, [users, checkins, checkinUsers, checkinAchievements]);
 
   useEffect(() => {
-    setAchievementsByCategory(
-      achievements.reduce((acc, achievement: Achievement) => {
-        const categoryExists = acc.get(achievement.category?.id);
+    achievements?.length > 0 &&
+      setAchievementsByCategory(
+        achievements.reduce((acc, achievement: Achievement) => {
+          const categoryExists = acc.get(achievement.category?.id);
 
-        const allExists = acc.get('all');
-        if (allExists) {
-          acc.set(
-            'all',
-            new Map([
-              ...allExists,
-              ...new Map([[achievement.id, achievement]])
-            ])
-          );
-        } else {
-          acc.set('all', new Map([[achievement.id, achievement]]));
-        }
+          const allExists = acc.get('all');
+          if (allExists) {
+            acc.set(
+              'all',
+              new Map([
+                ...allExists,
+                ...new Map([[achievement.id, achievement]])
+              ])
+            );
+          } else {
+            acc.set('all', new Map([[achievement.id, achievement]]));
+          }
 
-        if (achievement.category?.id === null) {
-          const noCategory = acc.get('noCategory');
-          if (noCategory) {
+          if (achievement.category?.id === null) {
+            const noCategory = acc.get('noCategory');
+            if (noCategory) {
+              return acc.set(
+                'noCategory',
+                new Map([
+                  ...noCategory,
+                  ...new Map([[achievement.id, achievement]])
+                ])
+              );
+            }
+
             return acc.set(
               'noCategory',
+              new Map([[achievement.id, achievement]])
+            );
+          }
+
+          if (categoryExists) {
+            return acc.set(
+              achievement.category?.id,
               new Map([
-                ...noCategory,
+                ...categoryExists,
                 ...new Map([[achievement.id, achievement]])
               ])
             );
           }
 
           return acc.set(
-            'noCategory',
+            achievement.category?.id,
             new Map([[achievement.id, achievement]])
           );
-        }
-
-        if (categoryExists) {
-          return acc.set(
-            achievement.category?.id,
-            new Map([
-              ...categoryExists,
-              ...new Map([[achievement.id, achievement]])
-            ])
-          );
-        }
-
-        return acc.set(
-          achievement.category?.id,
-          new Map([[achievement.id, achievement]])
-        );
-      }, new Map())
-    );
+        }, new Map())
+      );
   }, [achievements]);
 
   return (
