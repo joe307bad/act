@@ -102,7 +102,7 @@ export const UserCheckins = () => {
               </Columns>
             </Row>
             <Row>
-              {!isEmpty(checkin.note) && (
+              {!isEmpty(checkin?.note) && (
                 <Box paddingTop={2} paddingBottom={2}>
                   <Text>{checkin.note}</Text>
                 </Box>

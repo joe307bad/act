@@ -46,10 +46,10 @@ const PendingApprovalsComponent: FC<{
           )
             .map(
               ([aid, count]) =>
-                `${count} • ${achievements.get(aid).name}`
+                `${count} • ${achievements?.get(aid).name}`
             )
             .join(', ')}`,
-          title: usersForCheckin.reduce(
+          title: usersForCheckin?.reduce(
             (acc, userId, i) =>
               (acc += `${fullNamesByUser.get(userId)} ${
                 i === usersForCheckin.length - 1 ? '' : ','

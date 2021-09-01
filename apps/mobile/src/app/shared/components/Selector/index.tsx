@@ -186,7 +186,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
       setHiddenOptions(new Set());
     } else {
       const achievements = Array.from(
-        achievementsByCategory.get('all').values()
+        achievementsByCategory.get('all')?.values()
       );
       setHiddenOptions(
         new Set(

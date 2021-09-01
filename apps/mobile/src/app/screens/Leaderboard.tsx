@@ -156,7 +156,7 @@ export const Leaderboard: FC = () => {
                 achievementsForCheckin
               ).reduce((accc, [achievementId, count]) => {
                 const achievement =
-                  achievementsById.get(achievementId);
+                  achievementsById?.get(achievementId);
                 if (!achievement) {
                   return accc;
                 }

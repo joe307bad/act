@@ -85,6 +85,8 @@
 
 ## Beyond
 
+- [ ] **[MOBILE]** - Checkin to an checkin with multiple achievements from User Checkins
+- [ ] **[MOBILE]** - Pinned achievements (single achievements and from the Checkin Builder)
 - [ ] **[MOBILE]** - Bitrise pipeline for iOS
 - [ ] **[MOBILE]** - Way of seeding Achievements newly added to JSON file (e.g. renaming categories, moving achievements to new categories, etc.)
 - [ ] **[MOBILE]** - Toasts for successful sync/failed sync

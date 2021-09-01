@@ -30,7 +30,15 @@ type GlobalContext = {
   usersByCheckin: Map<string, string[]>;
 };
 
-const GlobalContext = createContext<Partial<GlobalContext>>({});
+const GlobalContext = createContext<Partial<GlobalContext>>({
+  achievementsByCategory: new Map(),
+  categoriesById: new Map(),
+  checkinsByUser: new Map(),
+  achievementsByCheckin: new Map(),
+  fullNamesByUser: new Map(),
+  checkinsById: new Map(),
+  usersByCheckin: new Map()
+});
 
 export const useGlobalContext = () => useContext(GlobalContext);
 
