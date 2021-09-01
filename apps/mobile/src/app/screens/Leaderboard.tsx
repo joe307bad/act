@@ -158,7 +158,7 @@ export const Leaderboard: FC = () => {
                 const achievement =
                   achievementsById.get(achievementId);
                 if (!achievement) {
-                  return acc;
+                  return accc;
                 }
 
                 const userAlreadyHasAchievement =

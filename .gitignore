@@ -112,3 +112,4 @@ apps/mobile/.env
 apps/mobile/.env.prod
 lib
 deploy/.env.launch-test
+apps/mobile/.env.dev
