@@ -97,16 +97,16 @@ var theme = {
 
 export default () => (
   <StacksProvider debug={false}>
-    <Provider theme={theme}>
-      <EnvironmentProvider>
-        <SyncProvider>
-          <GlobalContextProvider>
+    <GlobalContextProvider>
+      <Provider theme={theme}>
+        <EnvironmentProvider>
+          <SyncProvider>
             <KeycloakProvider>
               <Root.make />
             </KeycloakProvider>
-          </GlobalContextProvider>
-        </SyncProvider>
-      </EnvironmentProvider>
-    </Provider>
+          </SyncProvider>
+        </EnvironmentProvider>
+      </Provider>
+    </GlobalContextProvider>
   </StacksProvider>
 );

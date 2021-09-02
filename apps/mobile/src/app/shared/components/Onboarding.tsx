@@ -3,7 +3,7 @@ import db, {
   useSync,
   useEnvironment
 } from '@act/data/rn';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   useTheme,
   ActivityIndicator,
@@ -12,7 +12,7 @@ import {
   Headline,
   TouchableRipple
 } from 'react-native-paper';
-import { Text } from 'react-native';
+import { Text, Platform } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AwesomeButtonSmall } from '../../AwesomeButton';
 import {
@@ -69,7 +69,10 @@ const Onboarding = () => {
                   <Column width="content">
                     <Text>Prod</Text>
                   </Column>
-                  <Column width="content">
+                  <Column
+                    paddingLeft={Platform.OS === 'ios' ? 2 : 0}
+                    width="content"
+                  >
                     <Switch
                       disabled={true}
                       trackColor={{
