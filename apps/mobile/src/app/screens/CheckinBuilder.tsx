@@ -21,7 +21,7 @@ const CheckinBuilder: FC = () => {
   const users = db.useCollection<User>('users');
 
   const { currentUser } = useActAuth();
-  const sync = useSync();
+  const { sync } = useSync();
 
   const [checkin, setCheckin] = useState<CreateCheckin>({
     users: [currentUser.id],

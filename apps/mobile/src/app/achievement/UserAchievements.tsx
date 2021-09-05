@@ -14,7 +14,8 @@ const UserAchievementsTabbedList: FC<{
   const [selectedCategory, setSelectedCategory] = useState('all');
   const { achievementsByCategory, categoriesById } =
     useGlobalContext();
-  const achievements = achievementsByCategory?.get(selectedCategory);
+  const achievements =
+    achievementsByCategory[1].get(selectedCategory);
 
   return (
     <Rows>

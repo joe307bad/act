@@ -119,7 +119,7 @@ export const Leaderboard: FC = () => {
     checkinsById
   } = useGlobalContext();
 
-  const achievementsById = achievementsByCategory.get('all');
+  const achievementsById = achievementsByCategory[1].get('all');
 
   const [leaderboard, setLeaderboard] =
     useState<LeaderboardItemData[]>();

@@ -6,7 +6,7 @@ import json from './SuccessLottieJson.json';
 import { Animated, Easing, Text, View } from 'react-native';
 import { Rows, Row, Column, Columns, Box } from '@mobily/stacks';
 import { heightPercentageToDP } from 'react-native-responsive-screen';
-import { format } from 'date-fns';
+import { formatTimestamp } from '../core/formatTimestamp';
 
 export const CheckinSuccess = ({
   visible,
@@ -88,7 +88,7 @@ export const CheckinSuccess = ({
         </Row>
         <Row paddingBottom={note ? 0 : 5}>
           <Headline style={{ fontSize: 30, textAlign: 'center' }}>
-            {timestamp && format(timestamp, 'EEE MMM do @ pp')}
+            {timestamp && formatTimestamp(timestamp)}
           </Headline>
         </Row>
         {note !== '' && note && (

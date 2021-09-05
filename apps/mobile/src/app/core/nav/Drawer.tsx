@@ -1,6 +1,12 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
-import { List, useTheme, Button, Title } from 'react-native-paper';
+import {
+  List,
+  useTheme,
+  Button,
+  Title,
+  Headline
+} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   createDrawerNavigator,
@@ -12,6 +18,9 @@ import db, { useActAuth, useSync } from '@act/data/rn';
 import { Box, Stack } from '@mobily/stacks';
 import { useKeycloak } from '@react-keycloak/native';
 import KeycloakReactNativeClient from '@react-keycloak/native/lib/typescript/src/keycloak/client';
+import { formatTimestamp } from '../formatTimestamp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SyncStatus } from '../../shared/components/SyncStatus';
 
 MaterialCommunityIcons.loadFont();
 
@@ -23,7 +32,22 @@ const DrawerList: FC<
   }
 > = ({ navigation, theme, keycloak, setForceLogout }) => {
   const { currentUser } = useActAuth();
-  const sync = useSync();
+  const { sync, lastPulledAt: lpa, syncStatus } = useSync();
+  const [lastPulledAt, setLastPulledAt] = useState<number>();
+
+  useEffect(() => {
+    if (typeof lpa === 'undefined') {
+      AsyncStorage.getItem('lastPulledAt').then(
+        (asyncLastPulledAt) => {
+          if (asyncLastPulledAt) {
+            setLastPulledAt(Number(asyncLastPulledAt));
+          }
+        }
+      );
+    } else {
+      setLastPulledAt(lpa);
+    }
+  }, [lpa]);
 
   return (
     <>
@@ -187,10 +211,22 @@ const DrawerList: FC<
       )}
       <Stack space={2} padding={5}>
         <Box>
-          <AwesomeButtonMedium onPress={() => sync()}>
+          <AwesomeButtonMedium
+            disabled={syncStatus === 'PROCESSING'}
+            onPress={() => sync()}
+          >
             Sync
           </AwesomeButtonMedium>
         </Box>
+        {lastPulledAt && (
+          <Box alignX="center">
+            <Headline>Last Sync</Headline>
+            <Text>{formatTimestamp(lastPulledAt)}</Text>
+            <Box paddingTop={3}>
+              <SyncStatus status={syncStatus} />
+            </Box>
+          </Box>
+        )}
         <Box>
           <Button
             onPress={() => {

@@ -42,7 +42,7 @@ const NavBar: (
     searchCriteria,
     setSearchCriteria
   } = useContext(HeaderContext);
-  const sync = useSync();
+  const { sync } = useSync();
 
   const { options } = scene.descriptor;
   const title =

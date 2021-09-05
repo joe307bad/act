@@ -1,8 +1,4 @@
-import db, {
-  useActAuth,
-  useSync,
-  useEnvironment
-} from '@act/data/rn';
+import { useSync, useEnvironment } from '@act/data/rn';
 import React, { useState } from 'react';
 import {
   useTheme,
@@ -28,6 +24,8 @@ import Modal from './Modal';
 import Chip from './Chip';
 import { format } from 'date-fns';
 import { useKeycloak } from '@react-keycloak/native';
+import { formatTimestamp } from '../../core/formatTimestamp';
+import { SyncStatus } from './SyncStatus';
 
 const Onboarding = () => {
   const {
@@ -36,7 +34,7 @@ const Onboarding = () => {
     isFreshInstall,
     launchTimestamp
   } = useEnvironment();
-  const sync = useSync();
+  const { sync } = useSync();
   const theme = useTheme();
   const [showEnvironementDetails, setShowEnvironmentDetails] =
     useState(false);
@@ -128,28 +126,7 @@ const Onboarding = () => {
                     </Text>
                   </Column>
                   <Column width="content" paddingLeft={3}>
-                    {(() => {
-                      switch (syncStatus) {
-                        case 'PROCESSING':
-                          return <ActivityIndicator />;
-                        case 'SUCCESS':
-                          return (
-                            <MaterialCommunityIcons
-                              name={`checkbox-marked-circle-outline`}
-                              color={theme.colors.primary}
-                              size={25}
-                            />
-                          );
-                        case 'FAILURE':
-                          return (
-                            <MaterialCommunityIcons
-                              name={`network-strength-1-alert`}
-                              color={theme.colors.error}
-                              size={25}
-                            />
-                          );
-                      }
-                    })()}
+                    <SyncStatus status={syncStatus} />
                   </Column>
                 </Columns>
               </Column>
@@ -219,7 +196,7 @@ const Onboarding = () => {
               <Column width="content">
                 <Chip
                   icon="calendar"
-                  title={format(launchTimestamp, 'EEE MMM do @ pp')}
+                  title={formatTimestamp(launchTimestamp)}
                 />
               </Column>
             </Columns>

@@ -15,6 +15,7 @@ import Chip from '../shared/components/Chip';
 import { isEmpty } from 'lodash';
 import { Dropdown } from '../shared/components/Dropdown';
 import { useGlobalContext } from '../core/providers/GlobalContextProvider';
+import { formatTimestamp } from '../core/formatTimestamp';
 
 export const UserCheckins = () => {
   const { currentUser } = useActAuth();
@@ -27,7 +28,7 @@ export const UserCheckins = () => {
     checkinsById,
     achievementsByCheckin
   } = useGlobalContext();
-  const achievementsById = achievementsByCategory.get('all');
+  const achievementsById = achievementsByCategory[1].get('all');
 
   const confirmDeletion = (confirmDelete) =>
     Alert.alert(
@@ -68,8 +69,7 @@ export const UserCheckins = () => {
               <Columns alignY="center">
                 <Column>
                   <Headline>
-                    {checkin &&
-                      format(checkin.createdAt, 'EEE MMM do @ pp')}
+                    {checkin && formatTimestamp(checkin.createdAt)}
                   </Headline>
                 </Column>
                 {!checkin?.approved && (

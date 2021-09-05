@@ -6,6 +6,7 @@ import { debounce } from 'lodash';
 
 @autoInjectable()
 export class SyncService {
+  _lastPulledAt: number;
   constructor(@inject('ActContext') private _context?: ActContext) {}
 
   sync = (apiUrlOverride?: string) => {
@@ -31,6 +32,7 @@ export class SyncService {
         }
 
         const { changes, timestamp } = await response.json();
+        this._lastPulledAt = timestamp;
         return { changes, timestamp };
       },
       pushChanges: async ({ changes, lastPulledAt }) =>
@@ -42,6 +44,6 @@ export class SyncService {
           body: JSON.stringify(changes)
         }).catch((e) => Promise.reject()),
       migrationsEnabledAtVersion: 1
-    });
+    }).then(() => this._lastPulledAt);
   };
 }

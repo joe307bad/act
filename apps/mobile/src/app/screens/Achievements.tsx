@@ -26,7 +26,7 @@ const Achievements: FC = () => {
   const [enabledAchievementsByCategory, allAchievementsByCategory] =
     achievementsByCategory;
 
-  const sync = useSync();
+  const { sync } = useSync();
   const [enableCheckin, setEnableCheckin] = useState(true);
   const categories = Array.from(categoriesById.values());
 
