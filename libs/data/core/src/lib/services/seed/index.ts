@@ -257,6 +257,7 @@ export class SeedService {
             r.photo = a.photo;
             r.points = a.points;
             r.name = a.name;
+            r.enabled = a.enabled;
             r.category.set(category);
           })
         )

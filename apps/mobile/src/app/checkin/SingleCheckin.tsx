@@ -25,7 +25,7 @@ export const SingleCheckin: FC<{
   note,
   setNote
 }) => {
-  const { name, description, points } = achievement;
+  const { name, description, points, enabled, photo } = achievement;
   useEffect(() => {
     if (visible && Config.RANDOM_CHECKIN_NOTE && achievement.name) {
       setNote(sample(Config.RANDOM_CHECKIN_NOTE.split('|')));
@@ -44,9 +44,9 @@ export const SingleCheckin: FC<{
         setNote('');
       }}
       visible={visible}
-      apply={() => onConfirm(note)}
+      apply={enabled ? () => onConfirm(note) : undefined}
       applyText="Confirm"
-      thumbnail={achievement.photo}
+      thumbnail={photo}
     >
       <Rows>
         <Row paddingBottom={5}>

@@ -8,14 +8,24 @@ import { HeaderContext } from '../Entry';
 import { useDebounce } from '../shared/hooks/useDebounce';
 import { isEmpty } from 'lodash';
 import { AchievementRowLite } from '../achievement/AchievementRowLite';
-import { Rows, Row, Box } from '@mobily/stacks';
-import { Surface } from 'react-native-paper';
+import { Rows, Row, Box, Columns, Column } from '@mobily/stacks';
+import {
+  Surface,
+  Switch,
+  TouchableRipple,
+  useTheme
+} from 'react-native-paper';
 import { Dropdown } from '../shared/components/Dropdown';
 import { useGlobalContext } from '../core/providers/GlobalContextProvider';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Achievements: FC = () => {
+  const theme = useTheme();
   const { achievementsByCategory, categoriesById } =
     useGlobalContext();
+  const [enabledAchievementsByCategory, allAchievementsByCategory] =
+    achievementsByCategory;
+
   const sync = useSync();
   const [enableCheckin, setEnableCheckin] = useState(true);
   const categories = Array.from(categoriesById.values());
@@ -33,14 +43,23 @@ const Achievements: FC = () => {
     new Set<string>()
   );
   const [note, setNote] = useState('');
+  const [showOnlyEnabled, setShowOnlyEnabled] = useState<boolean>();
+
+  const achievements = (() => {
+    if (showOnlyEnabled) {
+      return enabledAchievementsByCategory.get(selectedCategory);
+    }
+
+    return allAchievementsByCategory.get(selectedCategory);
+  })();
 
   useEffect(() => {
-    if (achievementsByCategory.size > 0) {
+    if (enabledAchievementsByCategory.size > 0) {
       if (isEmpty(debouncedSearchCriteria)) {
         setHiddenOptions(new Set());
       } else {
         const achievements = Array.from(
-          achievementsByCategory.get('all').values()
+          allAchievementsByCategory.get('all').values()
         );
         setHiddenOptions(
           new Set(
@@ -59,23 +78,54 @@ const Achievements: FC = () => {
     }
   }, [debouncedSearchCriteria]);
 
-  const achievements = achievementsByCategory?.get(selectedCategory);
   return (
     <>
       <Rows>
         <Row height="content">
-          <Surface style={{ elevation: 2 }}>
-            <Dropdown
-              fullWidth
-              value={selectedCategory}
-              onValueChange={(v) => setSelectedCategory(v)}
-              items={categories.map((c) => ({
-                label: c.name,
-                value: c.id
-              }))}
-              padding={3}
-            />
-          </Surface>
+          <Columns alignY="center">
+            <Column width="content">
+              <TouchableRipple
+                onPress={() => setShowOnlyEnabled((p) => !p)}
+              >
+                <Columns alignY="center" padding={2}>
+                  <Column width="content">
+                    <MaterialCommunityIcons
+                      name="death-star"
+                      color={theme.colors.primary}
+                      size={20}
+                    />
+                  </Column>
+                  <Column width="content">
+                    <Switch
+                      disabled={true}
+                      //onValueChange={() => setShowEnabled((p) => !p)}
+                      trackColor={{
+                        false: theme.colors.backdrop,
+                        true: theme.colors.backdrop
+                      }}
+                      thumbColor={theme.colors.primary}
+                      color={theme.colors.primary}
+                      value={!showOnlyEnabled}
+                    />
+                  </Column>
+                </Columns>
+              </TouchableRipple>
+            </Column>
+            <Column>
+              <Surface style={{ elevation: 2 }}>
+                <Dropdown
+                  fullWidth
+                  value={selectedCategory}
+                  onValueChange={(v) => setSelectedCategory(v)}
+                  items={categories.map((c) => ({
+                    label: c.name,
+                    value: c.id
+                  }))}
+                  padding={3}
+                />
+              </Surface>
+            </Column>
+          </Columns>
         </Row>
         <Row>
           <Box padding={2} paddingBottom={0} paddingTop={0}>

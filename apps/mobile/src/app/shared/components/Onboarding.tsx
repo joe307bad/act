@@ -120,7 +120,7 @@ const Onboarding = () => {
                           case 'SUCCESS':
                             return 'Sync Successfull';
                           case 'FAILURE':
-                            return 'Sync Failed, try again';
+                            return 'Sync Failed';
                           default:
                             return 'Perform Sync';
                         }
@@ -165,6 +165,7 @@ const Onboarding = () => {
                     sync()
                       .then(({ rejectSyncGracefully }) => {
                         if (rejectSyncGracefully) {
+                          setSyncStatus('FAILURE');
                           return;
                         }
                         setSyncStatus('SUCCESS');

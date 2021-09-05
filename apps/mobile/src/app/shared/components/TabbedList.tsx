@@ -81,6 +81,7 @@ export const TabbedListComponent: <
   );
   const { achievementsByCategory, categoriesById } =
     useGlobalContext();
+  const [enabledAchievementsByCategory, _] = achievementsByCategory;
   const [itemsCounts, setItemsCounts] = useState<Map<string, number>>(
     new Map()
   );
@@ -119,7 +120,9 @@ export const TabbedListComponent: <
       onChange(items, itemsCounts);
     }
   }, [items]);
-  const achievements = achievementsByCategory?.get(selectedCategory);
+
+  const achievements =
+    enabledAchievementsByCategory.get(selectedCategory);
   return (
     <Rows>
       <Row height="content">

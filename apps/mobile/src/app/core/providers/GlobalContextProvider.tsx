@@ -18,10 +18,10 @@ import withObservables from '@nozbe/with-observables';
 import { map } from 'rxjs/operators';
 
 type GlobalContext = {
-  achievementsByCategory: Map<
-    string,
-    Map<string, Achievement> | undefined
-  >;
+  achievementsByCategory: [
+    Map<string, Map<string, Achievement>>,
+    Map<string, Map<string, Achievement>>
+  ];
   categoriesById: Map<string, AchievementCategory>;
   checkinsByUser: Map<string, Map<string, string>>;
   achievementsByCheckin: Map<string, Map<string, number>>;
@@ -31,7 +31,7 @@ type GlobalContext = {
 };
 
 const GlobalContext = createContext<Partial<GlobalContext>>({
-  achievementsByCategory: new Map(),
+  achievementsByCategory: [new Map(), new Map()],
   categoriesById: new Map(),
   checkinsByUser: new Map(),
   achievementsByCheckin: new Map(),
@@ -59,7 +59,12 @@ const GlobalContextProviderComponent: FC<{
   users
 }) => {
   const [achievementsByCategory, setAchievementsByCategory] =
-    useState<Map<string, Map<string, Achievement>>>(new Map());
+    useState<
+      [
+        Map<string, Map<string, Achievement>>,
+        Map<string, Map<string, Achievement>>
+      ]
+    >([new Map(), new Map()]);
   const [categoriesById, setCategoriesById] = useState<
     Map<string, AchievementCategory>
   >(new Map());
@@ -151,59 +156,94 @@ const GlobalContextProviderComponent: FC<{
     }
   }, [users, checkins, checkinUsers, checkinAchievements]);
 
-  useEffect(() => {
-    achievements?.length > 0 &&
-      setAchievementsByCategory(
-        achievements.reduce((acc, achievement: Achievement) => {
-          const categoryExists = acc.get(achievement.category?.id);
+  const addToCategory = (
+    achievement: Achievement,
+    enabledOnly: boolean,
+    category: string,
+    acc: Map<string, Map<string, Achievement>>
+  ) => {
+    const cat = acc.get(category);
 
-          const allExists = acc.get('all');
-          if (allExists) {
-            acc.set(
-              'all',
+    if (enabledOnly) {
+      if (cat) {
+        return achievement.enabled
+          ? acc.set(
+              category,
               new Map([
-                ...allExists,
+                ...cat,
                 ...new Map([[achievement.id, achievement]])
               ])
-            );
-          } else {
-            acc.set('all', new Map([[achievement.id, achievement]]));
-          }
+            )
+          : acc;
+      }
 
-          if (achievement.category?.id === null) {
-            const noCategory = acc.get('noCategory');
-            if (noCategory) {
-              return acc.set(
-                'noCategory',
-                new Map([
-                  ...noCategory,
-                  ...new Map([[achievement.id, achievement]])
-                ])
-              );
-            }
+      return achievement.enabled
+        ? acc.set(category, new Map([[achievement.id, achievement]]))
+        : acc;
+    }
 
-            return acc.set(
-              'noCategory',
-              new Map([[achievement.id, achievement]])
-            );
-          }
-
-          if (categoryExists) {
-            return acc.set(
-              achievement.category?.id,
-              new Map([
-                ...categoryExists,
-                ...new Map([[achievement.id, achievement]])
-              ])
-            );
-          }
-
-          return acc.set(
-            achievement.category?.id,
-            new Map([[achievement.id, achievement]])
-          );
-        }, new Map())
+    if (cat) {
+      acc.set(
+        category,
+        new Map([...cat, ...new Map([[achievement.id, achievement]])])
       );
+      return acc;
+    }
+
+    acc.set(category, new Map([[achievement.id, achievement]]));
+    return acc;
+  };
+
+  useEffect(() => {
+    const a = achievements.reduce(
+      (
+        acc: [
+          Map<string, Map<string, Achievement>>,
+          Map<string, Map<string, Achievement>>
+        ],
+        achievement: Achievement
+      ) => {
+        let [enabled, all] = acc;
+
+        (all = addToCategory(achievement, false, 'all', all)),
+          (enabled = addToCategory(
+            achievement,
+            true,
+            'all',
+            enabled
+          ));
+
+        if (achievement.category?.id === null) {
+          return [
+            addToCategory(achievement, true, 'noCategory', enabled),
+            addToCategory(achievement, false, 'noCategory', all)
+          ];
+        }
+
+        return [
+          addToCategory(
+            achievement,
+            true,
+            achievement.category.id || undefined,
+            enabled
+          ),
+          addToCategory(
+            achievement,
+            false,
+            achievement.category.id || undefined,
+            all
+          )
+        ];
+      },
+      [new Map(), new Map()]
+    );
+
+    setAchievementsByCategory(
+      a as [
+        Map<string, Map<string, Achievement>>,
+        Map<string, Map<string, Achievement>>
+      ]
+    );
   }, [achievements]);
 
   return (

@@ -68,6 +68,29 @@ const SelectCategory = ({ id, value }) => {
   ) : null;
 };
 
+const SelectEnabled = ({ id, value }) => {
+  const [v, setValue] = useState(value);
+
+  const handleChange = (event) => {
+    const newValue = event.target.value === 'true' ? true : false;
+    setValue(newValue);
+    db.models.achievements.updateWithProps(id, {
+      enabled: newValue
+    });
+  };
+
+  return (
+    <Select
+      style={{ flex: 1 }}
+      value={v ? 'true' : 'false'}
+      onChange={handleChange}
+    >
+      <MenuItem value={'true'}>Enabled</MenuItem>
+      <MenuItem value={'false'}>Disabled</MenuItem>
+    </Select>
+  );
+};
+
 const columns: GridColDef[] = [
   {
     field: 'id',
@@ -91,6 +114,16 @@ const columns: GridColDef[] = [
     editable: true,
     headerName: 'Photo',
     width: 200
+  },
+  {
+    field: 'enabled',
+    editable: false,
+    headerName: 'Enabled',
+    width: 200,
+    disableClickEventBubbling: true,
+    renderCell: ({ id, value }) => {
+      return <SelectEnabled id={id} value={value} />;
+    }
   },
   {
     field: 'created_at',

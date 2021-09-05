@@ -6,5 +6,9 @@ export default registryFactory(
     ...schemaAndMigrations,
     useWebWorker: false,
     useIncrementalIndexedDB: true
-  })
+  }),
+  //@ts-ignore
+  {
+    ACT_API_URL: 'http://192.168.0.4:3080/api'
+  }
 );

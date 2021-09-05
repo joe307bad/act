@@ -26,7 +26,7 @@ const baseColumns = (schema: ColumnSchema[]): ColumnSchema[] => [
 
 export const schemaAndMigrations = {
   schema: appSchema({
-    version: 10,
+    version: 11,
     tables: [
       tableSchema({
         name: 'users',
@@ -46,7 +46,8 @@ export const schemaAndMigrations = {
           { name: 'points', type: 'number' },
           { name: 'photo', type: 'string', isOptional: true },
           { name: 'category_id', type: 'string', isOptional: true },
-          { name: 'description', type: 'string', isOptional: true }
+          { name: 'description', type: 'string', isOptional: true },
+          { name: 'enabled', type: 'boolean', isOptional: true }
         ])
       }),
       tableSchema({
@@ -237,6 +238,15 @@ export const schemaAndMigrations = {
           addColumns({
             table: 'users',
             columns: [{ name: 'admin', type: 'boolean' }]
+          })
+        ]
+      },
+      {
+        toVersion: 11,
+        steps: [
+          addColumns({
+            table: 'achievements',
+            columns: [{ name: 'enabled', type: 'boolean' }]
           })
         ]
       }

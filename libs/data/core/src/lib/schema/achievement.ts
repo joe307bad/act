@@ -25,6 +25,7 @@ export class Achievement extends BaseModel {
   @field('points') points: number;
   @field('photo') photo?: string;
   @field('description') description?: string;
+  @field('enabled') enabled?: boolean;
 
   @relation('achievement_categories', 'category_id')
   category?: Relation<AchievementCategory>;

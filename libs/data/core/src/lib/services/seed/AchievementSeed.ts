@@ -1,3 +1,4 @@
+import { BADRESP } from 'dns';
 import { Mock } from 'mockingbird-ts';
 
 export enum Categories {
@@ -22,4 +23,7 @@ export class AchievementSeed {
 
   @Mock({ enum: Categories })
   readonly category: string;
+
+  @Mock((faker) => faker.datatype.boolean)
+  readonly enabled: boolean;
 }
