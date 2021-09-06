@@ -34,7 +34,8 @@
     "serve:launch-api": "export COUCHDB_URL=http://localhost:5985 && export PORT=3080 && yarn serve:api",
     "dev:web": "webpack serve",
     "tunnel": "adb reverse tcp:3000 tcp:3000 && adb reverse tcp:8081 tcp:8081 && adb reverse tcp:4000 tcp:4000 && adb reverse tcp:9090 tcp:9090",
-    "build-android:mobile": "nx build-android mobile"
+    "build-android:mobile": "nx build-android mobile",
+    "ensure-symlink:mobile": "nx ensure-symlink mobile"
   },
   "private": true,
   "dependencies": {
@@ -128,7 +129,7 @@
     "@nrwl/node": "^12.0.4",
     "@nrwl/nx-cloud": "latest",
     "@nrwl/react": "10.4.4",
-    "@nrwl/react-native": "^11.4.1",
+    "@nrwl/react-native": "12.5.0",
     "@nrwl/tao": "12.0.1",
     "@nrwl/web": "^12.0.8",
     "@nrwl/workspace": "12.0.1",

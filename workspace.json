@@ -30,6 +30,9 @@
           "executor": "@nrwl/workspace:run-commands",
           "options": { "command": "nx start mobile" }
         },
+        "ensure-symlink": {
+          "executor": "@nrwl/react-native:ensure-symlink"
+        },
         "run-ios": {
           "executor": "@nrwl/react-native:run-ios",
           "options": {}
