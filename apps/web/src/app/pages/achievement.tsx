@@ -82,7 +82,7 @@ const SelectEnabled = ({ id, value }) => {
   return (
     <Select
       style={{ flex: 1 }}
-      value={v ? 'true' : 'false'}
+      value={value ? 'true' : 'false'}
       onChange={handleChange}
     >
       <MenuItem value={'true'}>Enabled</MenuItem>
@@ -167,7 +167,10 @@ const Achievements = () => {
   let achievements = db
     .useCollection<Achievement>('achievements', [
       'name',
-      'category_id'
+      'category_id',
+      'enabled',
+      'photo',
+      'points'
     ])
     .map((a) => {
       a.photo = isEmpty(a.photo) ? '' : a.photo;
