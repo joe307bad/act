@@ -33,7 +33,8 @@
     "serve:api": "nx serve api",
     "serve:launch-api": "export COUCHDB_URL=http://localhost:5985 && export PORT=3080 && yarn serve:api",
     "dev:web": "webpack serve",
-    "tunnel": "adb reverse tcp:3000 tcp:3000 && adb reverse tcp:8081 tcp:8081 && adb reverse tcp:4000 tcp:4000 && adb reverse tcp:9090 tcp:9090"
+    "tunnel": "adb reverse tcp:3000 tcp:3000 && adb reverse tcp:8081 tcp:8081 && adb reverse tcp:4000 tcp:4000 && adb reverse tcp:9090 tcp:9090",
+    "build-android:mobile": "nx build-android mobile"
   },
   "private": true,
   "dependencies": {
