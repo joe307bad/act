@@ -20,6 +20,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Chip from '../shared/components/Chip';
 import { UserAchievements } from '../achievement/UserAchievements';
 import { useGlobalContext } from '../core/providers/GlobalContextProvider';
+import { withCommas } from '../core/withCommas';
 
 const LeaderboardItem: FC<{
   name: string;
@@ -93,7 +94,7 @@ const LeaderboardItem: FC<{
                 </Headline>
               </Column>
               <Column width="content">
-                <Chip title={points.toLocaleString()} />
+                <Chip title={withCommas(points)} />
               </Column>
             </Columns>
           </Box>

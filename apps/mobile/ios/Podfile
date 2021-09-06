@@ -7,7 +7,10 @@ platform :ios, '10.0'
 target 'Mobile' do
   config = use_native_modules!
   puts config
-  use_react_native!(:path => config[:reactNativePath])
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => false
+  )
   pod 'React-jsi', :path => '../../../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
 
 

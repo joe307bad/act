@@ -14,6 +14,7 @@ import {
 import { AwesomeButtonMedium } from '../../AwesomeButton';
 import Chip from './Chip';
 import Config from 'react-native-config';
+import { withCommas } from '../../core/withCommas';
 
 const CardActions = ({
   apply,
@@ -116,9 +117,7 @@ const Modal: FC<ModalProps> = ({
                       </Column>
                       {showPointCount && (
                         <Column width="content">
-                          <Chip
-                            title={pointsCount.toLocaleString()}
-                          />
+                          <Chip title={withCommas(pointsCount)} />
                         </Column>
                       )}
                     </Columns>
@@ -197,7 +196,7 @@ const Modal: FC<ModalProps> = ({
                 </Column>
                 {showPointCount && (
                   <Column width="content">
-                    <Chip title={pointsCount.toLocaleString()} />
+                    <Chip title={withCommas(pointsCount)} />
                   </Column>
                 )}
               </Columns>

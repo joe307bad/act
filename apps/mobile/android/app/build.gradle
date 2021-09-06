@@ -79,7 +79,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     entryFile: "apps/mobile/src/main.tsx",
-    enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true,  // clean and rebuild if changing
 ]
 
 apply from: "../../../../node_modules/react-native/react.gradle"
@@ -119,9 +119,10 @@ def jscFlavor = 'org.webkit:android-jsc-intl:+'
  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
-def enableHermes = project.ext.react.get("enableHermes", false);
+def enableHermes = project.ext.react.get("enableHermes", true);
 
 android {
+     ndkVersion rootProject.ext.ndkVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
@@ -207,11 +208,13 @@ android {
 
 dependencies {
     implementation project(':nozbe_watermelondb')
-     implementation project(':lottie-react-native')
+  implementation project(':lottie-react-native')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+  implementation files('../../../../node_modules/react-native-multithreading/android/rnmultithreading-release.aar')
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }

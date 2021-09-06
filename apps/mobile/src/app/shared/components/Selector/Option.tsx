@@ -9,6 +9,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Chip from '../Chip';
 import { GestureResponderEvent, Text } from 'react-native';
 import { Dropdown } from '../Dropdown';
+import { withCommas } from '../../../core/withCommas';
 
 export class Option extends PureComponent<{
   value: string;
@@ -112,7 +113,7 @@ export class Option extends PureComponent<{
           {!!points && (
             <Column width="content" padding={1}>
               <TouchableRipple onPress={onPress}>
-                <Chip title={points.toLocaleString()} />
+                <Chip title={withCommas(points)} />
               </TouchableRipple>
             </Column>
           )}

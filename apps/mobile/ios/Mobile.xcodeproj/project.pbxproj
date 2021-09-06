@@ -13,6 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		96905EF65AED1B983A6B3ABC /* libPods-Mobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Mobile.a */; };
+		B21F6A0226E5C97000160A97 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21F6A0126E5C97000160A97 /* File.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		E83882F7E715431A87228089 /* Bebas-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B4B13EBE718C4A059012F034 /* Bebas-Regular.ttf */; };
 /* End PBXBuildFile section */
@@ -42,6 +43,9 @@
 		8DD19DD060CE45D0B0FDB492 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Mobile/SplashScreen.storyboard; sourceTree = "<group>"; };
 		AEA4723ADD49406FB9C617EE /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
+		B21F69FF26E5C90B00160A97 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		B21F6A0026E5C96F00160A97 /* Mobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Mobile-Bridging-Header.h"; sourceTree = "<group>"; };
+		B21F6A0126E5C97000160A97 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		B2AF399626CACDA8001E5A64 /* Bebas-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Bebas-Regular.ttf"; path = "../fonts/Bebas-Regular.ttf"; sourceTree = "<group>"; };
 		B2AF399C26CAD5F3001E5A64 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		B3C04DE8159E43C28F79396F /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
@@ -77,6 +81,8 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
+				B21F6A0126E5C97000160A97 /* File.swift */,
+				B21F6A0026E5C96F00160A97 /* Mobile-Bridging-Header.h */,
 			);
 			name = Mobile;
 			sourceTree = "<group>";
@@ -101,6 +107,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				B21F69FF26E5C90B00160A97 /* File.swift */,
 				B2AF399C26CAD5F3001E5A64 /* MaterialCommunityIcons.ttf */,
 				B2AF399626CACDA8001E5A64 /* Bebas-Regular.ttf */,
 				13B07FAE1A68108700A75B9A /* Mobile */,
@@ -198,7 +205,7 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 4AJCFSNGAD;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1250;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -350,6 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				B21F6A0226E5C97000160A97 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -395,6 +403,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.act.auth;
 				PRODUCT_NAME = Mobile;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Mobile-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -422,6 +431,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.act.auth;
 				PRODUCT_NAME = Mobile;
 				PROVISIONING_PROFILE_SPECIFIER = "20210902-act";
+				SWIFT_OBJC_BRIDGING_HEADER = "Mobile-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

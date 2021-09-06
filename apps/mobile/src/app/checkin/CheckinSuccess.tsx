@@ -7,6 +7,7 @@ import { Animated, Easing, Text, View } from 'react-native';
 import { Rows, Row, Column, Columns, Box } from '@mobily/stacks';
 import { heightPercentageToDP } from 'react-native-responsive-screen';
 import { formatTimestamp } from '../core/formatTimestamp';
+import { withCommas } from '../core/withCommas';
 
 export const CheckinSuccess = ({
   visible,
@@ -60,7 +61,7 @@ export const CheckinSuccess = ({
           <Columns>
             <Column>
               <Title style={{ alignSelf: 'center' }}>
-                {points.toLocaleString()}{' '}
+                {withCommas(points)}{' '}
                 {`point${points > 1 || points === 0 ? 's' : ''}`}
               </Title>
             </Column>

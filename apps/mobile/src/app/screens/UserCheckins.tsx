@@ -25,6 +25,7 @@ import { formatTimestamp } from '../core/formatTimestamp';
 import { SingleCheckin } from '../checkin/SingleCheckin';
 import { Achievement, CreateCheckin } from '@act/data/core';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
+import { withCommas } from '../core/withCommas';
 
 export const UserCheckins = () => {
   const { currentUser } = useActAuth();
@@ -186,7 +187,7 @@ export const UserCheckins = () => {
                           </Column>
                           <Column width="content">
                             <Chip
-                              title={achievement.points.toLocaleString()}
+                              title={withCommas(achievement.points)}
                             />
                           </Column>
                         </Columns>
@@ -208,7 +209,7 @@ export const UserCheckins = () => {
                 {achievements && (
                   <Column>
                     <Box alignX="right">
-                      <Chip title={total.toLocaleString()} />
+                      <Chip title={withCommas(total)} />
                     </Box>
                   </Column>
                 )}
@@ -221,6 +222,7 @@ export const UserCheckins = () => {
                     .filter((u) => u !== selectedUser)
                     .map((u) => (
                       <Chip
+                        key={u}
                         icon="account"
                         title={fullNamesByUser.get(u)}
                       />

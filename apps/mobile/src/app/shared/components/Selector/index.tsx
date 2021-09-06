@@ -22,6 +22,7 @@ import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useGlobalContext } from '../../../core/providers/GlobalContextProvider';
+import { withCommas } from '../../../core/withCommas';
 
 export type SelectedOption = {
   id: string;
@@ -291,7 +292,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
               ? () => (
                   <Chip
                     style={{ marginRight: 10 }}
-                    title={pointsCount.toLocaleString()}
+                    title={withCommas(pointsCount)}
                   />
                 )
               : undefined

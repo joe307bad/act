@@ -10,6 +10,7 @@ import {
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Theme } from 'react-native-paper/lib/typescript/types';
+import { withCommas } from '../core/withCommas';
 
 export class AchievementRowLiteComponent extends PureComponent<{
   item: Achievement;
@@ -42,7 +43,7 @@ export class AchievementRowLiteComponent extends PureComponent<{
               </Column>
             )}
             <Column width="content">
-              <Chip title={points.toLocaleString()} />
+              <Chip title={withCommas(points)} />
             </Column>
           </Columns>
         </Box>
