@@ -234,7 +234,6 @@ const DrawerList: FC<
               (navigation as any).closeDrawer();
             }}
             labelStyle={{ fontFamily: 'Bebas-Regular' }}
-            //style={{ fontFamily: 'Bebas-Regular' }}
           >
             Logout
           </Button>

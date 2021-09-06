@@ -3,19 +3,21 @@ import {
   Surface,
   TouchableRipple
 } from 'react-native-paper';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Column, Columns, Row, Rows } from '@mobily/stacks';
-import db, { useActAuth } from '@act/data/rn';
+import db, { useActAuth, useSync } from '@act/data/rn';
 import { Alert, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
-import { format } from 'date-fns';
 import Chip from '../shared/components/Chip';
 import { isEmpty } from 'lodash';
 import { Dropdown } from '../shared/components/Dropdown';
 import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 import { formatTimestamp } from '../core/formatTimestamp';
+import { SingleCheckin } from '../checkin/SingleCheckin';
+import { Achievement, CreateCheckin } from '@act/data/core';
+import { CheckinSuccess } from '../checkin/CheckinSuccess';
 
 export const UserCheckins = () => {
   const { currentUser } = useActAuth();
@@ -29,6 +31,12 @@ export const UserCheckins = () => {
     achievementsByCheckin
   } = useGlobalContext();
   const achievementsById = achievementsByCategory[1].get('all');
+  const [selectedAchievement, setSelectedAchievement] =
+    useState<Achievement>();
+  const [note, setNote] = useState('');
+  const [confirmedCheckin, setConfirmedCheckin] =
+    useState<CreateCheckin>();
+  const { sync, syncStatus } = useSync();
 
   const confirmDeletion = (confirmDelete) =>
     Alert.alert(
@@ -36,6 +44,13 @@ export const UserCheckins = () => {
       'Are you sure you want to delete this checkin user?',
       [{ text: 'Yes', onPress: confirmDelete }, { text: 'No' }]
     );
+
+  useEffect(() => {
+    if (confirmedCheckin) {
+      console.log(confirmedCheckin);
+      db.models.checkins.create(confirmedCheckin).then(() => sync());
+    }
+  }, [confirmedCheckin]);
 
   const RenderItem = ({ item }) => {
     const [checkinId, checkinUserId] = item;
@@ -131,34 +146,42 @@ export const UserCheckins = () => {
                     }
                     return [
                       ...acc,
-                      <Columns
+                      <TouchableRipple
                         key={i}
-                        space={2}
-                        alignY="center"
-                        style={{ padding: 4 }}
+                        onPress={() =>
+                          setSelectedAchievement(achievement)
+                        }
                       >
-                        <Column
-                          width="content"
-                          height="fluid"
-                          style={{ justifyContent: 'center' }}
+                        <Columns
+                          space={2}
+                          alignY="center"
+                          style={{ padding: 4 }}
                         >
-                          <MaterialCommunityIcons
-                            name={`numeric-${count}-box`}
-                            color={theme.colors.primary}
-                            size={25}
-                          />
-                        </Column>
-                        <Column style={{ justifyContent: 'center' }}>
-                          <Text numberOfLines={3}>
-                            {achievement.name}
-                          </Text>
-                        </Column>
-                        <Column width="content">
-                          <Chip
-                            title={achievement.points.toLocaleString()}
-                          />
-                        </Column>
-                      </Columns>
+                          <Column
+                            width="content"
+                            height="fluid"
+                            style={{ justifyContent: 'center' }}
+                          >
+                            <MaterialCommunityIcons
+                              name={`numeric-${count}-box`}
+                              color={theme.colors.primary}
+                              size={25}
+                            />
+                          </Column>
+                          <Column
+                            style={{ justifyContent: 'center' }}
+                          >
+                            <Text numberOfLines={3}>
+                              {achievement.name}
+                            </Text>
+                          </Column>
+                          <Column width="content">
+                            <Chip
+                              title={achievement.points.toLocaleString()}
+                            />
+                          </Column>
+                        </Columns>
+                      </TouchableRipple>
                     ];
                   }, [])}
               </Row>
@@ -191,37 +214,75 @@ export const UserCheckins = () => {
   const checkinsForUser = checkinsByUser.get(selectedUser);
 
   return (
-    <Rows>
-      <Row height="content">
-        <Surface style={{ elevation: 2 }}>
-          <Dropdown
-            fullWidth
-            value={selectedUser}
-            onValueChange={(v) => setSelectedUser(v)}
-            items={Array.from(fullNamesByUser).map(
-              ([userId, fullName]) => ({
-                label: fullName,
-                value: userId
-              })
-            )}
-            padding={3}
-          />
-        </Surface>
-      </Row>
-      <Row>
-        <Box padding={2} paddingBottom={0} paddingTop={0}>
-          {checkinsForUser && (
-            <FlatList
-              data={Array.from(checkinsForUser)}
-              contentContainerStyle={{
-                paddingTop: 5
-              }}
-              renderItem={RenderItem}
-              keyExtractor={([c]) => c}
+    <>
+      <Rows>
+        <Row height="content">
+          <Surface style={{ elevation: 2 }}>
+            <Dropdown
+              fullWidth
+              value={selectedUser}
+              onValueChange={(v) => setSelectedUser(v)}
+              items={Array.from(fullNamesByUser).map(
+                ([userId, fullName]) => ({
+                  label: fullName,
+                  value: userId
+                })
+              )}
+              padding={3}
             />
-          )}
-        </Box>
-      </Row>
-    </Rows>
+          </Surface>
+        </Row>
+        <Row>
+          <Box padding={2} paddingBottom={0} paddingTop={0}>
+            {checkinsForUser && (
+              <FlatList
+                data={Array.from(checkinsForUser)}
+                contentContainerStyle={{
+                  paddingTop: 5
+                }}
+                renderItem={RenderItem}
+                keyExtractor={([c]) => c}
+              />
+            )}
+          </Box>
+        </Row>
+      </Rows>
+      <SingleCheckin
+        visible={!!selectedAchievement && !confirmedCheckin}
+        achievement={selectedAchievement}
+        disableSubmit={syncStatus === 'PROCESSING'}
+        note={note}
+        setNote={setNote}
+        onConfirm={async (note: string) => {
+          const checkin: CreateCheckin = {
+            achievementCounts: new Map([[selectedAchievement.id, 1]]),
+            insertProps: { note },
+            isAdmin: currentUser.admin,
+            points: selectedAchievement.points,
+            users: [currentUser.id]
+          };
+
+          setConfirmedCheckin({
+            ...checkin,
+            created: new Date()
+          });
+        }}
+        onDismiss={() => setSelectedAchievement(undefined)}
+      />
+      <CheckinSuccess
+        visible={!!confirmedCheckin}
+        onDismiss={() => {
+          setNote('');
+          setConfirmedCheckin(undefined);
+          setSelectedAchievement(undefined);
+        }}
+        numberOfAchievements={1}
+        points={confirmedCheckin?.points || 0}
+        timestamp={confirmedCheckin?.created}
+        note={confirmedCheckin?.insertProps?.note ?? ''}
+        userCount={confirmedCheckin?.users?.length}
+        dismissText="Dismiss"
+      />
+    </>
   );
 };

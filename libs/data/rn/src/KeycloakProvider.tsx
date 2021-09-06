@@ -41,7 +41,6 @@ const KeycloakProvider: FC = ({ children }) => {
   const [forceLogout, setForceLogout] =
     useState<boolean | undefined>();
   const loggingOut = useRef(false);
-  const sync = useSync();
 
   useEffect(() => {
     if (forceLogout === true && loggingOut.current === false) {

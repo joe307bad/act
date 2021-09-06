@@ -100,11 +100,11 @@ export default () => (
     <GlobalContextProvider>
       <Provider theme={theme}>
         <EnvironmentProvider>
-          <SyncProvider>
-            <KeycloakProvider>
+          <KeycloakProvider>
+            <SyncProvider>
               <Root.make />
-            </KeycloakProvider>
-          </SyncProvider>
+            </SyncProvider>
+          </KeycloakProvider>
         </EnvironmentProvider>
       </Provider>
     </GlobalContextProvider>

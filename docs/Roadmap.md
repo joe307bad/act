@@ -51,14 +51,14 @@
 - ✅ **[MOBILE]** - Bitrise pipeline for Android
 - ✅ **[OPS]** - Publicly accessible services behind HTTPS
 
-## Alpha issues
-- [ ] **[MOBILE]** - Side menu shows last synced timestamp and loading icon when syncing (should not be able to run concurrent sync commands)
-- [ ] **[MOBILE]** - add Bugsnag.notify to failed sync requests
+## Alpha issues(should not be able to run concurrent sync commands)
+
 - [ ] **[MOBILE]** - editing checkin note on the Achievements page does not push up text input on iOS
-- [ ] **[MOBILE]** - View Achievement detail from User Checkins screen
-- [ ] **[MOBILE]** - View Achievement detail Achievements by User on Leaderboard Screen
 - [ ] **[MOBILE]** - Show users asociated with checkins in UserCheckins. So when there are multi-user checkins, a user can see what other users were grouped into that checkin when they're viewing their checkins on UserCheckins.
-- [ ] **[MOBILE]** - Implement versioning in Bitrise
+- ✅ **[MOBILE]** - add Bugsnag.notify to failed sync requests
+- ✅ **[MOBILE]** - View Achievement detail Achievements by User on Leaderboard Screen
+- ✅ **[MOBILE]** - View Achievement detail from User Checkins screen
+- ✅ **[MOBILE]** - Side menu shows last synced timestamp and loading icon when syncing 
 - ✅ **[MOBILE]** - Allow for achievement photos to show in the SingleCheckin component of the Achievements screen
 - ✅ **[MOBILE]** - Way of switching over to clean DB after launch
 - ✅ **[MOBILE]** - iOS deployment
@@ -85,6 +85,7 @@
 
 ## Beyond
 
+- [ ] **[MOBILE]** - Implement versioning in Bitrise
 - [ ] **[MOBILE]** - Checkin to an checkin with multiple achievements from User Checkins
 - [ ] **[MOBILE]** - Pinned achievements (single achievements and from the Checkin Builder)
 - [ ] **[MOBILE]** - Bitrise pipeline for iOS

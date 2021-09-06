@@ -26,9 +26,9 @@ export class SyncService {
 
         const response = await fetch(
           `${apiUrl}/sync?${urlParams}`
-        ).catch((e) => Promise.reject());
+        ).catch((e) => Promise.reject(e));
         if (!response.ok) {
-          return Promise.reject();
+          return Promise.reject(new Error('!response.ok'));
         }
 
         const { changes, timestamp } = await response.json();
@@ -42,7 +42,7 @@ export class SyncService {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(changes)
-        }).catch((e) => Promise.reject()),
+        }).catch((e) => Promise.reject(e)),
       migrationsEnabledAtVersion: 1
     }).then(() => this._lastPulledAt);
   };

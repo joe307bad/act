@@ -5,9 +5,10 @@ import React, {
   useContext,
   useState
 } from 'react';
-import db from './index';
+import db, { useActAuth } from './index';
 import { useEnvironment } from './EnvironmentProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Bugsnag from '@bugsnag/react-native';
 
 export const SyncProviderContext =
   createContext<{
@@ -25,6 +26,7 @@ export const SyncProvider: FC = ({ children }) => {
   const { apiUrl } = useEnvironment();
   const [lastPulledAt, setLastPulledAt] = useState<number>();
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('INITIAL');
+  const { currentUser } = useActAuth();
   const sync = (retryCount = 0) => {
     if (syncProcessing.current && retryCount === 0) {
       return Promise.resolve({ rejectSyncGracefully: true });
@@ -45,12 +47,20 @@ export const SyncProvider: FC = ({ children }) => {
         setSyncStatus('SUCCESS');
         return Promise.resolve({ rejectSyncGracefully: false });
       })
-      .catch(() => {
+      .catch((err) => {
         if (retryCount === 0) {
           return sync(1);
         } else {
           syncProcessing.current = false;
           setSyncStatus('FAILURE');
+          Bugsnag.notify(
+            new Error(
+              `Sync failed for ${currentUser.username} ${currentUser.id}`
+            ),
+            (e) => {
+              e.addMetadata('errorFromCatch', err?.toString());
+            }
+          );
           return Promise.resolve({ rejectSyncGracefully: true });
         }
       });
