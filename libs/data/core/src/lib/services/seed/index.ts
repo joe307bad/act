@@ -242,8 +242,9 @@ export class SeedService {
   ) => {
     const allAchievements = await this._achievements.query().fetch();
 
-    const [_, insertAchievements] = partition(achievements, (a) =>
-      allAchievements.find((aa) => a.name === aa.name)
+    const [updateAcheivements, insertAchievements] = partition(
+      achievements,
+      (a) => allAchievements.find((aa) => a.name === aa.name)
     );
 
     return this._db.action((action) =>
@@ -260,6 +261,21 @@ export class SeedService {
             r.enabled = a.enabled;
             r.category.set(category);
           })
+        ),
+        ...updateAcheivements.map((a) =>
+          allAchievements
+            .find((aa) => aa.name === a.name)
+            .prepareUpdate((m) => {
+              const category = categories.find(
+                (c) => c.name === a.category
+              );
+              m.description = a.description ?? m.description;
+              m.photo = a.photo ?? m.photo;
+              m.points = a.points ?? m.points;
+              m.name = a.name ?? m.name;
+              m.enabled = a.enabled ?? m.enabled;
+              category && m.category.set(category);
+            })
         )
       )
     );
