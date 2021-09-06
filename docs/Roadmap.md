@@ -54,7 +54,7 @@
 ## Alpha issues(should not be able to run concurrent sync commands)
 
 - [ ] **[MOBILE]** - editing checkin note on the Achievements page does not push up text input on iOS
-- [ ] **[MOBILE]** - Show users asociated with checkins in UserCheckins. So when there are multi-user checkins, a user can see what other users were grouped into that checkin when they're viewing their checkins on UserCheckins.
+- ✅ **[MOBILE]** - Show users asociated with checkins in UserCheckins. So when there are multi-user checkins, a user can see what other users were grouped into that checkin when they're viewing their checkins on UserCheckins.
 - ✅ **[MOBILE]** - add Bugsnag.notify to failed sync requests
 - ✅ **[MOBILE]** - View Achievement detail Achievements by User on Leaderboard Screen
 - ✅ **[MOBILE]** - View Achievement detail from User Checkins screen

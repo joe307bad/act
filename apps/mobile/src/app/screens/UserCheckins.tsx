@@ -4,7 +4,14 @@ import {
   TouchableRipple
 } from 'react-native-paper';
 import React, { useEffect, useState } from 'react';
-import { Box, Column, Columns, Row, Rows } from '@mobily/stacks';
+import {
+  Box,
+  Column,
+  Columns,
+  Inline,
+  Row,
+  Rows
+} from '@mobily/stacks';
 import db, { useActAuth, useSync } from '@act/data/rn';
 import { Alert, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -28,7 +35,8 @@ export const UserCheckins = () => {
     checkinsByUser,
     fullNamesByUser,
     checkinsById,
-    achievementsByCheckin
+    achievementsByCheckin,
+    usersByCheckin
   } = useGlobalContext();
   const achievementsById = achievementsByCategory[1].get('all');
   const [selectedAchievement, setSelectedAchievement] =
@@ -56,6 +64,7 @@ export const UserCheckins = () => {
     const [checkinId, checkinUserId] = item;
     const achievements = achievementsByCheckin.get(checkinId);
     const checkin = checkinsById.get(checkinId);
+    const usersForCheckin = usersByCheckin.get(checkinId);
 
     const total = !achievements
       ? 0
@@ -205,6 +214,20 @@ export const UserCheckins = () => {
                 )}
               </Columns>
             </Row>
+            {usersForCheckin.length > 1 && (
+              <Row width="content">
+                <Inline>
+                  {usersForCheckin
+                    .filter((u) => u !== selectedUser)
+                    .map((u) => (
+                      <Chip
+                        icon="account"
+                        title={fullNamesByUser.get(u)}
+                      />
+                    ))}
+                </Inline>
+              </Row>
+            )}
           </Rows>
         </Surface>
       </Box>
