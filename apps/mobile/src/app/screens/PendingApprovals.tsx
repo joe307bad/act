@@ -29,7 +29,8 @@ const PendingApprovalsComponent: FC<{
     fullNamesByUser,
     usersByCheckin
   } = useGlobalContext();
-  const achievements = achievementsByCategory.get('all');
+  const [_, allAchievements] = achievementsByCategory;
+  const achievements = allAchievements.get('all');
 
   useEffect(() => {
     setPendingApprovals(
