@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import ReallyAwesomeButton from 'react-native-really-awesome-button';
 import { Headline, useTheme } from 'react-native-paper';
 
@@ -34,12 +34,13 @@ export const AwesomeButtonMedium = ({
 }) => {
   const { colors } = useTheme();
   const outlined = type === 'outlined';
+  const op = useCallback(() => !disabled && onPress(), []);
   return (
     <ReallyAwesomeButton
       stretch
       backgroundColor={disabled ? '#676B6D' : colors.primary}
       backgroundDarker="#3809C3"
-      onNativePress={() => !disabled && onPress()}
+      onNativePress={op}
       height={50}
       style={style}
       disabled={disabled}
@@ -74,13 +75,14 @@ export const AwesomeButtonSmall = ({
 }) => {
   const { colors } = useTheme();
   const outlined = type === 'outlined';
+  const op = useCallback(() => !disabled && onPress(), []);
   return (
     <ReallyAwesomeButton
       stretch
       springRelease={false}
       backgroundColor={disabled ? '#676B6D' : colors.primary}
       backgroundDarker="#3809C3"
-      onNativePress={() => !disabled && onPress()}
+      onNativePress={op}
       style={style}
       disabled={disabled}
       {...(outlined

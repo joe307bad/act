@@ -101,7 +101,7 @@ const NavBar: (
           }
         />
       )}
-      <Appbar.Action icon="refresh-circle" onPress={() => sync()} />
+      <Appbar.Action icon="refresh-circle" onPress={() => {}} />
       <Appbar.Action
         icon="menu"
         onPress={() => (navigation as any).openDrawer()}

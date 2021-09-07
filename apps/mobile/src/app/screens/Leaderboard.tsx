@@ -6,8 +6,8 @@ import {
   Columns,
   Box
 } from '@mobily/stacks';
-import React, { FC, useState, useEffect } from 'react';
-import { ScrollView } from 'react-native';
+import React, { FC, useState, useEffect, useCallback } from 'react';
+import { InteractionManager, ScrollView } from 'react-native';
 import {
   Headline,
   Surface,
@@ -20,6 +20,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Chip from '../shared/components/Chip';
 import { UserAchievements } from '../achievement/UserAchievements';
 import { useGlobalContext } from '../core/providers/GlobalContextProvider';
+import { useFocusEffect } from '@react-navigation/core';
 
 const LeaderboardItem: FC<{
   name: string;
@@ -128,78 +129,83 @@ export const Leaderboard: FC = () => {
   const [selectedUser, setSelectedUser] = useState<string>();
   const [userAchievementsVisible, setUserAchievementsVisible] =
     useState(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        if (checkinsByUser.size > 0) {
+          const { leaderboardItems, achievementsByUser: abu } =
+            Array.from(checkinsByUser).reduce(
+              (acc, userCheckins) => {
+                const [userId, checkins] = userCheckins;
+                acc.achievementsByUser.set(userId, new Map());
+                const userAchievements =
+                  acc.achievementsByUser.get(userId);
 
-  useEffect(() => {
-    if (checkinsByUser.size > 0) {
-      const { leaderboardItems, achievementsByUser: abu } =
-        Array.from(checkinsByUser).reduce(
-          (acc, userCheckins) => {
-            const [userId, checkins] = userCheckins;
-            acc.achievementsByUser.set(userId, new Map());
-            const userAchievements =
-              acc.achievementsByUser.get(userId);
+                const totalForCheckins = Array.from(
+                  checkins.keys()
+                ).reduce((acc, checkinId) => {
+                  const achievementsForCheckin =
+                    achievementsByCheckin.get(checkinId);
 
-            const totalForCheckins = Array.from(
-              checkins.keys()
-            ).reduce((acc, checkinId) => {
-              const achievementsForCheckin =
-                achievementsByCheckin.get(checkinId);
+                  const checkinApproved =
+                    checkinsById.get(checkinId)?.approved;
 
-              const checkinApproved =
-                checkinsById.get(checkinId)?.approved;
+                  if (!achievementsForCheckin || !checkinApproved) {
+                    return acc;
+                  }
 
-              if (!achievementsForCheckin || !checkinApproved) {
+                  const totalForAchievements = Array.from(
+                    achievementsForCheckin
+                  ).reduce((accc, [achievementId, count]) => {
+                    const achievement =
+                      achievementsById?.get(achievementId);
+                    if (!achievement) {
+                      return accc;
+                    }
+
+                    const userAlreadyHasAchievement =
+                      userAchievements.get(achievementId);
+
+                    if (userAlreadyHasAchievement) {
+                      userAchievements.set(
+                        achievementId,
+                        userAlreadyHasAchievement + count
+                      );
+                    } else {
+                      userAchievements.set(achievementId, count);
+                    }
+
+                    return accc + achievement.points * count;
+                  }, 0);
+                  return acc + totalForAchievements;
+                }, 0);
+                acc.achievementsByUser.set(userId, userAchievements);
+                acc.leaderboardItems.push({
+                  id: userId,
+                  name: fullNamesByUser.get(userId),
+                  points: totalForCheckins
+                });
                 return acc;
-              }
+              },
+              { leaderboardItems: [], achievementsByUser: new Map() }
+            );
 
-              const totalForAchievements = Array.from(
-                achievementsForCheckin
-              ).reduce((accc, [achievementId, count]) => {
-                const achievement =
-                  achievementsById?.get(achievementId);
-                if (!achievement) {
-                  return accc;
-                }
+          setLeaderboard(
+            leaderboardItems.sort((a, b) => b.points - a.points)
+          );
+          setAchievementsByUser(abu);
+        }
+      });
 
-                const userAlreadyHasAchievement =
-                  userAchievements.get(achievementId);
-
-                if (userAlreadyHasAchievement) {
-                  userAchievements.set(
-                    achievementId,
-                    userAlreadyHasAchievement + count
-                  );
-                } else {
-                  userAchievements.set(achievementId, count);
-                }
-
-                return accc + achievement.points * count;
-              }, 0);
-              return acc + totalForAchievements;
-            }, 0);
-            acc.achievementsByUser.set(userId, userAchievements);
-            acc.leaderboardItems.push({
-              id: userId,
-              name: fullNamesByUser.get(userId),
-              points: totalForCheckins
-            });
-            return acc;
-          },
-          { leaderboardItems: [], achievementsByUser: new Map() }
-        );
-
-      setLeaderboard(
-        leaderboardItems.sort((a, b) => b.points - a.points)
-      );
-      setAchievementsByUser(abu);
-    }
-  }, [
-    achievementsByCategory,
-    achievementsByCheckin,
-    checkinsByUser,
-    categoriesById,
-    fullNamesByUser
-  ]);
+      return () => task.cancel();
+    }, [
+      achievementsByCategory,
+      achievementsByCheckin,
+      checkinsByUser,
+      categoriesById,
+      fullNamesByUser
+    ])
+  );
 
   return (
     <>

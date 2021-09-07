@@ -3,7 +3,7 @@ import {
   Surface,
   TouchableRipple
 } from 'react-native-paper';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Column,
@@ -30,6 +30,14 @@ export const UserCheckins = () => {
   const { currentUser } = useActAuth();
   const theme = useTheme();
   const [selectedUser, setSelectedUser] = useState(currentUser.id);
+  // const {
+  //   achievementsByCategory,
+  //   checkinsByUser,
+  //   fullNamesByUser,
+  //   checkinsById,
+  //   achievementsByCheckin,
+  //   usersByCheckin
+  // } = useGlobalContext();
   const {
     achievementsByCategory,
     checkinsByUser,
@@ -37,7 +45,15 @@ export const UserCheckins = () => {
     checkinsById,
     achievementsByCheckin,
     usersByCheckin
-  } = useGlobalContext();
+  } = {
+    achievementsByCategory: [new Map(), new Map()],
+    checkinsByUser: new Map(),
+    fullNamesByUser: new Map(),
+    checkinsById: new Map(),
+    achievementsByCheckin: new Map(),
+    usersByCheckin: new Map()
+  };
+
   const achievementsById = achievementsByCategory[1].get('all');
   const [selectedAchievement, setSelectedAchievement] =
     useState<Achievement>();
@@ -46,12 +62,15 @@ export const UserCheckins = () => {
     useState<CreateCheckin>();
   const { sync, syncStatus } = useSync();
 
-  const confirmDeletion = (confirmDelete) =>
-    Alert.alert(
-      'Confirm Checkin User Deletion',
-      'Are you sure you want to delete this checkin user?',
-      [{ text: 'Yes', onPress: confirmDelete }, { text: 'No' }]
-    );
+  const confirmDeletion = useCallback(
+    (confirmDelete) =>
+      Alert.alert(
+        'Confirm Checkin User Deletion',
+        'Are you sure you want to delete this checkin user?',
+        [{ text: 'Yes', onPress: confirmDelete }, { text: 'No' }]
+      ),
+    []
+  );
 
   useEffect(() => {
     if (confirmedCheckin) {
@@ -221,6 +240,7 @@ export const UserCheckins = () => {
                     .filter((u) => u !== selectedUser)
                     .map((u) => (
                       <Chip
+                        key={u}
                         icon="account"
                         title={fullNamesByUser.get(u)}
                       />

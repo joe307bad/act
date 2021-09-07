@@ -57,6 +57,7 @@
     "@react-navigation/stack": "^5.14.5",
     "@rescript-react-native/paper": "git+https://github.com/joe307bad/paper.git#7094294a446eff99f9edf57bd30a09d96a04d0a2",
     "@rescript/react": "0.10.1",
+    "@welldone-software/why-did-you-render": "^6.2.1",
     "bs-fetch": "0.6.2",
     "change-case": "^4.1.2",
     "core-js": "^3.6.5",

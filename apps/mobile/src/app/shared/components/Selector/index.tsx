@@ -2,9 +2,18 @@ import React, {
   useState,
   PropsWithChildren,
   ReactElement,
-  useEffect
+  useEffect,
+  useCallback,
+  PureComponent,
+  FC,
+  useMemo
 } from 'react';
-import { GestureResponderEvent, Pressable, Text } from 'react-native';
+import {
+  GestureResponderEvent,
+  InteractionManager,
+  Pressable,
+  Text
+} from 'react-native';
 import { Avatar, Card, Surface, useTheme } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../../AwesomeButton';
 import Modal from '../Modal';
@@ -22,6 +31,7 @@ import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useGlobalContext } from '../../../core/providers/GlobalContextProvider';
+import { useFocusEffect } from '@react-navigation/native';
 
 export type SelectedOption = {
   id: string;
@@ -62,6 +72,51 @@ type RegularSelectorProps<T> = CommonSelectorProps & {
   optionSubtitleProperty?: keyof T;
 };
 
+class CloseButton extends PureComponent<{ op: any }> {
+  render() {
+    const { op } = this.props;
+    return (
+      <Pressable onPress={op}>
+        <MaterialCommunityIcons name="close-circle" size={20} />
+      </Pressable>
+    ); //<MaterialCommunityIcons name="close-circle" size={20} />;
+  }
+}
+
+const UserChip: FC<{
+  s: any;
+  fullNamesByUser: Map<any, any>;
+  op: any;
+}> = ({ s, fullNamesByUser, op }) => {
+  //const { s, fullNamesByUser, op, theme } = this.props;
+  const fnbu = useMemo(() => fullNamesByUser, []);
+  //const t = useMemo(() => theme, []);
+  return (
+    <Surface style={{ elevation: 3 }}>
+      <Columns
+        space={1}
+        style={{
+          padding: 5
+        }}
+      >
+        <Column width="content">
+          <Text>{fullNamesByUser.get(s)}</Text>
+        </Column>
+        <Column
+          width="content"
+          height="fluid"
+          style={{
+            justifyContent: 'center',
+            paddingRight: 5
+          }}
+        >
+          <CloseButton op={op} />
+        </Column>
+      </Columns>
+    </Surface>
+  );
+};
+
 function Selector<T extends BaseModel, C extends Category>(
   props: PropsWithChildren<TabbedSelectorProps<T, C>>
 ): ReactElement | null;
@@ -94,7 +149,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
     type = 'OPTIONS_LIST'
   } = props;
   const theme = useTheme();
-  const { fullNamesByUser } = useGlobalContext();
+  const { fullNamesByUser } = { fullNamesByUser: new Map() }; //useGlobalContext();
   const [selectorModalVisible, setSelectorModalVisible] =
     useState(false);
   const [selected, setSelected] = useState<
@@ -110,136 +165,172 @@ function Selector<T extends BaseModel, C extends Category = null>(
   const [hiddenOptions, setHiddenOptions] = useState(
     new Set<string>()
   );
-  const debouncedSearchCriteria = useDebounce(searchCriteria, 500);
+  const debouncedSearchCriteria = null; //useDebounce(searchCriteria, 500);
   const [selectedInfo, setSelectedInfo] = useState<{
     name?: string;
     description?: string;
   }>({});
   const [resetting, setResetting] = useState(false);
 
-  const calculatePointsTotal = (s: Map<string, SelectedOption>) =>
-    Array.from(s || []).reduce((acc, ps) => {
-      const [id, selectedItem] = ps;
-      return (acc +=
-        (selectedItem.count || 1) * selectedItem?.points);
-    }, 0);
+  const calculatePointsTotal = useCallback(
+    (s: Map<string, SelectedOption>) =>
+      Array.from(s || []).reduce((acc, ps) => {
+        const [id, selectedItem] = ps;
+        return (acc +=
+          (selectedItem.count || 1) * selectedItem?.points);
+      }, 0),
+    []
+  );
 
-  const debouncedPendingSelected = useDebounce(pendingSelected, 500);
+  const debouncedPendingSelected = null; //useDebounce(pendingSelected, 500);
 
-  useEffect(() => {
-    if (showPointCount) {
-      setPendingPointsCount(
-        calculatePointsTotal(
-          pendingSelected as Map<string, SelectedOption>
-        )
-      );
-    }
-  }, [debouncedPendingSelected]);
+  // useEffect(() => {
+  //   if (showPointCount) {
+  //     setPendingPointsCount(
+  //       calculatePointsTotal(
+  //         pendingSelected as Map<string, SelectedOption>
+  //       )
+  //     );
+  //   }
+  // }, [debouncedPendingSelected]);
 
-  useEffect(() => {
-    if (resetting) {
-      setResetting(false);
-      return;
-    }
+  useFocusEffect(
+    React.useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(() => {
+        if (resetting) {
+          setResetting(false);
+          return;
+        }
 
-    if (showPointCount) {
-      const achievementSelections = selected as Map<
-        string,
-        SelectedOption
-      >;
-      const points = calculatePointsTotal(achievementSelections);
-      setPointsCount(points);
-      type === 'TABBED_LIST' &&
-        onSelectorChange(
-          new Map(
-            Array.from(achievementSelections).map(
-              ([id, selectedOption]) => [id, selectedOption.count]
-            )
-          ),
-          points
-        );
-    }
-    type === 'OPTIONS_LIST' && onSelectorChange(selected as string[]);
-  }, [selected]);
+        if (showPointCount) {
+          const achievementSelections = selected as Map<
+            string,
+            SelectedOption
+          >;
+          const points = calculatePointsTotal(achievementSelections);
+          setPointsCount(points);
+          type === 'TABBED_LIST' &&
+            onSelectorChange(
+              new Map(
+                Array.from(achievementSelections).map(
+                  ([id, selectedOption]) => [id, selectedOption.count]
+                )
+              ),
+              points
+            );
+        }
+        type === 'OPTIONS_LIST' &&
+          onSelectorChange(selected as string[]);
+      });
 
-  useEffect(() => {
-    if (
-      typeof value !== 'undefined' &&
-      type === 'TABBED_LIST' &&
-      value?.size === 0
-    ) {
-      setResetting(true);
-      setPointsCount(0);
-      setPendingPointsCount(0);
-      setSelected(new Map());
-    }
+      return () => task.cancel();
+    }, [selected])
+  );
 
-    if (type === 'OPTIONS_LIST' && typeof value !== 'undefined') {
-      setSelected(value);
-    }
-  }, [value]);
+  // useEffect(() => {
+  //   if (
+  //     typeof value !== 'undefined' &&
+  //     type === 'TABBED_LIST' &&
+  //     value?.size === 0
+  //   ) {
+  //     setResetting(true);
+  //     setPointsCount(0);
+  //     setPendingPointsCount(0);
+  //     setSelected(new Map());
+  //   }
 
-  const { achievementsByCategory } = useGlobalContext();
+  //   if (type === 'OPTIONS_LIST' && typeof value !== 'undefined') {
+  //     setSelected(value);
+  //   }
+  // }, [value]);
 
-  useEffect(() => {
-    if (isEmpty(debouncedSearchCriteria)) {
-      setHiddenOptions(new Set());
-    } else {
-      const achievements = Array.from(
-        achievementsByCategory[1].get('all')?.values()
-      );
-      setHiddenOptions(
-        new Set(
-          achievements
-            .filter(
-              (a) =>
-                a.name
-                  .toUpperCase()
-                  .search(debouncedSearchCriteria.toUpperCase()) ===
-                -1
-            )
-            .map((a) => a.id)
-        )
-      );
-    }
-  }, [debouncedSearchCriteria]);
+  const { achievementsByCategory } = {
+    achievementsByCategory: new Map()
+  }; //useGlobalContext();
 
-  const onTabbedListChange = (
-    selectedAchievements: Map<string, Achievement>,
-    itemsCount: Map<string, number>
-  ) => {
-    setPendingSelected(
-      new Map(
-        Array.from(selectedAchievements).map(([id, a]) => {
-          return [
-            id,
-            {
+  // useEffect(() => {
+  //   if (isEmpty(debouncedSearchCriteria)) {
+  //     setHiddenOptions(new Set());
+  //   } else {
+  //     const achievements = Array.from(
+  //       achievementsByCategory[1].get('all')?.values()
+  //     );
+  //     setHiddenOptions(
+  //       new Set(
+  //         achievements
+  //           .filter(
+  //             (a) =>
+  //               a.name
+  //                 .toUpperCase()
+  //                 .search(debouncedSearchCriteria.toUpperCase()) ===
+  //               -1
+  //           )
+  //           .map((a) => a.id)
+  //       )
+  //     );
+  //   }
+  // }, [debouncedSearchCriteria]);
+
+  const onTabbedListChange = useCallback(
+    (
+      selectedAchievements: Map<string, Achievement>,
+      itemsCount: Map<string, number>
+    ) => {
+      setPendingSelected(
+        new Map(
+          Array.from(selectedAchievements).map(([id, a]) => {
+            return [
               id,
-              display: a.name,
-              points: a.points,
-              count: itemsCount.get(id) ?? 1
-            }
-          ];
-        })
-      )
-    );
-  };
+              {
+                id,
+                display: a.name,
+                points: a.points,
+                count: itemsCount.get(id) ?? 1
+              }
+            ];
+          })
+        )
+      );
+    },
+    []
+  );
 
-  const onOptionsListChange = (
-    selectedOptions: Map<string, any> | string[]
-  ) => {
-    setPendingSelected(selectedOptions);
-  };
+  const onOptionsListChange = useCallback(
+    (selectedOptions: Map<string, any> | string[]) => {
+      setPendingSelected(selectedOptions);
+    },
+    []
+  );
+
+  const op = useCallback(() => {
+    setSelected((p) => {
+      const newSelected = new Set(p as string[]);
+      newSelected.delete(s);
+      return Array.from(newSelected);
+    });
+  }, []);
+
+  const sop = useCallback(() => setSelectorModalVisible(true), []);
+
+  const ss = useCallback(() => {
+    setSelected((p) => {
+      const newSelected = new Map(p as Map<string, SelectedOption>);
+      newSelected.delete(s[0]);
+      return newSelected;
+    });
+  }, []);
+
+  const a = useCallback(() => {
+    setSelected(pendingSelected);
+    setSelectorModalVisible(false);
+  }, []);
 
   return (
     <>
       <Modal
         title={`${single} Selector`}
         subtitle={`Select one or more ${plural.toLocaleLowerCase()} and then select Apply`}
-        apply={() => {
-          setSelected(pendingSelected);
-          setSelectorModalVisible(false);
-        }}
+        apply={a}
         onDismiss={() => setSelectorModalVisible(false)}
         visible={selectorModalVisible}
         fullHeight={fullHeight}
@@ -251,36 +342,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
         selectedItemTitle={selectedInfo.name}
         selectedItemDescription={selectedInfo.description}
         closeSelectedItemInfo={() => setSelectedInfo({})}
-      >
-        {type === 'OPTIONS_LIST' && (
-          <OptionList
-            defaultSelected={value}
-            onChange={onOptionsListChange}
-            data={data as T[]}
-            optionSubtitleProperty={
-              (optionSubtitleProperty as keyof T) || ''
-            }
-            optionTitleProperty={optionTitleProperty as keyof T}
-            selectable={selectable}
-            showCountDropdown={showCountDropdown}
-          />
-        )}
-        {type === 'TABBED_LIST' && (
-          <TabbedList
-            onChange={onTabbedListChange}
-            initialSelected={selected as Map<string, SelectedOption>}
-            optionSubtitleProperty={optionSubtitleProperty || ''}
-            selectable={selectable}
-            optionTitleProperty={optionTitleProperty}
-            showCountDropdown={showCountDropdown}
-            hiddenOptions={hiddenOptions}
-            showInfoButton={showInfoButton}
-            setSelectedInfo={(name, description) =>
-              setSelectedInfo({ name, description })
-            }
-          />
-        )}
-      </Modal>
+      ></Modal>
       <Card>
         <Card.Title
           title={title}
@@ -300,48 +362,14 @@ function Selector<T extends BaseModel, C extends Category = null>(
         <Card.Content style={{ display: 'flex' }}>
           {type === 'OPTIONS_LIST' ? (
             <Inline space={2}>
-              {((selected as string[]) || []).map((s, i) => {
-                return (
-                  <Surface key={i} style={{ elevation: 3 }}>
-                    <Columns
-                      space={1}
-                      style={{
-                        padding: 5
-                      }}
-                    >
-                      <Column width="content">
-                        <Text>{fullNamesByUser.get(s)}</Text>
-                      </Column>
-                      <Column
-                        width="content"
-                        height="fluid"
-                        style={{
-                          justifyContent: 'center',
-                          paddingRight: 5
-                        }}
-                      >
-                        <Pressable
-                          onPress={() => {
-                            setSelected((p) => {
-                              const newSelected = new Set(
-                                p as string[]
-                              );
-                              newSelected.delete(s);
-                              return Array.from(newSelected);
-                            });
-                          }}
-                        >
-                          <MaterialCommunityIcons
-                            name="close-circle"
-                            color={theme.colors.primary}
-                            size={20}
-                          />
-                        </Pressable>
-                      </Column>
-                    </Columns>
-                  </Surface>
-                );
-              })}
+              {(selected as string[]).map((s, i) => (
+                <UserChip
+                  fullNamesByUser={fullNamesByUser}
+                  op={op}
+                  key={i}
+                  s={s}
+                />
+              ))}
             </Inline>
           ) : (
             <Stack space={2}>
@@ -370,7 +398,6 @@ function Selector<T extends BaseModel, C extends Category = null>(
                         >
                           <MaterialCommunityIcons
                             name={`numeric-${count}-box`}
-                            color={theme.colors.primary}
                             size={25}
                           />
                         </Column>
@@ -386,23 +413,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
                           paddingRight: 5
                         }}
                       >
-                        <Pressable
-                          onPress={() => {
-                            setSelected((p) => {
-                              const newSelected = new Map(
-                                p as Map<string, SelectedOption>
-                              );
-                              newSelected.delete(s[0]);
-                              return newSelected;
-                            });
-                          }}
-                        >
-                          <MaterialCommunityIcons
-                            name="close-circle"
-                            color={theme.colors.primary}
-                            size={20}
-                          />
-                        </Pressable>
+                        <Pressable onPress={ss}></Pressable>
                       </Column>
                     </Columns>
                   </Surface>
@@ -412,10 +423,7 @@ function Selector<T extends BaseModel, C extends Category = null>(
           )}
         </Card.Content>
         <Card.Actions>
-          <AwesomeButtonMedium
-            type="outlined"
-            onPress={() => setSelectorModalVisible(true)}
-          >
+          <AwesomeButtonMedium type="outlined" onPress={sop}>
             Select {plural}
           </AwesomeButtonMedium>
         </Card.Actions>

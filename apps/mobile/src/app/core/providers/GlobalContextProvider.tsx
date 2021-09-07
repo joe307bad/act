@@ -85,15 +85,17 @@ const GlobalContextProviderComponent: FC<{
   >(new Map());
 
   useEffect(() => {
-    categories.push({ name: 'All', id: 'all' });
-    categories.push({ name: 'No Category', id: 'noCategory' });
-    setCategoriesById(
-      categories.reduce((acc, c) => acc.set(c.id, c), new Map())
-    );
+    categories?.push({ name: 'All', id: 'all' });
+    categories?.push({ name: 'No Category', id: 'noCategory' });
+    categories &&
+      setCategoriesById(
+        categories?.reduce((acc, c) => acc.set(c.id, c), new Map())
+      );
   }, [categories]);
 
   useEffect(() => {
-    if (users.length > 0) {
+    console.log('rendered');
+    if (users?.length > 0) {
       setFullNamesByUser(
         users.reduce(
           (acc, user) => acc.set(user.id, user.fullName),
@@ -195,55 +197,57 @@ const GlobalContextProviderComponent: FC<{
   };
 
   useEffect(() => {
-    const a = achievements.reduce(
-      (
-        acc: [
+    if (achievements) {
+      const a = achievements?.reduce(
+        (
+          acc: [
+            Map<string, Map<string, Achievement>>,
+            Map<string, Map<string, Achievement>>
+          ],
+          achievement: Achievement
+        ) => {
+          let [enabled, all] = acc;
+
+          (all = addToCategory(achievement, false, 'all', all)),
+            (enabled = addToCategory(
+              achievement,
+              true,
+              'all',
+              enabled
+            ));
+
+          if (achievement.category?.id === null) {
+            return [
+              addToCategory(achievement, true, 'noCategory', enabled),
+              addToCategory(achievement, false, 'noCategory', all)
+            ];
+          }
+
+          return [
+            addToCategory(
+              achievement,
+              true,
+              achievement.category.id || undefined,
+              enabled
+            ),
+            addToCategory(
+              achievement,
+              false,
+              achievement.category.id || undefined,
+              all
+            )
+          ];
+        },
+        [new Map(), new Map()]
+      );
+
+      setAchievementsByCategory(
+        a as [
           Map<string, Map<string, Achievement>>,
           Map<string, Map<string, Achievement>>
-        ],
-        achievement: Achievement
-      ) => {
-        let [enabled, all] = acc;
-
-        (all = addToCategory(achievement, false, 'all', all)),
-          (enabled = addToCategory(
-            achievement,
-            true,
-            'all',
-            enabled
-          ));
-
-        if (achievement.category?.id === null) {
-          return [
-            addToCategory(achievement, true, 'noCategory', enabled),
-            addToCategory(achievement, false, 'noCategory', all)
-          ];
-        }
-
-        return [
-          addToCategory(
-            achievement,
-            true,
-            achievement.category.id || undefined,
-            enabled
-          ),
-          addToCategory(
-            achievement,
-            false,
-            achievement.category.id || undefined,
-            all
-          )
-        ];
-      },
-      [new Map(), new Map()]
-    );
-
-    setAchievementsByCategory(
-      a as [
-        Map<string, Map<string, Achievement>>,
-        Map<string, Map<string, Achievement>>
-      ]
-    );
+        ]
+      );
+    }
   }, [achievements]);
 
   return (
@@ -262,31 +266,31 @@ const GlobalContextProviderComponent: FC<{
     </GlobalContext.Provider>
   );
 };
-
-export const GlobalContextProvider = withObservables([''], () => ({
-  achievements: db.get
-    .get<Achievement>('achievements')
-    .query()
-    .observeWithColumns(['name', 'points', 'category_id', 'photo'])
-    .pipe(map((as) => as.sort((a, b) => b.points - a.points))),
-  categories: db.get
-    .get<AchievementCategory>('achievement_categories')
-    .query()
-    .observeWithColumns(['name']),
-  checkins: db.get
-    .get<Checkin>('checkins')
-    .query()
-    .observeWithColumns(['approved']),
-  checkinUsers: db.get
-    .get<CheckinUser>('checkin_users')
-    .query()
-    .observe(),
-  checkinAchievements: db.get
-    .get<CheckinAchievement>('checkin_achievements')
-    .query()
-    .observeWithColumns(['count']),
-  users: db.get
-    .get<User>('users')
-    .query()
-    .observeWithColumns(['full_name'])
-}))(GlobalContextProviderComponent);
+export const GlobalContextProvider = GlobalContextProviderComponent;
+// withObservables([''], () => ({
+//   achievements: db.get
+//     .get<Achievement>('achievements')
+//     .query()
+//     .observeWithColumns(['name', 'points', 'category_id', 'photo'])
+//     .pipe(map((as) => as.sort((a, b) => b.points - a.points))),
+//   categories: db.get
+//     .get<AchievementCategory>('achievement_categories')
+//     .query()
+//     .observeWithColumns(['name']),
+//   checkins: db.get
+//     .get<Checkin>('checkins')
+//     .query()
+//     .observeWithColumns(['approved']),
+//   checkinUsers: db.get
+//     .get<CheckinUser>('checkin_users')
+//     .query()
+//     .observe(),
+//   checkinAchievements: db.get
+//     .get<CheckinAchievement>('checkin_achievements')
+//     .query()
+//     .observeWithColumns(['count']),
+//   users: db.get
+//     .get<User>('users')
+//     .query()
+//     .observeWithColumns(['full_name'])
+// }))(GlobalContextProviderComponent);

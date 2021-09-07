@@ -57,6 +57,7 @@
     "@bugsnag/react-native": "*",
     "react-native-config": "*",
     "rescript": "*",
-    "@bugsnag/source-maps": "*"
+    "@bugsnag/source-maps": "*",
+    "@welldone-software/why-did-you-render": "*"
   }
 }

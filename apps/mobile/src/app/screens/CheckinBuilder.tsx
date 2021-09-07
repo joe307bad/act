@@ -5,7 +5,7 @@ import {
 } from '@act/data/core';
 import db, { useActAuth, useSync } from '@act/data/rn';
 import Selector from '../shared/components/Selector';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { groupBy, sample, toPairs } from 'lodash';
 import { ScrollView } from 'react-native';
 import { Row, Rows, Stack } from '@mobily/stacks';
@@ -18,10 +18,10 @@ import Config from 'react-native-config';
 import { useFocusEffect } from '@react-navigation/native';
 
 const CheckinBuilder: FC = () => {
-  const users = db.useCollection<User>('users');
+  //const users = db.useCollection<User>('users');
 
-  const { currentUser } = useActAuth();
-  const { sync } = useSync();
+  const { currentUser } = { currentUser: { admin: true, id: '' } }; //useActAuth();
+  //const { sync } = useSync();
 
   const [checkin, setCheckin] = useState<CreateCheckin>({
     users: [currentUser.id],
@@ -31,26 +31,77 @@ const CheckinBuilder: FC = () => {
   const [numberOfAchievements, setNumberOfAchievements] = useState(0);
   const [enableCheckin, setEnableCheckin] = useState(true);
 
-  useEffect(() => {
-    checkin?.achievementCounts &&
-      setNumberOfAchievements(
-        Array.from(checkin?.achievementCounts).reduce((acc, item) => {
-          const [id, count] = item;
-          return acc + count;
-        }, 0)
-      );
-  }, [checkin?.achievementCounts]);
+  // useEffect(() => {
+  //   checkin?.achievementCounts &&
+  //     setNumberOfAchievements(
+  //       Array.from(checkin?.achievementCounts).reduce((acc, item) => {
+  //         const [id, count] = item;
+  //         return acc + count;
+  //       }, 0)
+  //     );
+  // }, [checkin?.achievementCounts]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      Config.RANDOM_CHECKIN_NOTE &&
-        setCheckin({
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     Config.RANDOM_CHECKIN_NOTE &&
+  //       setCheckin({
+  //         ...checkin,
+  //         insertProps: {
+  //           note: sample(Config.RANDOM_CHECKIN_NOTE.split('|'))
+  //         }
+  //       });
+  //   }, [])
+  // );
+
+  const op = useCallback(() => {
+    async () => {
+      const users = !currentUser.admin
+        ? [currentUser.id]
+        : checkin.users;
+      setCheckin({
+        ...checkin,
+        users,
+        created: new Date()
+      });
+      setCheckinCreated(true);
+      setEnableCheckin(false);
+      db.models.checkins
+        .create({
           ...checkin,
-          insertProps: {
-            note: sample(Config.RANDOM_CHECKIN_NOTE.split('|'))
-          }
+          users
+        })
+        .then(() => {
+          //sync().finally(() => setEnableCheckin(true));
         });
-    }, [])
+    };
+  }, []);
+
+  const oct = useCallback(
+    (text) =>
+      setCheckin({
+        ...checkin,
+        insertProps: { note: text }
+      }),
+    []
+  );
+
+  const osc = useCallback(
+    (achievementCounts: Map<string, number>, points: number) =>
+      setCheckin({
+        ...checkin,
+        achievementCounts,
+        points
+      }),
+    []
+  );
+
+  const osi = useCallback(
+    (selectedItems: string[]) =>
+      setCheckin({
+        ...checkin,
+        users: selectedItems
+      }),
+    []
   );
 
   return (
@@ -83,12 +134,7 @@ const CheckinBuilder: FC = () => {
                         }
                       }
                     }}
-                    onChangeText={(text) =>
-                      setCheckin({
-                        ...checkin,
-                        insertProps: { note: text }
-                      })
-                    }
+                    onChangeText={oct}
                   />
                 </Card.Content>
               </Card>
@@ -106,21 +152,11 @@ const CheckinBuilder: FC = () => {
                 showPointCount={true}
                 selectable={true}
                 showInfoButton={true}
-                onInfoButtonPress={() => {}}
-                onSelectorChange={(
-                  achievementCounts: Map<string, number>,
-                  points: number
-                ) =>
-                  setCheckin({
-                    ...checkin,
-                    achievementCounts,
-                    points
-                  })
-                }
+                onSelectorChange={osc}
               />
               {currentUser?.admin && (
                 <Selector<User>
-                  data={users}
+                  data={[]}
                   value={checkin?.users}
                   single="User"
                   plural="Users"
@@ -130,41 +166,14 @@ const CheckinBuilder: FC = () => {
                   title="Checkin Users"
                   subtitle="Select one or more users to checkin"
                   inlineTags={true}
-                  onSelectorChange={(selectedItems: string[]) =>
-                    setCheckin({
-                      ...checkin,
-                      users: selectedItems
-                    })
-                  }
+                  onSelectorChange={osi}
                 />
               )}
             </Stack>
           </ScrollView>
         </Row>
         <Row padding={1} height="content">
-          <AwesomeButtonMedium
-            disabled={!enableCheckin}
-            onPress={async () => {
-              const users = !currentUser.admin
-                ? [currentUser.id]
-                : checkin.users;
-              setCheckin({
-                ...checkin,
-                users,
-                created: new Date()
-              });
-              setCheckinCreated(true);
-              setEnableCheckin(false);
-              db.models.checkins
-                .create({
-                  ...checkin,
-                  users
-                })
-                .then(() =>
-                  sync().finally(() => setEnableCheckin(true))
-                );
-            }}
-          >
+          <AwesomeButtonMedium disabled={!enableCheckin} onPress={op}>
             Create Checkin
           </AwesomeButtonMedium>
         </Row>
@@ -195,4 +204,5 @@ const CheckinBuilder: FC = () => {
   );
 };
 
+CheckinBuilder.whyDidYouRender = true;
 export default CheckinBuilder;

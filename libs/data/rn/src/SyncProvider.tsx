@@ -3,7 +3,8 @@ import React, {
   createContext,
   useRef,
   useContext,
-  useState
+  useState,
+  useCallback
 } from 'react';
 import db, { useActAuth } from './index';
 import { useEnvironment } from './EnvironmentProvider';
@@ -27,7 +28,7 @@ export const SyncProvider: FC = ({ children }) => {
   const [lastPulledAt, setLastPulledAt] = useState<number>();
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('INITIAL');
   const { currentUser } = useActAuth();
-  const sync = (retryCount = 0) => {
+  const sync = useCallback((retryCount = 0) => {
     if (syncProcessing.current && retryCount === 0) {
       return Promise.resolve({ rejectSyncGracefully: true });
     }
@@ -64,7 +65,7 @@ export const SyncProvider: FC = ({ children }) => {
           return Promise.resolve({ rejectSyncGracefully: true });
         }
       });
-  };
+  }, []);
   return (
     <SyncProviderContext.Provider
       value={{ sync, lastPulledAt, syncStatus }}

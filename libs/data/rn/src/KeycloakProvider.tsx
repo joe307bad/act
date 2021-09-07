@@ -1,4 +1,10 @@
-import React, { FC, useState, useEffect, useRef } from 'react';
+import React, {
+  FC,
+  useState,
+  useEffect,
+  useRef,
+  useCallback
+} from 'react';
 import k, {
   RNKeycloak,
   ReactNativeKeycloakProvider
@@ -94,29 +100,31 @@ const KeycloakProvider: FC = ({ children }) => {
     return `${scheme}://io.act.host/`;
   })();
 
+  const onEvent = useCallback(async (ev) => {
+    if (ev === 'onAuthSuccess') {
+      const user = await db.models.users.insertIfDoesNotExist(
+        keycloak.idToken
+      );
+
+      if (!user) {
+        setForceLogout(true);
+        return;
+      }
+
+      loggingOut.current = false;
+      AsyncStorage.setItem('currentUserId', user.id);
+      setCurrentUser(user);
+      setForceLogout(undefined);
+    }
+  }, []);
+
   return (
     <ReactNativeKeycloakProvider
       authClient={keycloak}
       initOptions={{
         redirectUri: `${redirectUri}Achievements/`
       }}
-      onEvent={async (ev) => {
-        if (ev === 'onAuthSuccess') {
-          const user = await db.models.users.insertIfDoesNotExist(
-            keycloak.idToken
-          );
-
-          if (!user) {
-            setForceLogout(true);
-            return;
-          }
-
-          loggingOut.current = false;
-          AsyncStorage.setItem('currentUserId', user.id);
-          setCurrentUser(user);
-          setForceLogout(undefined);
-        }
-      }}
+      onEvent={onEvent}
     >
       <AuthContext.Provider
         value={{

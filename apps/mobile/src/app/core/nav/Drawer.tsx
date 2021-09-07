@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import {
   List,
@@ -34,6 +34,9 @@ const DrawerList: FC<
   const { currentUser } = useActAuth();
   const { sync, lastPulledAt: lpa, syncStatus } = useSync();
   const [lastPulledAt, setLastPulledAt] = useState<number>();
+  const nav = useCallback((screen) => {
+    navigation.navigate('Entry', { screen });
+  }, []);
 
   useEffect(() => {
     if (typeof lpa === 'undefined') {
@@ -60,9 +63,7 @@ const DrawerList: FC<
         </Box>
       </Stack>
       <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'CheckinBuilder' });
-        }}
+        onPress={() => nav('CheckinBuilder')}
         style={{
           borderBottomWidth: 1,
           borderTopWidth: 1,
@@ -90,9 +91,7 @@ const DrawerList: FC<
         )}
       />
       <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'Achievements' });
-        }}
+        onPress={() => nav('Achievements')}
         style={{
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.primary
@@ -120,9 +119,7 @@ const DrawerList: FC<
         )}
       />
       <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'Leaderboard' });
-        }}
+        onPress={() => nav('Leaderboard')}
         style={{
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.primary
@@ -148,9 +145,7 @@ const DrawerList: FC<
         )}
       />
       <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'UserCheckins' });
-        }}
+        onPress={() => nav('UserCheckins')}
         style={{
           borderBottomWidth: 1,
           borderBottomColor: theme.colors.primary
@@ -177,11 +172,7 @@ const DrawerList: FC<
       />
       {currentUser?.admin && (
         <List.Item
-          onPress={() => {
-            navigation.navigate('Entry', {
-              screen: 'PendingApprovals'
-            });
-          }}
+          onPress={() => nav('PendingApprovals')}
           style={{
             borderBottomWidth: 1,
             borderBottomColor: theme.colors.primary
