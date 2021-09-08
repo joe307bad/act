@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from 'react';
-import k, {
+import {
   RNKeycloak,
   ReactNativeKeycloakProvider
 } from '@react-keycloak/native';
@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import db from './';
 import { Platform } from 'react-native';
 import Config from 'react-native-config';
-import { useSync } from './SyncProvider';
 
 const keycloak = new RNKeycloak({
   url: `${Config.KEYCLOAK_URL ?? 'http://192.168.0.4:8080'}/auth`,

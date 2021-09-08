@@ -5,7 +5,6 @@ import { AchievementRowLite } from './AchievementRowLite';
 import { FlatList } from 'react-native';
 import { Surface } from 'react-native-paper';
 import { Dropdown } from '../shared/components/Dropdown';
-import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 
 const UserAchievementsTabbedList: FC<{
   userAchievementCounts: Map<string, number>;

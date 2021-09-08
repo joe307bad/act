@@ -3,11 +3,12 @@ import { Root } from '../../re/Index.bs';
 import {
   KeycloakProvider,
   SyncProvider,
-  EnvironmentProvider
+  EnvironmentProvider,
+  SettingsProvider,
+  GlobalContextProvider
 } from '@act/data/rn';
 import Bugsnag from '@bugsnag/react-native';
 import Config from 'react-native-config';
-import { GlobalContextProvider } from './core/providers/GlobalContextProvider';
 import { StacksProvider } from '@mobily/stacks';
 import { configureFonts, Provider } from 'react-native-paper';
 
@@ -78,13 +79,15 @@ var animation = {
 var colors = {
   primary: '#470FF4',
   accent: '#87FF65',
-  background: '#eae8ff',
+  background: 'white',
   surface: 'white',
   error: '#c83e4d',
   text: 'black',
   disabled: '#adacb5',
   placeholder: '#470FF4',
-  backdrop: 'rgba(0, 0, 0, 0.33)'
+  backdrop: 'rgba(0, 0, 0, 0.33)',
+  onSurface: 'white',
+  notification: '#470FF4'
 };
 
 var theme = {
@@ -96,17 +99,19 @@ var theme = {
 };
 
 export default () => (
-  <StacksProvider debug={false}>
-    <GlobalContextProvider>
-      <Provider theme={theme}>
-        <EnvironmentProvider>
-          <KeycloakProvider>
+  <KeycloakProvider>
+    <StacksProvider debug={false}>
+      <GlobalContextProvider>
+        <Provider theme={theme}>
+          <EnvironmentProvider>
             <SyncProvider>
-              <Root.make />
+              <SettingsProvider>
+                <Root.make />
+              </SettingsProvider>
             </SyncProvider>
-          </KeycloakProvider>
-        </EnvironmentProvider>
-      </Provider>
-    </GlobalContextProvider>
-  </StacksProvider>
+          </EnvironmentProvider>
+        </Provider>
+      </GlobalContextProvider>
+    </StacksProvider>
+  </KeycloakProvider>
 );

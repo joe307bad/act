@@ -1,23 +1,29 @@
 import React, { FC, useContext, useEffect, useState } from 'react';
-import { Achievement, CreateCheckin } from '@act/data/core';
+import {
+  Achievement,
+  CreateCheckin,
+  useDebounce
+} from '@act/data/core';
 import { FlatList } from 'react-native';
 import { SingleCheckin } from '../checkin/SingleCheckin';
-import db, { useActAuth, useSync } from '@act/data/rn';
+import db, {
+  useActAuth,
+  useSync,
+  useGlobalContext
+} from '@act/data/rn';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
 import { HeaderContext } from '../Entry';
-import { useDebounce } from '../shared/hooks/useDebounce';
 import { isEmpty } from 'lodash';
 import { AchievementRowLite } from '../achievement/AchievementRowLite';
 import { Rows, Row, Box, Columns, Column } from '@mobily/stacks';
 import {
   Surface,
-  Switch,
   TouchableRipple,
   useTheme
 } from 'react-native-paper';
 import { Dropdown } from '../shared/components/Dropdown';
-import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Switch } from '../shared/components/Switch';
 
 const Achievements: FC = () => {
   const theme = useTheme();
@@ -98,13 +104,6 @@ const Achievements: FC = () => {
                   <Column width="content">
                     <Switch
                       disabled={true}
-                      //onValueChange={() => setShowEnabled((p) => !p)}
-                      trackColor={{
-                        false: theme.colors.backdrop,
-                        true: theme.colors.backdrop
-                      }}
-                      thumbColor={theme.colors.primary}
-                      color={theme.colors.primary}
                       value={!showOnlyEnabled}
                     />
                   </Column>

@@ -4,24 +4,23 @@ import React, {
   ReactElement,
   useEffect
 } from 'react';
-import { GestureResponderEvent, Pressable, Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import { Avatar, Card, Surface, useTheme } from 'react-native-paper';
 import { AwesomeButtonMedium } from '../../../AwesomeButton';
 import Modal from '../Modal';
 import Chip from '../Chip';
-import { Achievement, BaseModel } from '@act/data/core';
+import { Achievement, BaseModel, useDebounce } from '@act/data/core';
 import {
   Category,
   TabbedList,
   TabbedListProps as TLP
 } from '../TabbedList';
 import { OptionList } from './OptionList';
-import { useDebounce } from '../../hooks/useDebounce';
 import { isEmpty } from 'lodash';
 import { Column, Columns, Inline, Stack } from '@mobily/stacks';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useGlobalContext } from '../../../core/providers/GlobalContextProvider';
+import { useGlobalContext } from '@act/data/rn';
 
 export type SelectedOption = {
   id: string;

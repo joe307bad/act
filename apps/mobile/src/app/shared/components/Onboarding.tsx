@@ -2,8 +2,6 @@ import { useSync, useEnvironment } from '@act/data/rn';
 import React, { useState } from 'react';
 import {
   useTheme,
-  ActivityIndicator,
-  Switch,
   Card,
   Headline,
   TouchableRipple
@@ -12,7 +10,6 @@ import { Text, Platform } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AwesomeButtonSmall } from '../../AwesomeButton';
 import {
-  Box,
   Column,
   Columns,
   FillView,
@@ -26,6 +23,7 @@ import { format } from 'date-fns';
 import { useKeycloak } from '@react-keycloak/native';
 import { formatTimestamp } from '../../core/formatTimestamp';
 import { SyncStatus } from './SyncStatus';
+import { Switch } from './Switch';
 
 const Onboarding = () => {
   const {
@@ -71,16 +69,7 @@ const Onboarding = () => {
                     paddingLeft={Platform.OS === 'ios' ? 2 : 0}
                     width="content"
                   >
-                    <Switch
-                      disabled={true}
-                      trackColor={{
-                        false: theme.colors.backdrop,
-                        true: theme.colors.backdrop
-                      }}
-                      thumbColor={theme.colors.primary}
-                      color={theme.colors.primary}
-                      value={usingTestEnvironment}
-                    />
+                    <Switch value={usingTestEnvironment} />
                   </Column>
                   <Column paddingLeft={2} width="content">
                     <Text>Test</Text>

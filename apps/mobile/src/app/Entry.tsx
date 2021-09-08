@@ -1,6 +1,7 @@
 import React, {
   createContext,
   ReactElement,
+  useCallback,
   useContext,
   useState
 } from 'react';
@@ -12,13 +13,12 @@ import {
 import { Appbar, useTheme } from 'react-native-paper';
 import CheckinBuilder from './screens/CheckinBuilder';
 import Achievements from './screens/Achievements';
-import db, { useSync } from '@act/data/rn';
+import db, { useSettings, useSync } from '@act/data/rn';
 import { Leaderboard } from './screens/Leaderboard';
 import { PendingApprovals } from './screens/PendingApprovals';
 import { UserCheckins } from './screens/UserCheckins';
-import * as ImagePicker from 'react-native-image-picker';
-import { request, PERMISSIONS } from 'react-native-permissions';
-import Config from 'react-native-config';
+import { CameraFab } from './shared/camera/CameraFab';
+import { Settings } from './screens/Settings';
 
 const Stack = createStackNavigator();
 export const HeaderContext =
@@ -109,59 +109,13 @@ const NavBar: (
   );
 };
 
-const selectPhotoTapped = async () => {
-  const options = {
-    title: 'Select Photo',
-    mediaType: 'photo' as ImagePicker.MediaType,
-    saveToPhotos: true,
-    storageOptions: {
-      skipBackup: true,
-      path: 'images'
-    }
-  };
-
-  await request(PERMISSIONS.ANDROID.CAMERA);
-
-  ImagePicker.launchCamera(options, (response) => {
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.errorMessage) {
-      console.log('ImagePicker Error: ', response.errorMessage);
-    } else {
-      const uri = response.assets[0].uri;
-      const type = response.assets[0].type;
-      const name = response.assets[0].fileName;
-
-      const data = new FormData();
-      data.append('file', {
-        name,
-        type,
-        uri
-      });
-      data.append('upload_preset', Config.CLOUDINARY_UPLOAD_PRESET);
-      fetch(Config.CLOUDINARY_ENDPOINT, {
-        method: 'POST',
-        body: data,
-        headers: {
-          'content-type': 'multipart/form-data'
-        }
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  });
-};
-
 const EntryStack = () => {
   const theme = useTheme();
   const [excludedPendingApprovals, setExcludedPendingApprovals] =
     useState<Set<string>>(new Set());
   const [searchCriteria, setSearchCriteria] = useState<string>('');
+  const { settingsManager } = useSettings();
+  const { hideCameraFab } = settingsManager ?? {};
   return (
     <>
       <HeaderContext.Provider
@@ -204,21 +158,14 @@ const EntryStack = () => {
             options={{ title: 'User Checkins' }}
             component={UserCheckins}
           />
+          <Stack.Screen
+            name="Settings"
+            options={{ title: 'Settings' }}
+            component={Settings}
+          />
         </Stack.Navigator>
       </HeaderContext.Provider>
-
-      <FAB
-        style={{
-          position: 'absolute',
-          margin: 16,
-          right: 0,
-          bottom: 0,
-          backgroundColor: theme.colors.primary
-        }}
-        color={'white'}
-        icon="camera"
-        onPress={selectPhotoTapped}
-      />
+      {!hideCameraFab && <CameraFab />}
     </>
   );
 };

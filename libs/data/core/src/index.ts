@@ -10,3 +10,4 @@ export * from './lib/services/checkins';
 
 // react
 export * from './lib/react/use-collection';
+export * from './lib/react/useDebounce';

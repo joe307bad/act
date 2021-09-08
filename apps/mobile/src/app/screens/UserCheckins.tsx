@@ -12,7 +12,11 @@ import {
   Row,
   Rows
 } from '@mobily/stacks';
-import db, { useActAuth, useSync } from '@act/data/rn';
+import db, {
+  useActAuth,
+  useSync,
+  useGlobalContext
+} from '@act/data/rn';
 import { Alert, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
@@ -20,7 +24,6 @@ import { FlatList } from 'react-native-gesture-handler';
 import Chip from '../shared/components/Chip';
 import { isEmpty } from 'lodash';
 import { Dropdown } from '../shared/components/Dropdown';
-import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 import { formatTimestamp } from '../core/formatTimestamp';
 import { SingleCheckin } from '../checkin/SingleCheckin';
 import { Achievement, CreateCheckin } from '@act/data/core';

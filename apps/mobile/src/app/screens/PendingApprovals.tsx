@@ -1,12 +1,11 @@
 import withObservables from '@nozbe/with-observables';
 import React, { FC, useContext, useEffect, useState } from 'react';
 import { OptionList } from '../shared/components/Selector/OptionList';
-import db from '@act/data/rn';
+import db, { useGlobalContext } from '@act/data/rn';
 import { Checkin } from '@act/data/core';
 import { Box, Row, Rows } from '@mobily/stacks';
 import { HeaderContext } from '../Entry';
 import { Headline } from 'react-native-paper';
-import { useGlobalContext } from '../core/providers/GlobalContextProvider';
 import { Q } from '@nozbe/watermelondb';
 import { format } from 'date-fns';
 

@@ -19,7 +19,7 @@ import { widthPercentageToDP } from 'react-native-responsive-screen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Chip from '../shared/components/Chip';
 import { UserAchievements } from '../achievement/UserAchievements';
-import { useGlobalContext } from '../core/providers/GlobalContextProvider';
+import { useGlobalContext } from '@act/data/rn';
 
 const LeaderboardItem: FC<{
   name: string;

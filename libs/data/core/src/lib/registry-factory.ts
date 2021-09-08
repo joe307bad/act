@@ -19,6 +19,7 @@ import { MockFactory } from 'mockingbird-ts';
 import { isString } from 'lodash';
 import { CheckinUsersService } from './services/checkin-users';
 import { CreateCheckinSeed } from './services/seed/CreateCheckinSeed';
+import { UploadsService } from './services/uploads';
 
 const seedWithMock = (seed: (args: SeedArgs) => void) => ({
   achievements: (numberOfAchievements: number) =>
@@ -49,7 +50,6 @@ export const registryFactory = (
   adapter,
   config?: { ACT_API_URL: string; KEYCLOAK_URL: string }
 ) => {
-  const { ACT_API_URL } = config || {};
   container.register('ContextService', ContextService);
   container.register('SyncService', SyncService);
   container.register('CommunitiesService', CommunitiesService);
@@ -63,7 +63,7 @@ export const registryFactory = (
 
   container.register('ActContext', {
     useFactory: instanceCachingFactory<ActContext>(() => {
-      return new ActContext(adapter, ACT_API_URL);
+      return new ActContext(adapter, config || {});
     })
   });
 
@@ -83,7 +83,8 @@ export const registryFactory = (
       achievements: new AchievementsService(),
       users: new UsersService(),
       checkins: new CheckinsService(),
-      checkinUsers: new CheckinUsersService()
+      checkinUsers: new CheckinUsersService(),
+      uploads: new UploadsService()
     }
   };
 };

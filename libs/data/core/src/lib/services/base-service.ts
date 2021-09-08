@@ -4,7 +4,7 @@ import { ActContext } from '../context';
 import { Deleted } from '../schema';
 import { camelCase } from 'change-case';
 
-export abstract class BaseService<T extends Model> {
+export class BaseService<T extends Model> {
   _collection: Collection<T>;
   _deletedCollection: Collection<Deleted>;
   _db: Database;
@@ -22,14 +22,14 @@ export abstract class BaseService<T extends Model> {
       .collections.get<Deleted>('deleted');
   }
 
-  insert = async (name: string) => {
+  async insert(name: string) {
     await this._db.action(
       async () =>
         await this._collection.create((m: any) => {
           m.name = name;
         })
     );
-  };
+  }
 
   insertWithProps = async (insertProps: {
     [key: string]: string | boolean;
@@ -101,5 +101,6 @@ export abstract class BaseService<T extends Model> {
     });
   };
 
-  find = async (id) => this._collection.find(id).catch((e) => e);
+  find = async (id): Promise<T> =>
+    this._collection.find(id).catch((e) => e);
 }

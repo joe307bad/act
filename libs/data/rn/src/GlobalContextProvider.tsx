@@ -4,6 +4,7 @@ import {
   Checkin,
   CheckinAchievement,
   CheckinUser,
+  SettingsManager,
   User
 } from '@act/data/core';
 import React, {
@@ -13,7 +14,7 @@ import React, {
   useEffect,
   useState
 } from 'react';
-import db from '@act/data/rn';
+import db, { useActAuth } from '@act/data/rn';
 import withObservables from '@nozbe/with-observables';
 import { map } from 'rxjs/operators';
 
@@ -28,6 +29,7 @@ type GlobalContext = {
   fullNamesByUser: Map<string, string>;
   checkinsById: Map<string, Checkin>;
   usersByCheckin: Map<string, string[]>;
+  currentUserSettings: Partial<SettingsManager>;
 };
 
 const GlobalContext = createContext<Partial<GlobalContext>>({
@@ -37,7 +39,8 @@ const GlobalContext = createContext<Partial<GlobalContext>>({
   achievementsByCheckin: new Map(),
   fullNamesByUser: new Map(),
   checkinsById: new Map(),
-  usersByCheckin: new Map()
+  usersByCheckin: new Map(),
+  currentUserSettings: {} as SettingsManager
 });
 
 export const useGlobalContext = () => useContext(GlobalContext);
@@ -84,6 +87,12 @@ const GlobalContextProviderComponent: FC<{
     Map<string, string[]>
   >(new Map());
 
+  const [currentUserSettings, setCurrentUserSettings] = useState<
+    Partial<SettingsManager>
+  >({});
+
+  const { currentUser } = useActAuth();
+
   useEffect(() => {
     categories.push({ name: 'All', id: 'all' });
     categories.push({ name: 'No Category', id: 'noCategory' });
@@ -91,6 +100,20 @@ const GlobalContextProviderComponent: FC<{
       categories.reduce((acc, c) => acc.set(c.id, c), new Map())
     );
   }, [categories]);
+
+  useEffect(() => {
+    if (users.length > 0 && currentUser?.id) {
+      console.log(users.find((u) => u.id === currentUser?.id));
+      try {
+        setCurrentUserSettings(
+          JSON.parse(
+            users.find((u) => u.id === currentUser?.id)?.settings ||
+              '[]'
+          )
+        );
+      } catch (e) {}
+    }
+  }, [users, currentUser]);
 
   useEffect(() => {
     if (users.length > 0) {
@@ -255,7 +278,8 @@ const GlobalContextProviderComponent: FC<{
         categoriesById,
         fullNamesByUser,
         checkinsById,
-        usersByCheckin
+        usersByCheckin,
+        currentUserSettings
       }}
     >
       {children}
@@ -267,7 +291,13 @@ export const GlobalContextProvider = withObservables([''], () => ({
   achievements: db.get
     .get<Achievement>('achievements')
     .query()
-    .observeWithColumns(['name', 'points', 'category_id', 'photo'])
+    .observeWithColumns([
+      'name',
+      'points',
+      'category_id',
+      'photo',
+      'enabled'
+    ])
     .pipe(map((as) => as.sort((a, b) => b.points - a.points))),
   categories: db.get
     .get<AchievementCategory>('achievement_categories')
@@ -288,5 +318,5 @@ export const GlobalContextProvider = withObservables([''], () => ({
   users: db.get
     .get<User>('users')
     .query()
-    .observeWithColumns(['full_name'])
+    .observeWithColumns(['full_name', 'settings'])
 }))(GlobalContextProviderComponent);

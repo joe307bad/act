@@ -20,6 +20,7 @@ export class User extends BaseModel {
   @field('photo') photo: string;
   @field('bio') bio: string;
   @field('admin') admin: boolean;
+  @field('settings') settings: string;
 
   @lazy
   checkins = this.collections

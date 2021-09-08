@@ -9,6 +9,11 @@ import {
   EnvironmentProvider
 } from './EnvironmentProvider';
 import { useSync, SyncProvider } from './SyncProvider';
+import { useSettings, SettingsProvider } from './SettingsProvider';
+import {
+  useGlobalContext,
+  GlobalContextProvider
+} from './GlobalContextProvider';
 
 export default registryFactory(
   new SQLiteAdapter(schemaAndMigrations),
@@ -18,6 +23,10 @@ export default registryFactory(
 const useActAuth = () => useContext(AuthContext);
 
 export {
+  useGlobalContext,
+  GlobalContextProvider,
+  useSettings,
+  SettingsProvider,
   KeycloakProvider,
   useActAuth,
   useEnvironment,

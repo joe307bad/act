@@ -14,8 +14,8 @@ import {
   DrawerContentOptions
 } from '@react-navigation/drawer';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
-import db, { useActAuth, useSync } from '@act/data/rn';
-import { Box, Stack } from '@mobily/stacks';
+import db, { useActAuth, useSettings, useSync } from '@act/data/rn';
+import { Box, Column, Columns, Stack } from '@mobily/stacks';
 import { useKeycloak } from '@react-keycloak/native';
 import KeycloakReactNativeClient from '@react-keycloak/native/lib/typescript/src/keycloak/client';
 import { formatTimestamp } from '../formatTimestamp';
@@ -34,6 +34,7 @@ const DrawerList: FC<
   const { currentUser } = useActAuth();
   const { sync, lastPulledAt: lpa, syncStatus } = useSync();
   const [lastPulledAt, setLastPulledAt] = useState<number>();
+  const { setSettingsManager } = useSettings();
 
   useEffect(() => {
     if (typeof lpa === 'undefined') {
@@ -209,8 +210,8 @@ const DrawerList: FC<
           )}
         />
       )}
-      <Stack space={2} padding={5}>
-        <Box>
+      <Stack space={2}>
+        <Box paddingTop={5} paddingX={5}>
           <AwesomeButtonMedium
             disabled={syncStatus === 'PROCESSING'}
             onPress={() => sync()}
@@ -228,15 +229,32 @@ const DrawerList: FC<
           </Box>
         )}
         <Box>
-          <Button
-            onPress={() => {
-              setForceLogout(true);
-              (navigation as any).closeDrawer();
-            }}
-            labelStyle={{ fontFamily: 'Bebas-Regular' }}
-          >
-            Logout
-          </Button>
+          <Columns>
+            <Column>
+              <Button
+                onPress={() => {
+                  setForceLogout(true);
+                  setSettingsManager(undefined);
+                  (navigation as any).closeDrawer();
+                }}
+                labelStyle={{ fontFamily: 'Bebas-Regular' }}
+              >
+                Logout
+              </Button>
+            </Column>
+            <Column>
+              <Button
+                onPress={() => {
+                  navigation.navigate('Entry', {
+                    screen: 'Settings'
+                  });
+                }}
+                labelStyle={{ fontFamily: 'Bebas-Regular' }}
+              >
+                Settings
+              </Button>
+            </Column>
+          </Columns>
         </Box>
       </Stack>
     </>

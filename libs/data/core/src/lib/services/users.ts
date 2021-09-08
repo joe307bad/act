@@ -12,6 +12,10 @@ type Token = {
   full_name?: string;
 };
 
+export type SettingsManager = {
+  hideCameraFab: boolean;
+};
+
 @autoInjectable()
 export class UsersService extends BaseService<User> {
   constructor(@inject('ActContext') private _context?: ActContext) {
@@ -73,6 +77,12 @@ export class UsersService extends BaseService<User> {
       fullName: full_name
     };
   }
+
+  updateSettings = (userId: string, settings: SettingsManager) => {
+    return this.updateWithProps(userId, {
+      settings: JSON.stringify(settings)
+    });
+  };
 
   getByKeycloakId = (keycloakId: string): Promise<User[]> =>
     this._collection
