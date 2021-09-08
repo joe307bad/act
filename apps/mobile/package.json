@@ -57,6 +57,8 @@
     "@bugsnag/react-native": "*",
     "react-native-config": "*",
     "rescript": "*",
-    "@bugsnag/source-maps": "*"
+    "@bugsnag/source-maps": "*",
+    "react-native-image-picker": "*",
+    "react-native-permissions": "*"
   }
 }

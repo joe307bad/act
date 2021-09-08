@@ -60,6 +60,10 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>act wants to access to your photo library</string>
+	<key>NSCameraUsageDescription</key>
+	<string>act wants to access to your camera</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Bebas-Regular.ttf</string>

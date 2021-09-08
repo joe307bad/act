@@ -207,7 +207,7 @@ android {
 
 dependencies {
     implementation project(':nozbe_watermelondb')
-     implementation project(':lottie-react-native')
+    implementation project(':lottie-react-native')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
