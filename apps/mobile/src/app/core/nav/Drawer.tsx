@@ -176,6 +176,34 @@ const DrawerList: FC<
           </View>
         )}
       />
+      <List.Item
+        onPress={() => {
+          navigation.navigate('Entry', { screen: 'Uploads' });
+        }}
+        style={{
+          borderBottomWidth: 1,
+          borderBottomColor: theme.colors.primary
+        }}
+        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+        descriptionStyle={{
+          fontFamily: 'Bebas-Regular'
+        }}
+        title={'Uploads'}
+        description={'View uploaded photos'}
+        left={(props) => (
+          <View
+            style={{
+              justifyContent: 'center'
+            }}
+          >
+            <MaterialCommunityIcons
+              name="camera"
+              color={theme.colors.primary}
+              size={40}
+            />
+          </View>
+        )}
+      />
       {currentUser?.admin && (
         <List.Item
           onPress={() => {

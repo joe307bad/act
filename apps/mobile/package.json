@@ -59,6 +59,7 @@
     "rescript": "*",
     "@bugsnag/source-maps": "*",
     "react-native-image-picker": "*",
-    "react-native-permissions": "*"
+    "react-native-permissions": "*",
+    "react-native-fast-image": "*"
   }
 }

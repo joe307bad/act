@@ -25,9 +25,6 @@ export const Settings = () => {
               />
             </Column>
           </Columns>
-          <Box>
-            <Text>{JSON.stringify(settingsManager)}</Text>
-          </Box>
         </Surface>
       </Box>
     </Stack>

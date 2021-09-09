@@ -19,6 +19,11 @@ import { PendingApprovals } from './screens/PendingApprovals';
 import { UserCheckins } from './screens/UserCheckins';
 import { CameraFab } from './shared/camera/CameraFab';
 import { Settings } from './screens/Settings';
+import { Uploads } from './screens/Uploads';
+import {
+  launchCamera,
+  launchImageLibrary
+} from './shared/camera/camera';
 
 const Stack = createStackNavigator();
 export const HeaderContext =
@@ -100,6 +105,18 @@ const NavBar: (
           }
         />
       )}
+      {scene.route.name === 'Uploads' && (
+        <Appbar.Action
+          icon="file-image-outline"
+          onPress={() => launchImageLibrary(sync)}
+        />
+      )}
+      {scene.route.name === 'Uploads' && (
+        <Appbar.Action
+          icon="camera-iris"
+          onPress={() => launchCamera(sync)}
+        />
+      )}
       <Appbar.Action icon="refresh-circle" onPress={() => sync()} />
       <Appbar.Action
         icon="menu"
@@ -162,6 +179,11 @@ const EntryStack = () => {
             name="Settings"
             options={{ title: 'Settings' }}
             component={Settings}
+          />
+          <Stack.Screen
+            name="Uploads"
+            options={{ title: 'Uploads' }}
+            component={Uploads}
           />
         </Stack.Navigator>
       </HeaderContext.Provider>

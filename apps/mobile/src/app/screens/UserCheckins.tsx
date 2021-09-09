@@ -58,7 +58,6 @@ export const UserCheckins = () => {
 
   useEffect(() => {
     if (confirmedCheckin) {
-      console.log(confirmedCheckin);
       db.models.checkins.create(confirmedCheckin).then(() => sync());
     }
   }, [confirmedCheckin]);

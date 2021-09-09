@@ -21,6 +21,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Category from '@material-ui/icons/Category';
 import People from '@material-ui/icons/People';
 import CheckCircle from '@material-ui/icons/CheckCircle';
+import Camera from '@material-ui/icons/Camera';
 import Button from '@material-ui/core/Button';
 import db from '@act/data/web';
 import {
@@ -37,6 +38,7 @@ import AchievementCategories from './pages/achievement-categories';
 import Achievements from './pages/achievement';
 import Users from './pages/users';
 import Checkins from './pages/checkins';
+import Uploads from './pages/uploads';
 
 const drawerWidth = 240;
 
@@ -78,7 +80,8 @@ enum PAGE {
   EVENTS = '/events',
   ACHIEVEMENT = '/achievements',
   USERS = '/users',
-  CHECKINS = '/checkins'
+  CHECKINS = '/checkins',
+  UPLOADS = '/uploads'
 }
 
 const ToolBarAndSideBar = ({ onClick }) => {
@@ -122,6 +125,10 @@ const ToolBarAndSideBar = ({ onClick }) => {
           title: 'Checkins',
           insertText: 'Add Checkin',
           insertFn: onClick
+        };
+      case PAGE.UPLOADS:
+        return {
+          title: 'Uploads'
         };
       default:
         return {} as CurrentPage;
@@ -237,6 +244,17 @@ const ToolBarAndSideBar = ({ onClick }) => {
             </ListItemIcon>
             <ListItemText primary={'Checkins'} />
           </ListItem>
+          <ListItem
+            component={Link}
+            to={PAGE.UPLOADS}
+            button
+            className={isActive(PAGE.UPLOADS)}
+          >
+            <ListItemIcon>
+              <Camera className={isActive(PAGE.UPLOADS)} />
+            </ListItemIcon>
+            <ListItemText primary={'Uploads'} />
+          </ListItem>
         </List>
         <Divider />
       </Drawer>
@@ -273,6 +291,9 @@ const App = () => {
           </Route>
           <Route path={PAGE.USERS}>
             <Users />
+          </Route>
+          <Route path={PAGE.UPLOADS}>
+            <Uploads />
           </Route>
           <Route path={PAGE.CHECKINS}>
             <Checkins

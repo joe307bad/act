@@ -11,30 +11,37 @@ export class UploadsService extends BaseService<Upload> {
     super(_context, 'uploads');
   }
 
-  insert = (photo: Photo | string) => {
-    const { name, type, uri } = photo as Photo;
-    const { endpoint, fullSizeUrl, thumbnailUrl, uploadPreset } =
-      this._context.getCloudinaryConfig();
-    const data = new FormData();
-    data.append('file', {
-      name,
-      type,
-      uri
-    });
-    data.append('upload_preset', uploadPreset);
-    return fetch(endpoint, {
-      method: 'POST',
-      body: data,
-      headers: {
-        'content-type': 'multipart/form-data'
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
+  insert = async (photo: Photo | string) => {
+    return new Promise<void>((resolve) => {
+      this._db.action(() => {
+        const { name, type, uri } = photo as Photo;
+        const { endpoint, fullSizeUrl, thumbnailUrl, uploadPreset } =
+          this._context.getCloudinaryConfig();
+        const data = new FormData();
+        data.append('file', {
+          name,
+          type,
+          uri
+        });
+        data.append('upload_preset', uploadPreset);
+        return fetch(endpoint, {
+          method: 'POST',
+          body: data,
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        })
+          .then((res) => res.json())
+          .then(({ public_id }) =>
+            this._collection.create((m) => {
+              m.name = public_id;
+            })
+          )
+          .then(() => resolve())
+          .catch((e) => {
+            console.log(e);
+          });
       });
+    });
   };
 }

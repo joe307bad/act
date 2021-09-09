@@ -5,7 +5,8 @@ import {
   CheckinAchievement,
   CheckinUser,
   SettingsManager,
-  User
+  User,
+  Upload
 } from '@act/data/core';
 import React, {
   createContext,
@@ -30,6 +31,7 @@ type GlobalContext = {
   checkinsById: Map<string, Checkin>;
   usersByCheckin: Map<string, string[]>;
   currentUserSettings: Partial<SettingsManager>;
+  uploads: string[];
 };
 
 const GlobalContext = createContext<Partial<GlobalContext>>({
@@ -40,7 +42,8 @@ const GlobalContext = createContext<Partial<GlobalContext>>({
   fullNamesByUser: new Map(),
   checkinsById: new Map(),
   usersByCheckin: new Map(),
-  currentUserSettings: {} as SettingsManager
+  currentUserSettings: {} as SettingsManager,
+  uploads: []
 });
 
 export const useGlobalContext = () => useContext(GlobalContext);
@@ -52,6 +55,7 @@ const GlobalContextProviderComponent: FC<{
   users: User[];
   checkinAchievements: CheckinAchievement[];
   checkinUsers: CheckinUser[];
+  uploads: string[];
 }> = ({
   categories,
   achievements,
@@ -59,7 +63,8 @@ const GlobalContextProviderComponent: FC<{
   checkinAchievements,
   checkinUsers,
   checkins,
-  users
+  users,
+  uploads
 }) => {
   const [achievementsByCategory, setAchievementsByCategory] =
     useState<
@@ -103,7 +108,6 @@ const GlobalContextProviderComponent: FC<{
 
   useEffect(() => {
     if (users.length > 0 && currentUser?.id) {
-      console.log(users.find((u) => u.id === currentUser?.id));
       try {
         setCurrentUserSettings(
           JSON.parse(
@@ -279,7 +283,8 @@ const GlobalContextProviderComponent: FC<{
         fullNamesByUser,
         checkinsById,
         usersByCheckin,
-        currentUserSettings
+        currentUserSettings,
+        uploads
       }}
     >
       {children}
@@ -318,5 +323,16 @@ export const GlobalContextProvider = withObservables([''], () => ({
   users: db.get
     .get<User>('users')
     .query()
-    .observeWithColumns(['full_name', 'settings'])
+    .observeWithColumns(['full_name', 'settings']),
+  uploads: db.get
+    .get<Upload>('uploads')
+    .query()
+    .observe()
+    .pipe(
+      map((us) =>
+        us
+          .sort((a, b) => b.createdAt - a.createdAt)
+          .map((u) => u.name)
+      )
+    )
 }))(GlobalContextProviderComponent);

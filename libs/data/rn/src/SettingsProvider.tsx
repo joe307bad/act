@@ -54,7 +54,6 @@ export const SettingsProvider = ({ children }) => {
       typeof settingsManager !== 'undefined' &&
       !Array.isArray(settingsManager)
     ) {
-      console.log({ savedSettings: settingsManager });
       db.models.users
         .updateSettings(
           currentUser.id,
