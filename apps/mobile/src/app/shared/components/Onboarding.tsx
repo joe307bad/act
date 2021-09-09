@@ -65,10 +65,7 @@ const Onboarding = () => {
                   <Column width="content">
                     <Text>Prod</Text>
                   </Column>
-                  <Column
-                    paddingLeft={Platform.OS === 'ios' ? 2 : 0}
-                    width="content"
-                  >
+                  <Column width="content">
                     <Switch value={usingTestEnvironment} />
                   </Column>
                   <Column paddingLeft={2} width="content">

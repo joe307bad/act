@@ -2,6 +2,8 @@ import { useTheme } from 'react-native-paper';
 import { Switch as S } from 'react-native-paper';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { debounce } from 'lodash';
+import { Box } from '@mobily/stacks';
+import { Platform } from 'react-native';
 
 function useThrottle(cb, delay) {
   const options = { leading: true, trailing: false };
@@ -30,16 +32,18 @@ export const Switch = ({
   const theme = useTheme();
   const debounced = useThrottle(() => onPress(), 100);
   return (
-    <S
-      disabled={disabled}
-      trackColor={{
-        false: theme.colors.backdrop,
-        true: theme.colors.backdrop
-      }}
-      thumbColor={theme.colors.primary}
-      color={theme.colors.primary}
-      value={value}
-      onTouchEndCapture={debounced}
-    />
+    <Box paddingLeft={Platform.OS === 'ios' ? 2 : 0}>
+      <S
+        disabled={disabled}
+        trackColor={{
+          false: theme.colors.backdrop,
+          true: theme.colors.backdrop
+        }}
+        thumbColor={theme.colors.primary}
+        color={theme.colors.primary}
+        value={value}
+        onTouchEndCapture={debounced}
+      />
+    </Box>
   );
 };
