@@ -49,7 +49,8 @@ const Achievements: FC = () => {
     new Set<string>()
   );
   const [note, setNote] = useState('');
-  const [showOnlyEnabled, setShowOnlyEnabled] = useState<boolean>();
+  const [showOnlyEnabled, setShowOnlyEnabled] =
+    useState<boolean>(false);
 
   const achievements = (() => {
     if (showOnlyEnabled) {
@@ -90,25 +91,21 @@ const Achievements: FC = () => {
         <Row height="content">
           <Columns alignY="center">
             <Column width="content">
-              <TouchableRipple
-                onPress={() => setShowOnlyEnabled((p) => !p)}
-              >
-                <Columns alignY="center" padding={2}>
-                  <Column width="content">
-                    <MaterialCommunityIcons
-                      name="death-star"
-                      color={theme.colors.primary}
-                      size={20}
-                    />
-                  </Column>
-                  <Column width="content">
-                    <Switch
-                      disabled={true}
-                      value={!showOnlyEnabled}
-                    />
-                  </Column>
-                </Columns>
-              </TouchableRipple>
+              <Columns alignY="center" padding={2}>
+                <Column width="content">
+                  <MaterialCommunityIcons
+                    name="death-star"
+                    color={theme.colors.primary}
+                    size={20}
+                  />
+                </Column>
+                <Column width="content">
+                  <Switch
+                    value={!showOnlyEnabled}
+                    onPress={() => setShowOnlyEnabled((p) => !p)}
+                  />
+                </Column>
+              </Columns>
             </Column>
             <Column>
               <Surface style={{ elevation: 2 }}>

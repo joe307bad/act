@@ -18,8 +18,9 @@ export const Settings = () => {
             <Column>
               <Text>Toggle camera FAB</Text>
             </Column>
-            <Column>
+            <Column width="content">
               <Switch
+                disableWhileSyncing={true}
                 value={hideCameraFab}
                 onPress={toggleHideCameraFab}
               />

@@ -66,7 +66,10 @@ const Onboarding = () => {
                     <Text>Prod</Text>
                   </Column>
                   <Column width="content">
-                    <Switch value={usingTestEnvironment} />
+                    <Switch
+                      forceDisable={true}
+                      value={usingTestEnvironment}
+                    />
                   </Column>
                   <Column paddingLeft={2} width="content">
                     <Text>Test</Text>

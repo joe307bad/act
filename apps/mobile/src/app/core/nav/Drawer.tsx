@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import {
   List,
   useTheme,
@@ -60,156 +60,44 @@ const DrawerList: FC<
           <Text>{currentUser?.username}</Text>
         </Box>
       </Stack>
-      <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'CheckinBuilder' });
-        }}
-        style={{
-          borderBottomWidth: 1,
-          borderTopWidth: 1,
-          borderBottomColor: theme.colors.primary,
-          borderTopColor: theme.colors.primary
-        }}
-        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
-        descriptionStyle={{
-          fontFamily: 'Bebas-Regular'
-        }}
-        title={'Checkin Builder'}
-        description={'Create a checkin for one or more achievements'}
-        left={(props) => (
-          <View
-            style={{
-              justifyContent: 'center'
-            }}
-          >
-            <MaterialCommunityIcons
-              name="checkbox-marked-circle-outline"
-              color={theme.colors.primary}
-              size={40}
-            />
-          </View>
-        )}
-      />
-      <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'Achievements' });
-        }}
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.primary
-        }}
-        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
-        descriptionStyle={{
-          fontFamily: 'Bebas-Regular'
-        }}
-        title={'Achievements'}
-        description={
-          'Find Achievements by Category and create a Checkin'
-        }
-        left={(props) => (
-          <View
-            style={{
-              justifyContent: 'center'
-            }}
-          >
-            <MaterialCommunityIcons
-              name="star-circle-outline"
-              color={theme.colors.primary}
-              size={40}
-            />
-          </View>
-        )}
-      />
-      <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'Leaderboard' });
-        }}
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.primary
-        }}
-        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
-        descriptionStyle={{
-          fontFamily: 'Bebas-Regular'
-        }}
-        title={'Leaderboard'}
-        description={'View users sorted by most points'}
-        left={(props) => (
-          <View
-            style={{
-              justifyContent: 'center'
-            }}
-          >
-            <MaterialCommunityIcons
-              name="format-list-numbered"
-              color={theme.colors.primary}
-              size={40}
-            />
-          </View>
-        )}
-      />
-      <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'UserCheckins' });
-        }}
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.primary
-        }}
-        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
-        descriptionStyle={{
-          fontFamily: 'Bebas-Regular'
-        }}
-        title={'User Checkins'}
-        description={'view checkins by user'}
-        left={(props) => (
-          <View
-            style={{
-              justifyContent: 'center'
-            }}
-          >
-            <MaterialCommunityIcons
-              name="checkbox-multiple-marked-circle-outline"
-              color={theme.colors.primary}
-              size={40}
-            />
-          </View>
-        )}
-      />
-      <List.Item
-        onPress={() => {
-          navigation.navigate('Entry', { screen: 'Uploads' });
-        }}
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.primary
-        }}
-        titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
-        descriptionStyle={{
-          fontFamily: 'Bebas-Regular'
-        }}
-        title={'Uploads'}
-        description={'View uploaded photos'}
-        left={(props) => (
-          <View
-            style={{
-              justifyContent: 'center'
-            }}
-          >
-            <MaterialCommunityIcons
-              name="camera"
-              color={theme.colors.primary}
-              size={40}
-            />
-          </View>
-        )}
-      />
-      {currentUser?.admin && (
+      <ScrollView>
         <List.Item
           onPress={() => {
             navigation.navigate('Entry', {
-              screen: 'PendingApprovals'
+              screen: 'CheckinBuilder'
             });
+          }}
+          style={{
+            borderBottomWidth: 1,
+            borderTopWidth: 1,
+            borderBottomColor: theme.colors.primary,
+            borderTopColor: theme.colors.primary
+          }}
+          titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+          descriptionStyle={{
+            fontFamily: 'Bebas-Regular'
+          }}
+          title={'Checkin Builder'}
+          description={
+            'Create a checkin for one or more achievements'
+          }
+          left={(props) => (
+            <View
+              style={{
+                justifyContent: 'center'
+              }}
+            >
+              <MaterialCommunityIcons
+                name="checkbox-marked-circle-outline"
+                color={theme.colors.primary}
+                size={40}
+              />
+            </View>
+          )}
+        />
+        <List.Item
+          onPress={() => {
+            navigation.navigate('Entry', { screen: 'Achievements' });
           }}
           style={{
             borderBottomWidth: 1,
@@ -219,9 +107,9 @@ const DrawerList: FC<
           descriptionStyle={{
             fontFamily: 'Bebas-Regular'
           }}
-          title={'Pending Approvals'}
+          title={'Achievements'}
           description={
-            'View checkins by non-admins that have not been approved'
+            'Find Achievements by Category and create a Checkin'
           }
           left={(props) => (
             <View
@@ -230,61 +118,179 @@ const DrawerList: FC<
               }}
             >
               <MaterialCommunityIcons
-                name="dots-horizontal-circle-outline"
+                name="star-circle-outline"
                 color={theme.colors.primary}
                 size={40}
               />
             </View>
           )}
         />
-      )}
-      <Stack space={2}>
-        <Box paddingTop={5} paddingX={5}>
-          <AwesomeButtonMedium
-            disabled={syncStatus === 'PROCESSING'}
-            onPress={() => sync()}
-          >
-            Sync
-          </AwesomeButtonMedium>
-        </Box>
-        {lastPulledAt && (
-          <Box alignX="center">
-            <Headline>Last Sync</Headline>
-            <Text>{formatTimestamp(lastPulledAt)}</Text>
-            <Box paddingTop={3}>
-              <SyncStatus status={syncStatus} />
-            </Box>
-          </Box>
+        <List.Item
+          onPress={() => {
+            navigation.navigate('Entry', { screen: 'Leaderboard' });
+          }}
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.primary
+          }}
+          titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+          descriptionStyle={{
+            fontFamily: 'Bebas-Regular'
+          }}
+          title={'Leaderboard'}
+          description={'View users sorted by most points'}
+          left={(props) => (
+            <View
+              style={{
+                justifyContent: 'center'
+              }}
+            >
+              <MaterialCommunityIcons
+                name="format-list-numbered"
+                color={theme.colors.primary}
+                size={40}
+              />
+            </View>
+          )}
+        />
+        <List.Item
+          onPress={() => {
+            navigation.navigate('Entry', { screen: 'UserCheckins' });
+          }}
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.primary
+          }}
+          titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+          descriptionStyle={{
+            fontFamily: 'Bebas-Regular'
+          }}
+          title={'User Checkins'}
+          description={'view checkins by user'}
+          left={(props) => (
+            <View
+              style={{
+                justifyContent: 'center'
+              }}
+            >
+              <MaterialCommunityIcons
+                name="checkbox-multiple-marked-circle-outline"
+                color={theme.colors.primary}
+                size={40}
+              />
+            </View>
+          )}
+        />
+        <List.Item
+          onPress={() => {
+            navigation.navigate('Entry', { screen: 'Uploads' });
+          }}
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.primary
+          }}
+          titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+          descriptionStyle={{
+            fontFamily: 'Bebas-Regular'
+          }}
+          title={'Uploads'}
+          description={'View uploaded photos'}
+          left={(props) => (
+            <View
+              style={{
+                justifyContent: 'center'
+              }}
+            >
+              <MaterialCommunityIcons
+                name="camera"
+                color={theme.colors.primary}
+                size={40}
+              />
+            </View>
+          )}
+        />
+        {currentUser?.admin && (
+          <List.Item
+            onPress={() => {
+              navigation.navigate('Entry', {
+                screen: 'PendingApprovals'
+              });
+            }}
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: theme.colors.primary
+            }}
+            titleStyle={{ fontSize: 25, fontFamily: 'Bebas-Regular' }}
+            descriptionStyle={{
+              fontFamily: 'Bebas-Regular'
+            }}
+            title={'Pending Approvals'}
+            description={
+              'View checkins by non-admins that have not been approved'
+            }
+            left={(props) => (
+              <View
+                style={{
+                  justifyContent: 'center'
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="dots-horizontal-circle-outline"
+                  color={theme.colors.primary}
+                  size={40}
+                />
+              </View>
+            )}
+          />
         )}
-        <Box>
-          <Columns>
-            <Column>
-              <Button
-                onPress={() => {
-                  setForceLogout(true);
-                  setSettingsManager(undefined);
-                  (navigation as any).closeDrawer();
-                }}
-                labelStyle={{ fontFamily: 'Bebas-Regular' }}
-              >
-                Logout
-              </Button>
-            </Column>
-            <Column>
-              <Button
-                onPress={() => {
-                  navigation.navigate('Entry', {
-                    screen: 'Settings'
-                  });
-                }}
-                labelStyle={{ fontFamily: 'Bebas-Regular' }}
-              >
-                Settings
-              </Button>
-            </Column>
-          </Columns>
-        </Box>
-      </Stack>
+        <Stack space={2}>
+          <Box paddingTop={5} paddingX={5}>
+            <AwesomeButtonMedium
+              disabled={syncStatus === 'PROCESSING'}
+              onPress={() => sync()}
+            >
+              Sync
+            </AwesomeButtonMedium>
+          </Box>
+          {lastPulledAt && (
+            <Box alignX="center">
+              <Headline>Last Sync</Headline>
+              <Text>{formatTimestamp(lastPulledAt)}</Text>
+              <Box paddingTop={3}>
+                <SyncStatus status={syncStatus} />
+              </Box>
+            </Box>
+          )}
+          <Box>
+            <Columns>
+              <Column>
+                <Button
+                  onPress={() => {
+                    setForceLogout(true);
+                    setSettingsManager(undefined);
+                    (navigation as any).closeDrawer();
+                  }}
+                  labelStyle={{ fontFamily: 'Bebas-Regular' }}
+                >
+                  Logout
+                </Button>
+              </Column>
+              <Column>
+                <Button
+                  onPress={() => {
+                    navigation.navigate('Entry', {
+                      screen: 'Settings'
+                    });
+                  }}
+                  labelStyle={{ fontFamily: 'Bebas-Regular' }}
+                >
+                  Settings
+                </Button>
+              </Column>
+            </Columns>
+          </Box>
+        </Stack>
+      </ScrollView>
     </>
   );
 };

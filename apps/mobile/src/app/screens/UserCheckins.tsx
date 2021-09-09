@@ -223,6 +223,7 @@ export const UserCheckins = () => {
                     .filter((u) => u !== selectedUser)
                     .map((u) => (
                       <Chip
+                        key={u}
                         icon="account"
                         title={fullNamesByUser.get(u)}
                       />

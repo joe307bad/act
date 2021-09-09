@@ -58,12 +58,16 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>act wants to access to your photo library</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>act wants to access to your music</string>
 	<key>NSCameraUsageDescription</key>
 	<string>act wants to access to your camera</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>act wants to add to your photo library</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>act wants to access to your photo library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Bebas-Regular.ttf</string>
