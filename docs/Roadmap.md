@@ -86,23 +86,28 @@
 ## Beyond
 
 - [ ] **[MOBILE]** - Implement versioning in Bitrise
-- [ ] **[MOBILE]** - Checkin to an checkin with multiple achievements from User Checkins
+- [ ] **[MOBILE]** - Use a checkin from User Checkins as a template
 - [ ] **[MOBILE]** - Pinned achievements (single achievements and from the Checkin Builder)
 - [ ] **[MOBILE]** - Bitrise pipeline for iOS
 - [ ] **[MOBILE]** - Way of seeding Achievements newly added to JSON file (e.g. renaming categories, moving achievements to new categories, etc.)
 - [ ] **[MOBILE]** - Toasts for successful sync/failed sync
 - [ ] **[MOBILE]** - User achievements from Leaderboard should show Approved and Pending Approved as categories, not the Achievement categories
-- [ ] **[MOBILE]** - Sort user achievements by number of times checked into the achievement
 - [ ] **[MOBILE]** - (Profile) In the side menu, show username, total points, total checkins
-- [ ] **[MOBILE] + [WEB]** - View a users checkin feed
-- [ ] **[MOBILE]** - Ability to see a feed of checkins sorted by most recent to oldest
-- [ ] **[MOBILE]** - Admins should be able to delete checkins from the feed
+- [ ] **[WEB]** - View a users checkin feed
 - [ ] **[MOBILE] + [WEB] + [API]** - Access control layer/RBAC
 - [ ] **[MOBILE] + [WEB] + [OPS]** - Live feed of checkins with web sockets
-- [ ] **[MOBILE] + [WEB] + [OPS]** - Photo uploads as seperate entities and attached to checkins
-- [ ] **[MOBILE]** - More advanced stats on checkins (checkins per hour, checkins per day, who has the most points in a specific time frame, etc.)
+- [ ] **[MOBILE] + [WEB] + [OPS]** - Photo uploads for checkins
+- [ ] **[MOBILE]** - More advanced stats on checkins (leaderboard by category, checkins per hour, checkins per day, who has the most points in a specific time frame, etc.)
 - More listed in the READMEs of Points
 - [ ] **[OPS]** - Reslient and automated API + Keycloak + DB deployment
+- [ ] Ability to challenge people: "user 1 challenges user 2 to chug 2 beers". Either both users get points for completing something in a time frame, or it more of a head to head challenge type where users both have to initiate the timer.
+
+## September 2021 Beta Observations:
+- [ ] Sync was slow. This had to due partially because I didn't optimize properly and also because wifi seemed to be shifty. But there were instances were it seemed like the sync spinned continuously and I had to close out and reopen the app to get it to sync. There were also some weird edge cases where it felt that dropping wifi in the middle of a sync made things weird.
+- [ ] Each phones leaderboard could get out of sync. I think this eventually resolved itself and was partially due to deleting checkins. Anyways, there prob should be a leaderboard endpoint that is online-only and acts a single source of truth.
+- [ ] Required approvals for individual checkins should go away. Or maybe just scaled down to "only checkins that are > 500 pts need approvals"
+- [ ] Some achievements should only be allowed once per weekend
+- [ ] We need a third class of achievement organization, in addition to enabled/disabled. Potentially "archived". Furthermore, there was a suggestion for potentially looking at the most done achievements this year and scrubbing (archiving) the rest.
 
 ## Tech Debt
 
