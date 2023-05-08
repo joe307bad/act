@@ -1,5 +1,4 @@
 import React from 'react';
-import { Root } from '../../re/Index.bs';
 import {
   KeycloakProvider,
   SyncProvider,
@@ -106,7 +105,7 @@ export default () => (
           <EnvironmentProvider>
             <SyncProvider>
               <SettingsProvider>
-                <Root.make />
+                <div><h1>Hey</h1></div>
               </SettingsProvider>
             </SyncProvider>
           </EnvironmentProvider>
