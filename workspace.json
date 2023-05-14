@@ -28,7 +28,7 @@
         },
         "serve": {
           "executor": "@nrwl/workspace:run-commands",
-          "options": { "command": "nx start mobile" }
+          "options": { "command": "react-native start" }
         },
         "run-ios": {
           "executor": "@nrwl/react-native:run-ios",

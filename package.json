@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "start:mobile": "nx serve mobile",
     "run:mobile": "nx run-android mobile",
     "serve:web": "nx serve web",
     "nx": "nx",

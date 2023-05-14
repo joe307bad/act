@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@act/data/rn": ["libs/data/rn/src/index.ts"],
-      "@act/data/core": ["libs/data/core/src/index.ts"]
+      "@act/data/rn": ["libs/data/rn/src"],
+      "@act/data/core": ["libs/data/core/src"]
     }
   },
   "files": [],
