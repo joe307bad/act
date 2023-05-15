@@ -1,0 +1,22 @@
+{
+  "name": "data-rn",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/data/rn/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/data/rn/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/data/rn"],
+      "options": {
+        "jestConfig": "libs/data/rn/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

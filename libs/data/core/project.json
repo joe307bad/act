@@ -1,0 +1,22 @@
+{
+  "name": "data-core",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/data/core/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/data/core/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/data/core"],
+      "options": {
+        "jestConfig": "libs/data/core/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

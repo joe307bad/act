@@ -20,7 +20,7 @@ import db, {
 import { Alert, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'react-native-paper';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native';
 import Chip from '../shared/components/Chip';
 import { isEmpty } from 'lodash';
 import { Dropdown } from '../shared/components/Dropdown';
