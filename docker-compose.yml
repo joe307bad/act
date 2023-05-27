@@ -12,7 +12,7 @@ services:
       - '9101:9100'
     volumes:
       - couchdb_data:/bitnami/couchdb
-      - /Users/jbadaczewski/Source/other/act/apps/api/couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
+      - ~/Source/act/apps/api/couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
   couchdb:
     image: couchdb
     environment:
@@ -24,7 +24,7 @@ services:
       - '9100:9100'
     volumes:
       - couchdb_data:/bitnami/couchdb
-      - /Users/jbadaczewski/Source/other/act/apps/api/couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
+      - ~/Source/other/act/apps/api/couchdb.ini:/opt/couchdb/etc/local.d/couchdb.ini
   postgres:
     image: postgres
     volumes:
