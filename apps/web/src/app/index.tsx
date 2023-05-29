@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Theme } from '@mui/material/styles';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  makeStyles,
+  createStyles,
+  Theme
+} from '@material-ui/core/styles';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
@@ -26,7 +28,9 @@ import {
   Link as RouterLink,
   Route,
   useLocation,
-  Router, Routes, BrowserRouter
+  Router,
+  Routes,
+  BrowserRouter
 } from 'react-router-dom';
 import Communities from './pages/communities';
 import Events from './pages/events';
@@ -36,12 +40,8 @@ import Users from './pages/users';
 import Checkins from './pages/checkins';
 import Uploads from './pages/uploads';
 import { StyledEngineProvider } from '@mui/material';
-import { ThemeProvider } from '@material-ui/core/styles';
-
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import { red } from '@mui/material/colors';
 
 const drawerWidth = 240;
 
@@ -267,14 +267,20 @@ const ToolBarAndSideBar = ({ onClick }) => {
     </>
   );
 };
-
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: red[500]
+    }
+  }
+});
 const App = () => {
   const classes = useStyles();
   const [showCheckinDetails, setShowCheckinDetails] = useState(false);
 
   return (
     <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={{}}>
+      <ThemeProvider theme={theme}>
         <div className={classes.root}>
           <BrowserRouter>
             <CssBaseline />
@@ -282,34 +288,39 @@ const App = () => {
               onClick={() => setShowCheckinDetails(true)}
             />
             <Routes>
-              <Route path="/">
-                <Communities />
-              </Route>
-              <Route path={PAGE.COMMUNITIES}>
-                <Communities />
-              </Route>
-              <Route path={PAGE.EVENTS}>
-                <Events />
-              </Route>
-              <Route path={PAGE.ACHIEVEMENT_CATEGORIES}>
-                <AchievementCategories />
-              </Route>
-              <Route path={PAGE.ACHIEVEMENT}>
-                <Achievements />
-              </Route>
-              <Route path={PAGE.USERS}>
-                <Users />
-              </Route>
-              <Route path={PAGE.UPLOADS}>
-                <Uploads />
-              </Route>
-              <Route path={PAGE.CHECKINS}>
-                <Checkins
+              <Route path="/" element={<Communities />} />
+              <Route
+                path={PAGE.COMMUNITIES}
+                element={<Communities />}
+              />
+              <Route
+                path={PAGE.EVENTS}
+                element={<Events />}
+              />
+              <Route
+                path={PAGE.ACHIEVEMENT_CATEGORIES}
+                element={<AchievementCategories />}
+              />
+              <Route
+                path={PAGE.ACHIEVEMENT}
+                element={<Achievements />}
+              />
+              <Route
+                path={PAGE.USERS}
+                element={<Users />}
+              />
+              <Route
+                path={PAGE.UPLOADS}
+                element={<Uploads />}
+              />
+              <Route
+                path={PAGE.CHECKINS}
+                element={<Checkins
                   open={showCheckinDetails}
                   openCheckin={() => setShowCheckinDetails(true)}
                   onDismiss={() => setShowCheckinDetails(false)}
-                />
-              </Route>
+                />}
+              />
             </Routes>
           </BrowserRouter>
         </div>

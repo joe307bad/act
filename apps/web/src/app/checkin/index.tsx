@@ -167,7 +167,6 @@ const useStyles = makeStyles((theme: Theme) =>
       minWidth: 120,
       maxWidth: 300
     },
-    toolbar: theme.mixins.toolbar,
     addCheckinHeader: {
       backgroundColor: theme.palette.primary.main,
       margin: 0,

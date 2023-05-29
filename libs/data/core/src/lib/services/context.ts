@@ -1,4 +1,4 @@
-import { inject, autoInjectable } from '@triptyk/tsyringe';
+import { inject, autoInjectable } from 'tsyringe';
 import { ActContext } from '../context';
 
 @autoInjectable()
