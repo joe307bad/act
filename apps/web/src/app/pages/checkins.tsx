@@ -38,8 +38,8 @@ const Checkins = ({ open, openCheckin, onDismiss }) => {
     useState<string | undefined>();
 
   const handleEditCellChangeCommitted = React.useCallback(
-    async ({ id, field, props }) =>
-      db.models.checkins.update(id, props.value),
+    async (newRow, oldRow) =>
+      db.models.checkins.update(oldRow.id, newRow.name),
     [checkins]
   );
   return (
@@ -61,6 +61,7 @@ const Checkins = ({ open, openCheckin, onDismiss }) => {
             <DataGrid
               rows={checkins as any}
               columns={columns}
+              processRowUpdate={handleEditCellChangeCommitted}
               checkboxSelection
             />
           )}

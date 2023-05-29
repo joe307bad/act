@@ -5,7 +5,11 @@ import {
   Theme
 } from '@material-ui/core/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColDef,
+  GridEventListener
+} from '@mui/x-data-grid';
 import { IconButton, NativeSelect, Select } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import db from '@act/data/web';
@@ -175,14 +179,31 @@ const Achievements = () => {
       return a;
     });
 
-  const handleEditCellChangeCommitted = React.useCallback(
-    async ({ id, field, props }) => {
-      if (field === 'points') {
-        props.value = Number(props.value);
-      }
-      return db.models.achievements.updateWithProps(id, {
-        [field]: props.value
+  const handleEditCellChangeCommitted: (
+    newRow: any,
+    oldRow: any
+  ) => any = React.useCallback(
+    async (
+      { id, name, category_id, points, photo, enabled },
+      oldRow
+    ) => {
+      await db.models.achievements.updateWithProps(id, {
+        name,
+        category_id,
+        points,
+        photo,
+        enabled
       });
+
+      return {
+        id,
+        name,
+        category_id,
+        points,
+        photo,
+        enabled,
+        ...oldRow
+      };
     },
     [achievements]
   );
@@ -192,8 +213,9 @@ const Achievements = () => {
       <div className={classes.toolbar} />
       <GridContainer>
         <DataGrid
-          rows={achievements as any}
+          rows={achievements}
           columns={columns}
+          processRowUpdate={handleEditCellChangeCommitted}
           checkboxSelection
         />
       </GridContainer>

@@ -16,7 +16,9 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 import { Q } from '@nozbe/watermelondb';
 import { of } from 'rxjs';
 import { CheckinUserSelector } from './CheckinUserSelector';
-import {AppBar, Paper, Tab, Tabs} from "@mui/material";
+import { AppBar, Paper, Tab, Tabs } from '@mui/material';
+import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel';
+import { GridCallbackDetails } from '@mui/x-data-grid/models/api';
 
 const columns: GridColDef[] = [
   {
@@ -110,8 +112,8 @@ export const SelectAchievementsAndUsersComponent = ({
   }, [checkin]);
 
   const handleEditCellChangeCommitted = React.useCallback(
-    async ({ id, field, props }) =>
-      db.models.checkins.update(id, props.value),
+    async (newRow, oldRow) =>
+      db.models.checkins.update(oldRow.id, newRow.name),
     [achievements]
   );
 
@@ -170,6 +172,33 @@ export const SelectAchievementsAndUsersComponent = ({
           <div style={{ height: 'calc(100% - 75px)' }}>
             <DataGrid
               rows={achievements as any}
+              processRowUpdate={handleEditCellChangeCommitted}
+              rowSelectionModel={Array.from(
+                selectedAchievements.get.keys()
+              )}
+              onRowSelectionModelChange={(
+                selectionModel: GridRowSelectionModel,
+                details: GridCallbackDetails
+              ) => {
+                const sa = selectionModel.reduce((acc, nsm) => {
+                  const a = achievements.find((a) => a.id === nsm);
+
+                  if (!a) {
+                    return acc;
+                  }
+                  acc.push([
+                    nsm.toString(),
+                    {
+                      id: a.id,
+                      name: a.name,
+                      points: a.points,
+                      count: achievementCounts.get.get(a.id) ?? 1
+                    }
+                  ]);
+                  return acc;
+                }, []);
+                selectedAchievements.set(new Map(sa));
+              }}
               columns={columns}
               checkboxSelection
             />

@@ -2,6 +2,8 @@ import React, { useContext } from 'react';
 import { CheckinContext } from '../context/CheckinContext';
 import { HeaderWithTags } from './HeaderWithTags';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {GridRowSelectionModel} from "@mui/x-data-grid/models/gridRowSelectionModel";
+import {GridCallbackDetails} from "@mui/x-data-grid/models/api";
 
 const usersColumns: GridColDef[] = [
   {
@@ -31,6 +33,24 @@ export const CheckinUserSelector = ({ existingUsers }) => {
         <DataGrid
           rows={existingUsers}
           columns={usersColumns}
+          rowSelectionModel={Array.from(selectedUsers.get.keys())}
+          onRowSelectionModelChange={(
+            selectionModel: GridRowSelectionModel,
+            details: GridCallbackDetails
+          ) => {
+            existingUsers.length &&
+            selectedUsers.set(
+              new Map(
+                selectionModel.map((nsm) => {
+                  const u = existingUsers.find((a) => a.id === nsm);
+                  return [
+                    nsm.toString(),
+                    { id: u.id, name: u.username }
+                  ];
+                })
+              )
+            );
+          }}
           checkboxSelection
         />
       </div>
