@@ -21,7 +21,7 @@ export class AchievementCategoriesService {
   }
 
   insert = async () => {
-    await this._db.action(
+    await this._db.write(
       async () =>
         await this._collection.create((achievementCategory) => {
           achievementCategory.name = 'New AchievementCategory';
@@ -30,7 +30,7 @@ export class AchievementCategoriesService {
   };
 
   update = async (id, name: string) => {
-    await this._db.action(async () => {
+    await this._db.write(async () => {
       const achievementCategoryToEdit = await this._collection.find(
         id
       );
@@ -43,7 +43,7 @@ export class AchievementCategoriesService {
   };
 
   delete = async (id) => {
-    await this._db.action(async () => {
+    await this._db.write(async () => {
       const achievementCategoryToDelete = await this._collection.find(
         id
       );

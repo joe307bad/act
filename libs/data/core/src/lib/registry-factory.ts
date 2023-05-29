@@ -67,10 +67,8 @@ export const registryFactory = (
     })
   });
 
-  debugger;  
   const b = new ContextService()
 
-  debugger;
   const database = b.get();
   const { seed, seedWithAchievementsJsonFile } = new SeedService();
 

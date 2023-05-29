@@ -23,7 +23,7 @@ export class BaseService<T extends Model> {
   }
 
   async insert(name: string) {
-    await this._db.action(
+    await this._db.write(
       async () =>
         await this._collection.create((m: any) => {
           m.name = name;
@@ -34,7 +34,7 @@ export class BaseService<T extends Model> {
   insertWithProps = async (insertProps: {
     [key: string]: string | boolean;
   }): Promise<T> => {
-    return await this._db.action(
+    return await this._db.write(
       async () =>
         await this._collection.create((m: any) => {
           for (const property in insertProps) {
@@ -45,7 +45,8 @@ export class BaseService<T extends Model> {
   };
 
   update = async (id, name) => {
-    await this._db.action(async () => {
+    debugger;
+    await this._db.write(async () => {
       const model = await this._collection.find(id);
       await model.update((m: any) => {
         m.name = name;
@@ -54,7 +55,7 @@ export class BaseService<T extends Model> {
   };
 
   deleteAll = () =>
-    this._db.action(async () => {
+    this._db.write(async () => {
       const all = await this._collection.query().fetch();
       await this._db.batch(
         ...all.map((a) =>
@@ -70,7 +71,8 @@ export class BaseService<T extends Model> {
     id,
     updateProps: { [key: string]: string | boolean }
   ) => {
-    await this._db.action(async () => {
+    debugger;
+    await this._db.write(async () => {
       const model = await this._collection.find(id);
       await model.update((m) => {
         for (const property in updateProps) {
@@ -81,7 +83,7 @@ export class BaseService<T extends Model> {
   };
 
   updateRelation = async (id, relationName, relationId) => {
-    await this._db.action(async () => {
+    await this._db.write(async () => {
       const model = await this._collection.find(id);
       await model.update((m) => {
         m[relationName].id = relationId;
@@ -90,7 +92,7 @@ export class BaseService<T extends Model> {
   };
 
   delete = async (id) => {
-    await this._db.action(async () => {
+    await this._db.write(async () => {
       const model = await this._collection.find(id);
       await this._db.batch(
         this._deletedCollection.prepareCreate((deletedUnit) => {

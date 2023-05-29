@@ -106,7 +106,7 @@ export class CheckinsService extends BaseService<Checkin> {
       selectedUserIds
     ).map((ru) => allUsers.find((u) => u.userId === ru));
 
-    return this._db.action(async (action) =>
+    return this._db.write(async (action) =>
       this._db.batch(
         (await this._collection.find(id)).prepareUpdate(
           (m: Checkin) => {
@@ -163,7 +163,7 @@ export class CheckinsService extends BaseService<Checkin> {
   find = async (id: string) => this._collection.find(id);
 
   create = (args: CreateCheckin): Promise<Date> =>
-    this._db.action(async (action) => {
+    this._db.write(async (action) => {
       const {
         insertProps,
         achievementCounts,
@@ -210,7 +210,7 @@ export class CheckinsService extends BaseService<Checkin> {
     });
 
   approveCheckins = async (checkins: Set<string>) =>
-    this._db.action(async () =>
+    this._db.write(async () =>
       this._db.batch(
         ...(await Promise.all(
           Array.from(checkins).map(async (checkinId) =>
@@ -228,7 +228,7 @@ export class CheckinsService extends BaseService<Checkin> {
     const allCheckins = await this._collection
       .query(Q.where('approved', false))
       .fetch();
-    return this._db.action(async () =>
+    return this._db.write(async () =>
       this._db.batch(
         ...allCheckins
           .filter((c) => !excludeCheckins.has(c.id))

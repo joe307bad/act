@@ -13,7 +13,7 @@ export class UploadsService extends BaseService<Upload> {
 
   insert = async (photo: Photo | string) => {
     return new Promise<void>((resolve) => {
-      this._db.action(() => {
+      this._db.write(async () => {
         const { name, type, uri } = photo as Photo;
         const { endpoint, fullSizeUrl, thumbnailUrl, uploadPreset } =
           this._context.getCloudinaryConfig();

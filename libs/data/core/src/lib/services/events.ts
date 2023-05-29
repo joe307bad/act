@@ -21,7 +21,7 @@ export class EventsService {
   }
 
   insert = async () => {
-    await this._db.action(
+    await this._db.write(
       async () =>
         await this._collection.create((event) => {
           event.name = 'New event';
@@ -30,7 +30,7 @@ export class EventsService {
   };
 
   update = async (id, name) => {
-    await this._db.action(async () => {
+    await this._db.write(async () => {
       const eventToEdit = await this._collection.find(id);
       await eventToEdit.update((event) => {
         event.name = name;
@@ -39,7 +39,7 @@ export class EventsService {
   };
 
   delete = async (id) => {
-    await this._db.action(async () => {
+    await this._db.write(async () => {
       const eventToDelete = await this._collection.find(id);
       await this._db.batch(
         this._deletedCollection.prepareCreate((deletedUnit) => {

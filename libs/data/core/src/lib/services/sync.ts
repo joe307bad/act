@@ -1,7 +1,10 @@
 import { inject, autoInjectable } from 'tsyringe';
 import { ActContext } from '../context';
 import { schemaAndMigrations } from '../schema';
-import {synchronize, SyncRejectedIds} from '@nozbe/watermelondb/sync';
+import {
+  synchronize,
+  SyncRejectedIds
+} from '@nozbe/watermelondb/sync';
 
 @autoInjectable()
 export class SyncService {
@@ -34,17 +37,14 @@ export class SyncService {
         this._lastPulledAt = timestamp;
         return { changes, timestamp };
       },
-      pushChanges: async ({ changes, lastPulledAt }) =>
-      {
-        const res = await fetch(`${apiUrl}/sync?last_pulled_at=${lastPulledAt}`, {
+      pushChanges: async ({ changes, lastPulledAt }) => {
+        await fetch(`${apiUrl}/sync?last_pulled_at=${lastPulledAt}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(changes)
         }).catch((e) => Promise.reject(e));
-        
-        return res.json();
       },
       migrationsEnabledAtVersion: 1
     }).then(() => this._lastPulledAt);

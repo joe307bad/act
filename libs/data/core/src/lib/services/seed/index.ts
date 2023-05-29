@@ -123,7 +123,7 @@ export class SeedService {
   _seedCheckins = async (numberOfCheckins: number) => {
     let newCheckinIds = [];
     return new Promise<Checkin[]>((resolve) => {
-      this._db.action(async () => {
+      this._db.write(async () => {
         [...new Array(numberOfCheckins)].forEach(async (_, i) => {
           newCheckinIds.push(
             await this._checkins.create((m: Checkin) => {
@@ -223,7 +223,7 @@ export class SeedService {
       (a) => allAchievementCategories.find((aa) => a === aa.name)
     );
 
-    await this._db.action(() =>
+    await this._db.write(() =>
       this._db.batch(
         ...insertAchievementCategories.map((ac) =>
           this._achievementCategories.prepareCreate((r) => {
@@ -247,7 +247,7 @@ export class SeedService {
       (a) => allAchievements.find((aa) => a.name === aa.name)
     );
 
-    return this._db.action((action) =>
+    return this._db.write((action) =>
       this._db.batch(
         ...insertAchievements.map((a) =>
           this._achievements.prepareCreate((r) => {

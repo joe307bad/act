@@ -102,9 +102,11 @@ export class AppController {
                 this.unitService
                   .create({ type: table, ...unit })
                   .catch((e) => {
-                    throw new HttpException(
-                      `Push Changes Failed: ${e.toString()}`,
-                      HttpStatus.INTERNAL_SERVER_ERROR
+                    console.error(
+                      new HttpException(
+                        `Push Changes Failed: ${e.toString()}`,
+                        HttpStatus.INTERNAL_SERVER_ERROR
+                      )
                     );
                   });
               });

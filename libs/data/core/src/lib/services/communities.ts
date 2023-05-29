@@ -21,7 +21,7 @@ export class CommunitiesService {
   }
 
   insert = async () => {
-    await this._db.action(
+    await this._db.write(
       async () =>
         await this._collection.create((community) => {
           community.name = 'New community';
@@ -30,7 +30,7 @@ export class CommunitiesService {
   };
 
   update = async (id, name) => {
-    await this._db.action(async () => {
+    await this._db.write(async () => {
       const communityToEdit = await this._collection.find(id);
       await communityToEdit.update((community) => {
         community.name = name;
@@ -39,7 +39,7 @@ export class CommunitiesService {
   };
 
   delete = async (id) => {
-    await this._db.action(async () => {
+    await this._db.write(async () => {
       const communityToDelete = await this._collection.find(id);
       await this._db.batch(
         this._deletedCollection.prepareCreate((deletedUnit) => {
