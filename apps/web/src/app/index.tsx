@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
 import {
+  makeStyles,
   createStyles,
-  Theme,
-  makeStyles
+  Theme
 } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import LocationCity from '@material-ui/icons/LocationCity';
-import { Stars } from '@material-ui/icons';
-import EventIcon from '@material-ui/icons/Event';
-import AddIcon from '@material-ui/icons/Add';
-import Category from '@material-ui/icons/Category';
-import People from '@material-ui/icons/People';
-import CheckCircle from '@material-ui/icons/CheckCircle';
-import Camera from '@material-ui/icons/Camera';
-import Button from '@material-ui/core/Button';
+import Drawer from '@mui/material/Drawer';
+import CssBaseline from '@mui/material/CssBaseline';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import LocationCity from '@mui/icons-material/LocationCity';
+import { Stars } from '@mui/icons-material';
+import EventIcon from '@mui/icons-material/Event';
+import AddIcon from '@mui/icons-material/Add';
+import Category from '@mui/icons-material/Category';
+import People from '@mui/icons-material/People';
+import CheckCircle from '@mui/icons-material/CheckCircle';
+import Camera from '@mui/icons-material/Camera';
+import Button from '@mui/material/Button';
 import db from '@act/data/web';
 import {
-  BrowserRouter as Router,
-  Switch,
+  Link as RouterLink,
   Route,
-  Link,
-  Redirect,
-  useLocation
+  useLocation,
+  Router,
+  Routes,
+  BrowserRouter
 } from 'react-router-dom';
 import Communities from './pages/communities';
 import Events from './pages/events';
@@ -39,6 +39,9 @@ import Achievements from './pages/achievement';
 import Users from './pages/users';
 import Checkins from './pages/checkins';
 import Uploads from './pages/uploads';
+import { StyledEngineProvider } from '@mui/material';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import { red } from '@mui/material/colors';
 
 const drawerWidth = 240;
 
@@ -138,6 +141,11 @@ const ToolBarAndSideBar = ({ onClick }) => {
   const isActive = (route) =>
     pathname === route ? classes.active : undefined;
 
+  const Link = React.forwardRef(function Link(itemProps, ref) {
+    // @ts-ignore
+    return <RouterLink ref={ref} {...itemProps} role={undefined} />;
+  });
+
   return (
     <>
       <AppBar position="fixed" className={classes.appBar}>
@@ -148,7 +156,6 @@ const ToolBarAndSideBar = ({ onClick }) => {
           {insertFn && (
             <Button
               variant="contained"
-              color="default"
               startIcon={<AddIcon />}
               onClick={insertFn}
             >
@@ -158,7 +165,6 @@ const ToolBarAndSideBar = ({ onClick }) => {
           <Button
             style={{ marginLeft: 10 }}
             variant="contained"
-            color="default"
             onClick={() => db.sync()}
           >
             Sync
@@ -177,9 +183,9 @@ const ToolBarAndSideBar = ({ onClick }) => {
         <Divider />
         <List>
           <ListItem
+            // @ts-ignore
             component={Link}
             to={PAGE.COMMUNITIES}
-            button
             className={isActive(PAGE.COMMUNITIES)}
           >
             <ListItemIcon>
@@ -188,9 +194,9 @@ const ToolBarAndSideBar = ({ onClick }) => {
             <ListItemText primary={'Communities'} />
           </ListItem>
           <ListItem
+            // @ts-ignore
             component={Link}
             to={PAGE.EVENTS}
-            button
             className={isActive(PAGE.EVENTS)}
           >
             <ListItemIcon>
@@ -199,9 +205,9 @@ const ToolBarAndSideBar = ({ onClick }) => {
             <ListItemText primary={'Events'} />
           </ListItem>
           <ListItem
+            // @ts-ignore
             component={Link}
             to={PAGE.ACHIEVEMENT}
-            button
             className={isActive(PAGE.ACHIEVEMENT)}
           >
             <ListItemIcon>
@@ -210,9 +216,9 @@ const ToolBarAndSideBar = ({ onClick }) => {
             <ListItemText primary={'Achievements'} />
           </ListItem>
           <ListItem
+            // @ts-ignore
             component={Link}
             to={PAGE.ACHIEVEMENT_CATEGORIES}
-            button
             className={isActive(PAGE.ACHIEVEMENT_CATEGORIES)}
           >
             <ListItemIcon>
@@ -223,9 +229,9 @@ const ToolBarAndSideBar = ({ onClick }) => {
             <ListItemText primary={'Achievement Categories'} />
           </ListItem>
           <ListItem
+            // @ts-ignore
             component={Link}
             to={PAGE.USERS}
-            button
             className={isActive(PAGE.USERS)}
           >
             <ListItemIcon>
@@ -234,9 +240,9 @@ const ToolBarAndSideBar = ({ onClick }) => {
             <ListItemText primary={'Users'} />
           </ListItem>
           <ListItem
+            // @ts-ignore
             component={Link}
             to={PAGE.CHECKINS}
-            button
             className={isActive(PAGE.CHECKINS)}
           >
             <ListItemIcon>
@@ -245,9 +251,9 @@ const ToolBarAndSideBar = ({ onClick }) => {
             <ListItemText primary={'Checkins'} />
           </ListItem>
           <ListItem
+            // @ts-ignore
             component={Link}
             to={PAGE.UPLOADS}
-            button
             className={isActive(PAGE.UPLOADS)}
           >
             <ListItemIcon>
@@ -261,50 +267,65 @@ const ToolBarAndSideBar = ({ onClick }) => {
     </>
   );
 };
-
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: red[500]
+    }
+  }
+});
 const App = () => {
   const classes = useStyles();
   const [showCheckinDetails, setShowCheckinDetails] = useState(false);
 
   return (
-    <div className={classes.root}>
-      <Router>
-        <CssBaseline />
-        <ToolBarAndSideBar
-          onClick={() => setShowCheckinDetails(true)}
-        />
-        <Switch>
-          <Route exact path="/">
-            <Redirect to={PAGE.COMMUNITIES} />
-          </Route>
-          <Route path={PAGE.COMMUNITIES}>
-            <Communities />
-          </Route>
-          <Route path={PAGE.EVENTS}>
-            <Events />
-          </Route>
-          <Route path={PAGE.ACHIEVEMENT_CATEGORIES}>
-            <AchievementCategories />
-          </Route>
-          <Route path={PAGE.ACHIEVEMENT}>
-            <Achievements />
-          </Route>
-          <Route path={PAGE.USERS}>
-            <Users />
-          </Route>
-          <Route path={PAGE.UPLOADS}>
-            <Uploads />
-          </Route>
-          <Route path={PAGE.CHECKINS}>
-            <Checkins
-              open={showCheckinDetails}
-              openCheckin={() => setShowCheckinDetails(true)}
-              onDismiss={() => setShowCheckinDetails(false)}
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <div className={classes.root}>
+          <BrowserRouter>
+            <CssBaseline />
+            <ToolBarAndSideBar
+              onClick={() => setShowCheckinDetails(true)}
             />
-          </Route>
-        </Switch>
-      </Router>
-    </div>
+            <Routes>
+              <Route path="/" element={<Communities />} />
+              <Route
+                path={PAGE.COMMUNITIES}
+                element={<Communities />}
+              />
+              <Route
+                path={PAGE.EVENTS}
+                element={<Events />}
+              />
+              <Route
+                path={PAGE.ACHIEVEMENT_CATEGORIES}
+                element={<AchievementCategories />}
+              />
+              <Route
+                path={PAGE.ACHIEVEMENT}
+                element={<Achievements />}
+              />
+              <Route
+                path={PAGE.USERS}
+                element={<Users />}
+              />
+              <Route
+                path={PAGE.UPLOADS}
+                element={<Uploads />}
+              />
+              <Route
+                path={PAGE.CHECKINS}
+                element={<Checkins
+                  open={showCheckinDetails}
+                  openCheckin={() => setShowCheckinDetails(true)}
+                  onDismiss={() => setShowCheckinDetails(false)}
+                />}
+              />
+            </Routes>
+          </BrowserRouter>
+        </div>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 

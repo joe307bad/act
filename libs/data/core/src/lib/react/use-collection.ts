@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Condition } from '@nozbe/watermelondb/QueryDescription';
 import Database from '@nozbe/watermelondb/Database';
 
-const initialConditions: Array<Condition> = [];
+const initialConditions: any[] = [];
 
 export const useCollectionFactory = (database: Database) =>
   function <T>(

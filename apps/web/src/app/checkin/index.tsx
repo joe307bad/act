@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import * as MUI from '@material-ui/core';
-import * as Icons from '@material-ui/icons';
+
+import * as Icons from '@mui/icons-material';
 import db from '@act/data/web';
 import { SelectAchievementsAndUsers } from './components/SelectAchievementsAndUsers';
 import {
@@ -8,6 +8,20 @@ import {
   CheckinProvider
 } from './context/CheckinContext';
 import DatabaseProvider from '@nozbe/watermelondb/DatabaseProvider';
+import {
+  AppBar,
+  Button,
+  FormControlLabel,
+  Paper,
+  Switch,
+  TextField,
+  Toolbar
+} from '@mui/material';
+import {
+  makeStyles,
+  createStyles,
+  Theme
+} from '@material-ui/core/styles';
 
 type CheckinProps = {
   onDismiss: () => void;
@@ -53,7 +67,7 @@ export const Checkin: FC<CheckinProps> = ({
                   });
             };
             return (
-              <MUI.Paper
+              <Paper
                 style={{
                   height: '100%',
                   display: 'flex',
@@ -65,7 +79,7 @@ export const Checkin: FC<CheckinProps> = ({
                   {selectedCheckin ? 'Edit Checkin' : 'Add Checkin'}
                 </h2>
                 <div style={{ display: 'flex' }}>
-                  <MUI.TextField
+                  <TextField
                     id="filled-basic"
                     label="Note"
                     variant="filled"
@@ -77,10 +91,10 @@ export const Checkin: FC<CheckinProps> = ({
                       marginRight: 0
                     }}
                   />
-                  <MUI.FormControlLabel
+                  <FormControlLabel
                     style={{ margin: 10, marginLeft: 0 }}
                     control={
-                      <MUI.Switch
+                      <Switch
                         checked={model.approved.get}
                         onChange={(e) =>
                           approved.set(e.target.checked)
@@ -95,17 +109,17 @@ export const Checkin: FC<CheckinProps> = ({
                 <SelectAchievementsAndUsers
                   selectedCheckin={selectedCheckin}
                 />
-                <MUI.AppBar position="static">
-                  <MUI.Toolbar
+                <AppBar position="static">
+                  <Toolbar
                     style={{
                       flexDirection: 'column',
                       justifyContent: 'center'
                     }}
                   >
                     <div style={{ alignSelf: 'flex-end' }}>
-                      <MUI.Button
+                      <Button
                         variant="contained"
-                        color="default"
+                        color="primary"
                         startIcon={
                           selectedCheckin ? (
                             <Icons.Save />
@@ -121,23 +135,23 @@ export const Checkin: FC<CheckinProps> = ({
                         {selectedCheckin
                           ? 'Save Checkin'
                           : 'Add Checkin'}
-                      </MUI.Button>
-                      <MUI.Button
+                      </Button>
+                      <Button
                         style={{
                           alignSelf: 'flex-end',
                           marginLeft: 10
                         }}
                         variant="contained"
-                        color="default"
+                        color="primary"
                         startIcon={<Icons.Cancel />}
                         onClick={onDismiss}
                       >
                         Cancel
-                      </MUI.Button>
+                      </Button>
                     </div>
-                  </MUI.Toolbar>
-                </MUI.AppBar>
-              </MUI.Paper>
+                  </Toolbar>
+                </AppBar>
+              </Paper>
             );
           }}
         </CheckinContext.Consumer>
@@ -146,14 +160,13 @@ export const Checkin: FC<CheckinProps> = ({
   );
 };
 
-const useStyles = MUI.makeStyles((theme: MUI.Theme) =>
-  MUI.createStyles({
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
     formControl: {
       margin: theme.spacing(1),
       minWidth: 120,
       maxWidth: 300
     },
-    toolbar: theme.mixins.toolbar,
     addCheckinHeader: {
       backgroundColor: theme.palette.primary.main,
       margin: 0,

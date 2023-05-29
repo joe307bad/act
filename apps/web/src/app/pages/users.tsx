@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
+  makeStyles,
   createStyles,
-  Theme,
-  makeStyles
+  Theme
 } from '@material-ui/core/styles';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { DataGrid, GridColDef } from '@material-ui/data-grid';
-import { IconButton, MenuItem, Select } from '@material-ui/core';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { IconButton, MenuItem, Select } from '@mui/material';
 import db from '@act/data/web';
 import { GridContainer } from '../shared/components/TableContainer';
 
@@ -43,7 +43,6 @@ const columns: GridColDef[] = [
     headerName: 'Admin',
     width: 200,
     editable: false,
-    disableClickEventBubbling: true,
     renderCell: ({ id, value }) => {
       return <SelectAdmin id={id} value={value} />;
     }
@@ -54,13 +53,13 @@ const columns: GridColDef[] = [
     width: 200,
     disableColumnMenu: true,
     sortable: false,
-    disableClickEventBubbling: true,
     renderCell: ({ id }) => {
       return (
         <IconButton
           onClick={() => db.models.users.delete(id)}
           aria-label="delete"
           color="secondary"
+          size="large"
         >
           <DeleteIcon />
         </IconButton>
@@ -90,7 +89,7 @@ const SelectAdmin = ({ id, value }) => {
   return (
     <Select
       style={{ flex: 1 }}
-      value={actualValue === 'true' ? 'true' : 'false'}
+      value={actualValue === 'true' ? 'true' : ('false' as any)}
       onChange={handleChange}
     >
       <MenuItem value={'false'}>False</MenuItem>
@@ -128,11 +127,8 @@ const Users = () => {
       <div className={classes.toolbar} />
       <GridContainer>
         <DataGrid
-          editMode="client"
           rows={users}
           columns={columns}
-          onEditCellChangeCommitted={handleEditCellChangeCommitted}
-          pageSize={5}
           checkboxSelection
         />
       </GridContainer>

@@ -2,7 +2,8 @@ import React from 'react';
 import { useState } from 'react';
 import db from '@act/data/web';
 import { AchievementCategory } from '@act/data/core';
-import * as MUI from '@material-ui/core';
+import {FormControl, InputLabel, NativeSelect} from "@mui/material";
+
 
 type CategoryFilterSelection =
   | 'ALL_CATEGORIES'
@@ -27,11 +28,11 @@ export const CategoryFilter = (props) => {
   );
 
   return (
-    <MUI.FormControl>
-      <MUI.InputLabel id="demo-simple-select-label">
+    <FormControl>
+      <InputLabel id="demo-simple-select-label">
         Category
-      </MUI.InputLabel>
-      <MUI.NativeSelect value={v} onChange={handleFilterChange}>
+      </InputLabel>
+      <NativeSelect value={v} onChange={handleFilterChange}>
         <option key={'ALL_CATEGORIES'} value={'ALL_CATEGORIES'}>
           All Categories
         </option>
@@ -43,8 +44,8 @@ export const CategoryFilter = (props) => {
             {ac.name}
           </option>
         ))}
-      </MUI.NativeSelect>
-    </MUI.FormControl>
+      </NativeSelect>
+    </FormControl>
   );
 };
 

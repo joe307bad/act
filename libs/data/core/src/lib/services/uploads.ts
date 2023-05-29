@@ -19,10 +19,9 @@ export class UploadsService extends BaseService<Upload> {
           this._context.getCloudinaryConfig();
         const data = new FormData();
         data.append('file', {
-          name,
           type,
           uri
-        });
+        } as any);
         data.append('upload_preset', uploadPreset);
         return fetch(endpoint, {
           method: 'POST',

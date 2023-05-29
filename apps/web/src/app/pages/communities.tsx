@@ -1,12 +1,12 @@
 import React from 'react';
 import {
+  makeStyles,
   createStyles,
-  Theme,
-  makeStyles
+  Theme
 } from '@material-ui/core/styles';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { DataGrid, GridColDef } from '@material-ui/data-grid';
-import { IconButton } from '@material-ui/core';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { IconButton } from '@mui/material';
 import db from '@act/data/web';
 import { GridContainer } from '../shared/components/TableContainer';
 
@@ -28,14 +28,13 @@ const columns: GridColDef[] = [
     width: 200,
     disableColumnMenu: true,
     sortable: false,
-    disableClickEventBubbling: true,
     renderCell: ({ id }) => {
       return (
         <IconButton
           onClick={() => db.models.communities.delete(id)}
           aria-label="delete"
           color="secondary"
-        >
+          size="large">
           <DeleteIcon />
         </IconButton>
       );
@@ -70,11 +69,8 @@ const Communities = () => {
       <div className={classes.toolbar} />
       <GridContainer>
         <DataGrid
-          editMode="client"
           rows={communities}
           columns={columns}
-          onEditCellChangeCommitted={handleEditCellChangeCommitted}
-          pageSize={5}
           checkboxSelection
         />
       </GridContainer>

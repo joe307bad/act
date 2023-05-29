@@ -1,16 +1,19 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target":"es5",
+    "module": "commonjs",
     "allowSyntheticDefaultImports": true,
-    "lib": ["dom", "esnext"],
+    "lib": ["es2018", "dom", "esnext"],
     "jsx": "react",
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "experimentalDecorators": true
   },
   "files": [],
-  "include": [],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
       "path": "./tsconfig.app.json"

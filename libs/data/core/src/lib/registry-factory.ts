@@ -48,7 +48,7 @@ const seedWithMock = (seed: (args: SeedArgs) => void) => ({
 
 export const registryFactory = (
   adapter,
-  config?: { ACT_API_URL: string; KEYCLOAK_URL: string }
+  config?: { ACT_API_URL?: string; KEYCLOAK_URL?: string }
 ) => {
   container.register('ContextService', ContextService);
   container.register('SyncService', SyncService);
@@ -67,7 +67,11 @@ export const registryFactory = (
     })
   });
 
-  const database = new ContextService().get();
+  debugger;  
+  const b = new ContextService()
+
+  debugger;
+  const database = b.get();
   const { seed, seedWithAchievementsJsonFile } = new SeedService();
 
   return {

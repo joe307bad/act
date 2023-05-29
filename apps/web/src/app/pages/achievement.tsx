@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
+  makeStyles,
   createStyles,
-  Theme,
-  makeStyles
+  Theme
 } from '@material-ui/core/styles';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { DataGrid, GridColDef } from '@material-ui/data-grid';
-import { IconButton, NativeSelect, Select } from '@material-ui/core';
-import MenuItem from '@material-ui/core/MenuItem';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { IconButton, NativeSelect, Select } from '@mui/material';
+import MenuItem from '@mui/material/MenuItem';
 import db from '@act/data/web';
 import { Achievement, AchievementCategory } from '@act/data/core';
 import { GridContainer } from '../shared/components/TableContainer';
@@ -72,7 +72,7 @@ const SelectEnabled = ({ id, value }) => {
   const [v, setValue] = useState(value);
 
   const handleChange = (event) => {
-    const newValue = event.target.value === 'true' ? true : false;
+    const newValue = event.target.value === 'true';
     setValue(newValue);
     db.models.achievements.updateWithProps(id, {
       enabled: newValue
@@ -82,7 +82,7 @@ const SelectEnabled = ({ id, value }) => {
   return (
     <Select
       style={{ flex: 1 }}
-      value={value ? 'true' : 'false'}
+      value={value ? 'true' : ('false' as any)}
       onChange={handleChange}
     >
       <MenuItem value={'true'}>Enabled</MenuItem>
@@ -120,7 +120,6 @@ const columns: GridColDef[] = [
     editable: false,
     headerName: 'Enabled',
     width: 200,
-    disableClickEventBubbling: true,
     renderCell: ({ id, value }) => {
       return <SelectEnabled id={id} value={value} />;
     }
@@ -135,7 +134,6 @@ const columns: GridColDef[] = [
     headerName: 'Category',
     editable: false,
     width: 200,
-    disableClickEventBubbling: true,
     renderCell: ({ id, value }) => {
       return <SelectCategory id={id} value={value} />;
     }
@@ -146,13 +144,13 @@ const columns: GridColDef[] = [
     width: 200,
     disableColumnMenu: true,
     sortable: false,
-    disableClickEventBubbling: true,
     renderCell: ({ id }) => {
       return (
         <IconButton
           onClick={() => db.models.achievements.delete(id)}
           aria-label="delete"
           color="secondary"
+          size="large"
         >
           <DeleteIcon />
         </IconButton>
@@ -194,11 +192,8 @@ const Achievements = () => {
       <div className={classes.toolbar} />
       <GridContainer>
         <DataGrid
-          editMode="client"
-          rows={achievements}
+          rows={achievements as any}
           columns={columns}
-          onEditCellChangeCommitted={handleEditCellChangeCommitted}
-          pageSize={100}
           checkboxSelection
         />
       </GridContainer>

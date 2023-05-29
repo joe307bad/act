@@ -1,17 +1,19 @@
 import React, { createContext, useContext, useState } from 'react';
-import {
-  createStyles,
-  Theme,
-  makeStyles
-} from '@material-ui/core/styles';
-import { DataGrid, GridColDef } from '@material-ui/data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import db from '@act/data/web';
 import { Checkin } from '@act/data/core';
 import { Checkin as CheckinDetails } from '../checkin';
 import { GridContainer } from '../shared/components/TableContainer';
-import * as MUI from '@material-ui/core';
-import * as Icons from '@material-ui/icons';
+import {
+  makeStyles,
+  createStyles,
+  Theme
+} from '@material-ui/core/styles';
 
+import * as Icons from '@mui/icons-material';
+import {IconButton} from "@mui/material";
+
+// @ts-ignore
 window.db = db;
 
 const CheckinContext =
@@ -57,13 +59,8 @@ const Checkins = ({ open, openCheckin, onDismiss }) => {
             />
           ) : (
             <DataGrid
-              editMode="client"
-              rows={checkins}
+              rows={checkins as any}
               columns={columns}
-              onEditCellChangeCommitted={
-                handleEditCellChangeCommitted
-              }
-              pageSize={100}
               checkboxSelection
             />
           )}
@@ -101,7 +98,6 @@ const columns: GridColDef[] = [
     width: 200,
     disableColumnMenu: true,
     sortable: false,
-    disableClickEventBubbling: true,
     renderCell: ({ id }) => {
       const [_, setSelectedCheckin, openCheckin] =
         useContext(CheckinContext);
@@ -113,20 +109,20 @@ const columns: GridColDef[] = [
 
       return (
         <>
-          <MUI.IconButton
+          <IconButton
             onClick={() => db.models.checkins.delete(id)}
             aria-label="delete"
             color="secondary"
           >
             <Icons.Delete />
-          </MUI.IconButton>
-          <MUI.IconButton
+          </IconButton>
+          <IconButton
             onClick={() => editCheckin(id.toString())}
             aria-label="delete"
             color="secondary"
           >
             <Icons.Edit />
-          </MUI.IconButton>
+          </IconButton>
         </>
       );
     }

@@ -1,24 +1,31 @@
 {
   "name": "web",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "projectType": "application",
   "sourceRoot": "apps/web/src",
+  "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:build",
+      "executor": "@nx/webpack:webpack",
       "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
+        "compiler": "babel",
         "outputPath": "dist/apps/web",
         "index": "apps/web/src/index.html",
+        "baseHref": "/",
         "main": "apps/web/src/main.tsx",
-        "polyfills": "",
         "tsConfig": "apps/web/tsconfig.app.json",
-        "assets": ["apps/web/src/favicon.ico"],
-        "styles": [],
         "scripts": [],
-        "webpackConfig": "apps/web/webpack.config.ts"
+        "isolatedConfig": true,
+        "webpackConfig": "apps/web/webpack.config.js"
       },
       "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
         "production": {
           "fileReplacements": [
             {
@@ -29,45 +36,56 @@
           "optimization": true,
           "outputHashing": "all",
           "sourceMap": false,
-          "extractCss": true,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false,
-          "budgets": [
-            {
-              "type": "initial",
-              "maximumWarning": "2mb",
-              "maximumError": "5mb"
-            }
-          ]
+          "vendorChunk": false
         }
       }
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nx/webpack:dev-server",
+      "defaultConfiguration": "development",
       "options": {
         "buildTarget": "web:build",
-        "webpackConfig": "apps/web/webpack.config.ts"
+        "hmr": true
       },
       "configurations": {
+        "development": {
+          "buildTarget": "web:build:development"
+        },
         "production": {
-          "buildTarget": "web:build:production"
+          "buildTarget": "web:build:production",
+          "hmr": false
         }
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/web/**/*.ts"]
+        "lintFilePatterns": ["apps/web/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "web:build"
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/web"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/web/jest.config.js",
+        "jestConfig": "apps/web/jest.config.ts",
         "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
       }
     }
-  }
+  },
+  "tags": []
 }

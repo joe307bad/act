@@ -44,7 +44,6 @@ export class ActContext {
         CheckinUser,
         Upload
       ],
-      actionsEnabled: true
     });
     this._actApiUrl = config.ACT_API_URL;
     this._cloudinaryConfig = {
