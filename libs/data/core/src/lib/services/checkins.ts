@@ -45,18 +45,6 @@ export class CheckinsService extends BaseService<Checkin> {
       .collections.get<CheckinUser>('checkin_users');
   }
 
-  insertCheckinWithAchievements = async (): Promise<Checkin> => {
-    return await this._db.action(async (action) => {
-      const newCheckin = await this._collection.create();
-      await this._checkinAchievementCollection.create(
-        (m: CheckinAchievement) => {
-          m.checkinId = newCheckin.id;
-          m.achievementId = '3tbpqxlt3dupjcor';
-        }
-      );
-    });
-  };
-
   edit = async (args: {
     id: string;
     editProps: Partial<Omit<Checkin, 'achievements' | 'users'>>;

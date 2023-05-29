@@ -1,11 +1,10 @@
 import React, { FC, useContext, useEffect } from 'react';
-import * as MUI from '@material-ui/core';
 import {
   Achievement,
   AchievementCategory,
   User
 } from '@act/data/core';
-import { DataGrid, GridColDef } from '@material-ui/data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import db from '@act/data/web';
 import { HeaderWithTags } from './HeaderWithTags';
 import { CheckinContext } from '../context/CheckinContext';
@@ -17,6 +16,7 @@ import { withDatabase } from '@nozbe/watermelondb/DatabaseProvider';
 import { Q } from '@nozbe/watermelondb';
 import { of } from 'rxjs';
 import { CheckinUserSelector } from './CheckinUserSelector';
+import {AppBar, Paper, Tab, Tabs} from "@mui/material";
 
 const columns: GridColDef[] = [
   {
@@ -54,7 +54,6 @@ const columns: GridColDef[] = [
   {
     field: 'id',
     headerName: 'Count',
-    disableClickEventBubbling: true,
     renderCell: ({ id }) => {
       const { achievementCounts } = useContext(CheckinContext);
       return (
@@ -95,7 +94,9 @@ export const SelectAchievementsAndUsersComponent = ({
 
     model.achievements.set(
       new Map(
-        Array.from(newAchievementCounts).map(([k]) => [k, null])
+        Array.from(newAchievementCounts).map(
+          (value, index, array) => [value[0], null]
+        )
       )
     );
     achievementCounts.set(newAchievementCounts);
@@ -131,29 +132,29 @@ export const SelectAchievementsAndUsersComponent = ({
   }
 
   return (
-    <MUI.Paper style={{ margin: 20, flex: 1 }} variant="outlined">
-      <MUI.AppBar position="static">
-        <MUI.Tabs
+    <Paper style={{ margin: 20, flex: 1 }} variant="outlined">
+      <AppBar position="static">
+        <Tabs
           value={activeTab}
           onChange={(event, newValue) => setActiveTab(newValue)}
           aria-label="simple tabs example"
         >
-          <MUI.Tab
+          <Tab
             label={`Achievements${
               selectedAchievements.get.size > 0
                 ? ` (${selectedAchievements.get.size})`
                 : ''
             }`}
           />
-          <MUI.Tab
+          <Tab
             label={`Users${
               selectedUsers.get.size > 0
                 ? ` (${selectedUsers.get.size})`
                 : ''
             }`}
           />
-        </MUI.Tabs>
-      </MUI.AppBar>
+        </Tabs>
+      </AppBar>
       <TabPanel
         value={activeTab}
         style={{ height: '100%' }}
@@ -162,41 +163,14 @@ export const SelectAchievementsAndUsersComponent = ({
         <>
           <HeaderWithTags
             title="Achievements"
-            selected={selectedAchievements.get}
+            selected={Array.from(selectedAchievements.get)}
             onChange={selectedAchievements.set}
             showCount={true}
           />
           <div style={{ height: 'calc(100% - 75px)' }}>
             <DataGrid
-              editMode="client"
-              rows={achievements}
+              rows={achievements as any}
               columns={columns}
-              onEditCellChangeCommitted={
-                handleEditCellChangeCommitted
-              }
-              selectionModel={Array.from(
-                selectedAchievements.get.keys()
-              )}
-              onSelectionModelChange={({ selectionModel }) => {
-                const sa = selectionModel.reduce((acc, nsm) => {
-                  const a = achievements.find((a) => a.id === nsm);
-
-                  if (!a) {
-                    return acc;
-                  }
-                  acc.push([
-                    nsm.toString(),
-                    {
-                      id: a.id,
-                      name: a.name,
-                      points: a.points,
-                      count: achievementCounts.get.get(a.id) ?? 1
-                    }
-                  ]);
-                  return acc;
-                }, []);
-                selectedAchievements.set(new Map(sa));
-              }}
               checkboxSelection
             />
           </div>
@@ -209,7 +183,7 @@ export const SelectAchievementsAndUsersComponent = ({
       >
         <CheckinUserSelector existingUsers={users} />
       </TabPanel>
-    </MUI.Paper>
+    </Paper>
   );
 };
 

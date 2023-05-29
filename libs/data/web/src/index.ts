@@ -9,6 +9,7 @@ export default registryFactory(
   }),
   //@ts-ignore
   {
-    ACT_API_URL: 'http://192.168.0.4:3080/api'
+    ACT_API_URL: 'http://localhost:3333/api',
+    KEYCLOAK_URL: ""
   }
 );

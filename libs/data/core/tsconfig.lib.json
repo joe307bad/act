@@ -1,7 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "target":"ES2018",
     "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["es2018", "dom", "esnext"],
     "outDir": "../../../dist/out-tsc",
     "declaration": true,
     "types": ["node"],
@@ -9,5 +12,8 @@
     "experimentalDecorators": true
   },
   "exclude": ["**/*.spec.ts"],
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts",
+    "../../../node_modules/react-native/types/modules/globals.d.ts"
+  ]
 }

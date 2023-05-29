@@ -1,7 +1,9 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["ES2019"],
+    "target":"ES2018",
+    "module": "commonjs",
+    "lib": ["es2018", "dom", "esnext"],
     "resolveJsonModule": true,
     "esModuleInterop": true
   },

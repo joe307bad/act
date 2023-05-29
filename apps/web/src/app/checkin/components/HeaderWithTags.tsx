@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import * as MUI from '@material-ui/core';
-import * as Icons from '@material-ui/icons';
+import React from 'react';
+import * as Icons from '@mui/icons-material';
+import { Avatar, Chip } from '@mui/material';
 
 export const HeaderWithTags = ({
   title,
-  selected,
+  selected = [],
   onChange,
   showCount = false
 }) => {
@@ -20,10 +20,8 @@ export const HeaderWithTags = ({
       <h2 style={{ paddingRight: 10 }}>{title}</h2>
       <div style={{ flex: 1 }}>
         {Array.from(selected).map(([id, sa]) => (
-          <MUI.Chip
-            avatar={
-              <MUI.Avatar>{showCount ? sa?.count : null}</MUI.Avatar>
-            }
+          <Chip
+            avatar={<Avatar>{showCount ? sa?.count : null}</Avatar>}
             key={id}
             label={sa?.name ?? ''}
             style={{ marginRight: 10 }}
@@ -36,7 +34,7 @@ export const HeaderWithTags = ({
         ))}
       </div>
       {showCount && (
-        <MUI.Chip
+        <Chip
           color="primary"
           icon={<Icons.Add />}
           label={Array.from(selected)
