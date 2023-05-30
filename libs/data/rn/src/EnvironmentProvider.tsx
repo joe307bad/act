@@ -46,6 +46,11 @@ export const EnvironmentProvider: FC = ({ children }) => {
               installTimestamp > Number(Config.LAUNCH_TIMESTAMP)
                 ? Config.LAUNCH_ACT_API_URL
                 : Config.ACT_API_URL;
+
+            console.log({ Config });
+            console.log({ 'Config.ACT_API_URL': Config.ACT_API_URL });
+            console.log({ apiUrl });
+            console.log({ apiUrlBasedOnInstallDate });
             if (!apiUrl) {
               AsyncStorage.setItem(
                 'apiUrl',

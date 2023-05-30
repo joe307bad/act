@@ -34,7 +34,7 @@ services:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
   keycloak:
-    image: quay.io/keycloak/keycloak:latest
+    image: jboss/keycloak:latest
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
@@ -45,7 +45,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: Pa55w0rd
     ports:
-      - 8080:8080
+      - '8080:8080'
     depends_on:
       - postgres
 volumes:

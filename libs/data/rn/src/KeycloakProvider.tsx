@@ -111,7 +111,7 @@ const KeycloakProvider: FC = ({ children }) => {
           }
 
           loggingOut.current = false;
-          AsyncStorage.setItem('currentUserId', user.id);
+          await AsyncStorage.setItem('currentUserId', user.id);
           setCurrentUser(user);
           setForceLogout(undefined);
         }
