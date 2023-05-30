@@ -28,9 +28,9 @@ export class SyncService {
 
         const response = await fetch(
           `${apiUrl}/sync?${urlParams}`
-        ).catch((e) => Promise.reject(e));
+        ).catch((e) => e);
         if (!response.ok) {
-          return Promise.reject(new Error('!response.ok'));
+          throw new Error(response)
         }
 
         const { changes, timestamp } = await response.json();

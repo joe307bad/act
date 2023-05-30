@@ -69,7 +69,7 @@ export class BaseService<T extends Model> {
 
   updateWithProps = async (
     id,
-    updateProps: { [key: string]: string | boolean }
+    updateProps: { [key: string]: string | boolean | number }
   ) => {
     debugger;
     await this._db.write(async () => {

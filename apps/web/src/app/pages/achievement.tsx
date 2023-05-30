@@ -183,26 +183,22 @@ const Achievements = () => {
     newRow: any,
     oldRow: any
   ) => any = React.useCallback(
-    async (
-      { id, name, category_id, points, photo, enabled },
-      oldRow
-    ) => {
-      await db.models.achievements.updateWithProps(id, {
+    async ({ name, category_id, points, photo, enabled }, oldRow) => {
+      await db.models.achievements.updateWithProps(oldRow.id, {
         name,
         category_id,
-        points,
+        points: Number(points),
         photo,
         enabled
       });
 
       return {
-        id,
+        ...oldRow,
         name,
         category_id,
-        points,
+        points: Number(points),
         photo,
-        enabled,
-        ...oldRow
+        enabled
       };
     },
     [achievements]

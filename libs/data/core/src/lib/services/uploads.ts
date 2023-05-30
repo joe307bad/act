@@ -38,7 +38,7 @@ export class UploadsService extends BaseService<Upload> {
           )
           .then(() => resolve())
           .catch((e) => {
-            console.log(e);
+            console.error(e);
           });
       });
     });

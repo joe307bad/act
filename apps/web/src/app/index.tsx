@@ -165,7 +165,7 @@ const ToolBarAndSideBar = ({ onClick }) => {
           <Button
             style={{ marginLeft: 10 }}
             variant="contained"
-            onClick={() => db.sync()}
+            onClick={() => db.sync().catch(e => console.error(e))}
           >
             Sync
           </Button>

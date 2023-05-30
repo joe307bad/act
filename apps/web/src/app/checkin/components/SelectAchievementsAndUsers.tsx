@@ -77,14 +77,14 @@ export const SelectAchievementsAndUsersComponent = ({
     'achievements',
     ['name']
   );
-  const users: User[] = db.useCollection('users', ['full_name']);
+  const users: User[] = db.useCollection('users', ['username']);
   const [activeTab, setActiveTab] = React.useState(0);
   const { model, achievementCounts } = useContext(CheckinContext);
   const { achievements: selectedAchievements, users: selectedUsers } =
     model;
 
   useEffect(() => {
-    if (!checkin) {
+    if (!checkin || achievements.length === 0 || users.length === 0) {
       return;
     }
     const newAchievementCounts: Map<string, number> = new Map(
@@ -97,19 +97,30 @@ export const SelectAchievementsAndUsersComponent = ({
     model.achievements.set(
       new Map(
         Array.from(newAchievementCounts).map(
-          (value, index, array) => [value[0], null]
+          (value, index, array) => {
+            const a: Achievement & { count?: number } =
+              achievements.find((a) => a.id === value[0]);
+            a.count = value[1];
+            return [value[0], a];
+          }
         )
       )
     );
     achievementCounts.set(newAchievementCounts);
 
+    console.log(savedUsers);
     selectedUsers.set(
-      new Map(savedUsers.map((su) => [su.userId, su.name]))
+      new Map(
+        savedUsers.map((su) => {
+          const u = users.find((us) => us.id === su.userId);
+          return [su.userId, { name: u.username }];
+        })
+      )
     );
 
     model.note.set(checkin.note);
     model.approved.set(checkin.approved);
-  }, [checkin]);
+  }, [checkin, achievements, users]);
 
   const handleEditCellChangeCommitted = React.useCallback(
     async (newRow, oldRow) =>

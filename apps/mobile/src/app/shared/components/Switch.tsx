@@ -55,7 +55,6 @@ export const Switch = ({
   useEffect(() => {
     if (disableWhileSyncing && afterFirstSelection.current === true) {
       if (!disabled) {
-        console.log('disabled');
         setDisabled(true);
       } else if (syncStatus === 'SUCCESS') {
         setDisabled(false);

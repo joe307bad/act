@@ -114,10 +114,15 @@ const Users = () => {
   let users: any[] = db.useCollection('users', ['full_name']);
 
   const handleEditCellChangeCommitted = React.useCallback(
-    async ({ field, id, props }) => {
-      return db.models.users.updateWithProps(id, {
-        [field]: props.value
+    async ({ full_name, username, keycloak_id, admin }, oldRow) => {
+      await db.models.users.updateWithProps(oldRow.id, {
+        full_name,
+        username,
+        keycloak_id,
+        admin
       });
+
+      return { full_name, username, keycloak_id, admin, ...oldRow };
     },
     [users]
   );
@@ -129,6 +134,7 @@ const Users = () => {
         <DataGrid
           rows={users}
           columns={columns}
+          processRowUpdate={handleEditCellChangeCommitted}
           checkboxSelection
         />
       </GridContainer>
