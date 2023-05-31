@@ -9,7 +9,8 @@ import {
 import Bugsnag from '@bugsnag/react-native';
 import Config from 'react-native-config';
 import { StacksProvider } from '@mobily/stacks';
-import {configureFonts, Provider, Title} from 'react-native-paper';
+import { configureFonts, Provider } from 'react-native-paper';
+import { Root } from '../../re/Index.bs';
 
 if (Config.ENABLE_BUGSNAG) {
   Bugsnag.start();
@@ -105,9 +106,7 @@ export default () => (
           <EnvironmentProvider>
             <SyncProvider>
               <SettingsProvider>
-                <Title style={{ alignSelf: 'center' }}>
-                 Hey
-                </Title>
+                <Root.make />
               </SettingsProvider>
             </SyncProvider>
           </EnvironmentProvider>

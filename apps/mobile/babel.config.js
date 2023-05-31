@@ -8,7 +8,8 @@ module.exports = function (api) {
     ],
     plugins: [
       ['@babel/plugin-proposal-decorators', { legacy: true }],
-      'babel-plugin-transform-typescript-metadata'
+      'babel-plugin-transform-typescript-metadata',
+      'react-native-reanimated/plugin'
     ]
   };
 };

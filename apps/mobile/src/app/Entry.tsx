@@ -10,6 +10,7 @@ import {
   createStackNavigator,
   StackHeaderProps
 } from '@react-navigation/stack';
+import { getHeaderTitle } from '@react-navigation/elements';
 import { Appbar, useTheme } from 'react-native-paper';
 import CheckinBuilder from './screens/CheckinBuilder';
 import Achievements from './screens/Achievements';
@@ -26,19 +27,18 @@ import {
 } from './shared/camera/camera';
 
 const Stack = createStackNavigator();
-export const HeaderContext =
-  createContext<{
-    excludedPendingApprovals: Set<string>;
-    setExcludedPendingApprovals: React.Dispatch<
-      React.SetStateAction<Set<string>>
-    >;
-    searchCriteria: string;
-    setSearchCriteria: React.Dispatch<React.SetStateAction<string>>;
-  }>(undefined);
+export const HeaderContext = createContext<{
+  excludedPendingApprovals: Set<string>;
+  setExcludedPendingApprovals: React.Dispatch<
+    React.SetStateAction<Set<string>>
+  >;
+  searchCriteria: string;
+  setSearchCriteria: React.Dispatch<React.SetStateAction<string>>;
+}>(undefined);
 
 const NavBar: (
   props: StackHeaderProps & { theme: ReactNativePaper.Theme }
-) => ReactElement = ({ scene, previous, navigation }) => {
+) => ReactElement = ({ navigation, route, options, back }) => {
   const [showSearch, setShowSearch] = useState<boolean>(false);
 
   const {
@@ -48,16 +48,10 @@ const NavBar: (
   } = useContext(HeaderContext);
   const { sync } = useSync();
 
-  const { options } = scene.descriptor;
-  const title =
-    options.headerTitle !== undefined
-      ? options.headerTitle
-      : options.title !== undefined
-      ? options.title
-      : scene.route.name;
+  const title = getHeaderTitle(options, route.name);
 
   const [showSearchBar, showSearchIcon] = ((): [boolean, boolean] => {
-    if (scene.route.name !== 'Achievements') {
+    if (route.name !== 'Achievements') {
       return [false, false];
     }
 
@@ -70,7 +64,7 @@ const NavBar: (
 
   return (
     <Appbar.Header>
-      {previous ? (
+      {back ? (
         <Appbar.BackAction onPress={navigation.goBack} />
       ) : null}
       {showSearchBar ? (
@@ -95,7 +89,7 @@ const NavBar: (
           onPress={() => setShowSearch(true)}
         />
       )}
-      {scene.route.name === 'PendingApprovals' && (
+      {route.name === 'PendingApprovals' && (
         <Appbar.Action
           icon="checkbox-multiple-marked-circle"
           onPress={() =>
@@ -105,13 +99,13 @@ const NavBar: (
           }
         />
       )}
-      {scene.route.name === 'Uploads' && (
+      {route.name === 'Uploads' && (
         <Appbar.Action
           icon="file-image-outline"
           onPress={() => launchImageLibrary(sync)}
         />
       )}
-      {scene.route.name === 'Uploads' && (
+      {route.name === 'Uploads' && (
         <Appbar.Action
           icon="camera-iris"
           onPress={() => launchCamera(sync)}
@@ -145,7 +139,6 @@ const EntryStack = () => {
       >
         <Stack.Navigator
           initialRouteName="Achievements"
-          headerMode="float"
           screenOptions={{
             header: (props) => <NavBar {...props} theme={theme} />
           }}
