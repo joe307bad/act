@@ -94,6 +94,92 @@ export class SeedService {
     });
   };
 
+  seedCategoriesFromJsonFile = async (
+    remoteAchievementsJsonFile: string
+  ) => {
+    const achievementsFromJson = (await fetch(
+      remoteAchievementsJsonFile
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('HTTP error ' + response.status);
+        }
+        return response.json();
+      })
+      .catch(function (e) {
+        throw Error(e);
+      })) as AchievementSeed[];
+
+    const [categories] = achievementsFromJson.reduce(
+      (acc, achievement) => {
+        const [c, a] = acc;
+        c.add(achievement.category);
+        a.set(achievement.name, achievement);
+
+        return [c, a];
+      },
+      [new Set<string>(), new Map<string, AchievementSeed>()]
+    );
+
+    return this._seedAchievementCategories(
+      Array.from(categories || [])
+    );
+  };
+
+  seed50Achievements = async (
+    remoteAchievementsJsonFile: string,
+    page = 0
+  ) => {
+    const achievementsFromJson = (await fetch(
+      remoteAchievementsJsonFile
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('HTTP error ' + response.status);
+        }
+        return response.json();
+      })
+      .catch(function (e) {
+        throw Error(e);
+      })) as AchievementSeed[];
+
+    const [categories, achievements] = achievementsFromJson.reduce(
+      (acc, achievement) => {
+        const [c, a] = acc;
+        c.add(achievement.category);
+        a.set(achievement.name, achievement);
+
+        return [c, a];
+      },
+      [new Set<string>(), new Map<string, AchievementSeed>()]
+    );
+
+    const units = {
+      achievements: Array.from(achievements.values()),
+      categories: Array.from(categories)
+    };
+
+    console.log(Array.from(achievements.values()).length)
+    console.log(this._paginateArray(units.achievements, page, 50));
+    
+    return this._seedAchievementCategories(
+      units.categories || []
+    ).then((categories) =>
+      this._seedAchievements(
+        this._paginateArray(units.achievements, page, 50) || [],
+        categories || []
+      )
+    );
+  };
+
+  _paginateArray = (array, pageNumber, pageSize) => {
+    const page = array.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+    return page;
+  };
+
   seed = (args: SeedArgs) => {
     const { units, type } = args;
     switch (type) {

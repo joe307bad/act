@@ -111,6 +111,12 @@ android {
     }
   }
   signingConfigs {
+    release {
+      storeFile file('act_2023.keystore')
+      storePassword 'Reaper307'
+      keyAlias 'act_2023'
+      keyPassword 'Reaper307'
+    }
     debug {
       storeFile file('debug.keystore')
       storePassword 'android'

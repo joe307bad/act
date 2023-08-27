@@ -113,3 +113,9 @@ apps/mobile/.env.prod
 lib
 deploy/.env.launch-test
 apps/mobile/.env.dev
+## Nested node_modules
+
+node_modules/
+
+apps/new-rn-e2e/artifacts
+/apps/mobile/android/app/act_2023.keystore

@@ -8,9 +8,10 @@
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
     "paths": {
-      "@act/data/rn": ["libs/data/rn/src"],
-      "@act/data/core": ["libs/data/core/src"]
+      "@act/data/rn": ["../../libs/data/rn/src"],
+      "@act/data/core": ["../../libs/data/core/src"]
     }
   },
   "files": [],

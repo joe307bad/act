@@ -9,7 +9,7 @@ import { Platform } from 'react-native';
 import Config from 'react-native-config';
 
 const keycloak = new RNKeycloak({
-  url: `${Config.KEYCLOAK_URL ?? 'http://192.168.0.4:8080'}/auth`,
+  url: `${Config.KEYCLOAK_URL ?? 'http://192.168.0.4:8080'}`,
   realm: 'master',
   clientId: 'account'
 });
