@@ -1,40 +1,30 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useCallback, useContext, useState } from 'react';
 import {
   Achievement,
+  AchievementCategory,
   CreateCheckin,
   useDebounce
 } from '@act/data/core';
 import { FlatList } from 'react-native';
 import { SingleCheckin } from '../checkin/SingleCheckin';
-import db, {
-  useActAuth,
-  useSync,
-  useGlobalContext
-} from '@act/data/rn';
+import db, { useActAuth, useSync } from '@act/data/rn';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
 import { HeaderContext } from '../Entry';
-import { isEmpty } from 'lodash';
 import { AchievementRowLite } from '../achievement/AchievementRowLite';
 import { Rows, Row, Box, Columns, Column } from '@mobily/stacks';
-import {
-  Surface,
-  TouchableRipple,
-  useTheme
-} from 'react-native-paper';
+import { Surface, useTheme } from 'react-native-paper';
 import { Dropdown } from '../shared/components/Dropdown';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Switch } from '../shared/components/Switch';
+import { isEmpty } from 'lodash';
 
-const Achievements: FC = () => {
+const Achievements: FC<{
+  achievements: Achievement[];
+  categories: AchievementCategory[];
+}> = ({ achievements: a, categories }) => {
   const theme = useTheme();
-  const { achievementsByCategory, categoriesById } =
-    useGlobalContext();
-  const [enabledAchievementsByCategory, allAchievementsByCategory] =
-    achievementsByCategory;
-
   const { sync } = useSync();
   const [enableCheckin, setEnableCheckin] = useState(true);
-  const categories = Array.from(categoriesById.values());
 
   const { currentUser } = useActAuth();
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -45,44 +35,27 @@ const Achievements: FC = () => {
 
   const { searchCriteria } = useContext(HeaderContext);
   const debouncedSearchCriteria = useDebounce(searchCriteria, 500);
-  const [hiddenOptions, setHiddenOptions] = useState(
-    new Set<string>()
-  );
   const [note, setNote] = useState('');
   const [showOnlyEnabled, setShowOnlyEnabled] =
     useState<boolean>(false);
 
-  const achievements = (() => {
-    if (showOnlyEnabled) {
-      return enabledAchievementsByCategory.get(selectedCategory);
+  const achievements = useCallback(() => {
+    if (!showOnlyEnabled && isEmpty(debouncedSearchCriteria)) {
+      return a;
     }
 
-    return allAchievementsByCategory.get(selectedCategory);
-  })();
-
-  useEffect(() => {
-    if (enabledAchievementsByCategory.size > 0) {
-      if (isEmpty(debouncedSearchCriteria)) {
-        setHiddenOptions(new Set());
-      } else {
-        const achievements = Array.from(
-          allAchievementsByCategory.get('all').values()
-        );
-        setHiddenOptions(
-          new Set(
-            achievements
-              .filter(
-                (a) =>
-                  a.name
-                    .toUpperCase()
-                    .search(debouncedSearchCriteria.toUpperCase()) ===
-                  -1
-              )
-              .map((a) => a.id)
-          )
-        );
+    return a.filter((a) => {
+      if (showOnlyEnabled && !a.enabled) {
+        return false;
       }
-    }
+
+      return !(
+        !isEmpty(debouncedSearchCriteria) &&
+        a.name
+          .toUpperCase()
+          .search(debouncedSearchCriteria.toUpperCase()) == -1
+      );
+    });
   }, [debouncedSearchCriteria]);
 
   return (
@@ -127,13 +100,7 @@ const Achievements: FC = () => {
           <Box padding={2} paddingBottom={0} paddingTop={0}>
             {achievements && (
               <FlatList
-                data={
-                  hiddenOptions.size === 0
-                    ? Array.from(achievements.values())
-                    : Array.from(achievements.values()).filter(
-                        (a) => !hiddenOptions.has(a.id)
-                      )
-                }
+                data={achievements}
                 renderItem={({ item }) => (
                   <AchievementRowLite
                     item={item}
