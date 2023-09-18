@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import {
   Achievement,
   AchievementCategory,
@@ -17,11 +17,20 @@ import { Dropdown } from '../shared/components/Dropdown';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Switch } from '../shared/components/Switch';
 import { isEmpty } from 'lodash';
+import withObservables from '@nozbe/with-observables';
+import DatabaseProvider, {
+  withDatabase
+} from '@nozbe/watermelondb/DatabaseProvider';
+import { map } from 'rxjs/operators';
+import { Database } from '@nozbe/watermelondb';
 
-const Achievements: FC<{
-  achievements: Achievement[];
-  categories: AchievementCategory[];
-}> = ({ achievements: a, categories }) => {
+function Achievements({
+  achievements: a,
+  categories
+}: {
+  achievements?: Achievement[];
+  categories?: AchievementCategory[];
+}) {
   const theme = useTheme();
   const { sync } = useSync();
   const [enableCheckin, setEnableCheckin] = useState(true);
@@ -39,12 +48,12 @@ const Achievements: FC<{
   const [showOnlyEnabled, setShowOnlyEnabled] =
     useState<boolean>(false);
 
-  const achievements = useCallback(() => {
+  const achievements = useMemo(() => {
     if (!showOnlyEnabled && isEmpty(debouncedSearchCriteria)) {
       return a;
     }
 
-    return a.filter((a) => {
+    return a?.filter((a) => {
       if (showOnlyEnabled && !a.enabled) {
         return false;
       }
@@ -56,7 +65,7 @@ const Achievements: FC<{
           .search(debouncedSearchCriteria.toUpperCase()) == -1
       );
     });
-  }, [debouncedSearchCriteria]);
+  }, [debouncedSearchCriteria, a, showOnlyEnabled]);
 
   return (
     <>
@@ -155,6 +164,41 @@ const Achievements: FC<{
       />
     </>
   );
-};
+}
 
-export default Achievements;
+const enhance = withObservables(
+  [],
+  ({ database }: { database: Database }) => {
+    return {
+      achievements: database
+        .get<Achievement>('achievements')
+        .query()
+        .observeWithColumns([
+          'name',
+          'points',
+          'category_id',
+          'photo',
+          'enabled'
+        ])
+        .pipe(
+          map((as: Achievement[]) =>
+            as.sort((a, b) => b.points - a.points)
+          )
+        ),
+      categories: database
+        .get<AchievementCategory>('achievement_categories')
+        .query()
+        .observeWithColumns(['name'])
+    };
+  }
+);
+
+const A = withDatabase(enhance(Achievements));
+
+export default function () {
+  return (
+    <DatabaseProvider database={db.get}>
+      <A />
+    </DatabaseProvider>
+  );
+}

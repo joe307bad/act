@@ -34,7 +34,7 @@
     "start": "node dist/apps/api/main.js",
     "start:mobile": "nx serve mobile",
     "test": "nx test",
-    "tunnel": "adb reverse tcp:3000 tcp:3000 && adb reverse tcp:8081 tcp:8081 && adb reverse tcp:4000 tcp:4000 && adb reverse tcp:9090 tcp:9090",
+    "tunnel": "adb reverse tcp:8080 tcp:8080 && adb reverse tcp:3333 tcp:3333 && adb reverse tcp:3000 tcp:3000 && adb reverse tcp:8081 tcp:8081 && adb reverse tcp:4000 tcp:4000 && adb reverse tcp:9090 tcp:9090",
     "update": "nx migrate latest",
     "workspace-generator": "nx workspace-generator"
   },
@@ -62,7 +62,7 @@
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-picker/picker": "^1.16.3",
-    "@react-navigation/drawer": "^5.12.5",
+    "@react-navigation/drawer": "^6.0.8",
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/stack": "^6.2.0",
     "@rescript-react-native/paper": "git+https://github.com/joe307bad/paper.git#7094294a446eff99f9edf57bd30a09d96a04d0a2",
