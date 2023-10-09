@@ -178,15 +178,10 @@ function Selector<T extends BaseModel, C extends Category = null>(
     }
   }, [value]);
 
-  const { achievementsByCategory } = useGlobalContext();
-
   useEffect(() => {
     if (isEmpty(debouncedSearchCriteria)) {
       setHiddenOptions(new Set());
     } else {
-      const achievements = Array.from(
-        achievementsByCategory[1].get('all')?.values()
-      );
       setHiddenOptions(
         new Set(
           achievements

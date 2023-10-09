@@ -34,14 +34,11 @@ export const UserCheckins = () => {
   const theme = useTheme();
   const [selectedUser, setSelectedUser] = useState(currentUser.id);
   const {
-    achievementsByCategory,
     checkinsByUser,
     fullNamesByUser,
     checkinsById,
-    achievementsByCheckin,
     usersByCheckin
   } = useGlobalContext();
-  const achievementsById = achievementsByCategory[1].get('all');
   const [selectedAchievement, setSelectedAchievement] =
     useState<Achievement>();
   const [note, setNote] = useState('');

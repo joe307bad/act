@@ -79,9 +79,8 @@ export const TabbedListComponent: <
   const [items, setItems] = useState<Map<string, Achievement>>(
     new Map()
   );
-  const { achievementsByCategory, categoriesById } =
+  const { categoriesById } =
     useGlobalContext();
-  const [enabledAchievementsByCategory, _] = achievementsByCategory;
   const [itemsCounts, setItemsCounts] = useState<Map<string, number>>(
     new Map()
   );

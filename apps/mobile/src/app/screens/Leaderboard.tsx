@@ -111,15 +111,11 @@ type LeaderboardItemData = {
 
 export const Leaderboard: FC = () => {
   const {
-    achievementsByCategory,
-    achievementsByCheckin,
     checkinsByUser,
     categoriesById,
     fullNamesByUser,
     checkinsById
   } = useGlobalContext();
-
-  const achievementsById = achievementsByCategory[1].get('all');
 
   const [leaderboard, setLeaderboard] =
     useState<LeaderboardItemData[]>();
@@ -194,8 +190,6 @@ export const Leaderboard: FC = () => {
       setAchievementsByUser(abu);
     }
   }, [
-    achievementsByCategory,
-    achievementsByCheckin,
     checkinsByUser,
     categoriesById,
     fullNamesByUser

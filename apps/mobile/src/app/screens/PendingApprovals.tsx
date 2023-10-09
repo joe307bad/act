@@ -23,12 +23,9 @@ const PendingApprovalsComponent: FC<{
   >([]);
   const { setExcludedPendingApprovals } = useContext(HeaderContext);
   const {
-    achievementsByCategory,
-    achievementsByCheckin,
     fullNamesByUser,
     usersByCheckin
   } = useGlobalContext();
-  const [_, allAchievements] = achievementsByCategory;
   const achievements = allAchievements.get('all');
 
   useEffect(() => {
