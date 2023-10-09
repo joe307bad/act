@@ -1,18 +1,20 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "dist",
+    "strict": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "lib": ["dom", "esnext"],
     "moduleResolution": "node",
-    "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "strictPropertyInitialization": false,
     "baseUrl": ".",
     "paths": {
       "@act/data/rn": ["../../libs/data/rn/src"],
       "@act/data/core": ["../../libs/data/core/src"]
-    }
+    },
   },
   "files": [],
   "include": [],

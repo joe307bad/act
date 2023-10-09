@@ -20,5 +20,6 @@
       "@act/data/web": ["libs/data/web/src/index.ts"]
     }
   },
+  "files": [],
   "exclude": ["node_modules", "tmp"]
 }
