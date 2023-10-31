@@ -1,7 +1,6 @@
 open ReactNative
 open Stacks
 open Paper
-open ReactNavigation
 
 module AwesomeButton = {
   @module("../src/app/AwesomeButton") @react.component
@@ -27,7 +26,7 @@ module Entry = {
 
 module ActDrawer = {
   @module("../src/app/core/nav/Drawer.tsx") @react.component
-  external make: (~children: React.element) => React.element = "default"
+  external make: unit => React.element = "default"
 }
 
 module ActData = {
@@ -102,64 +101,6 @@ module Root = {
   })
   @react.component
   let make = () => {
-    let fontFamily = "Bebas-Regular"
-    let fonts = ThemeProvider.Theme.Fonts.configureFonts(
-      ThemeProvider.Theme.Fonts.make(
-        ~default=ThemeProvider.Theme.Fonts.platformFont(
-          ~regular={fontFamily: fontFamily, fontWeight: "normal"},
-          ~thin={fontFamily: fontFamily, fontWeight: "normal"},
-          ~medium={fontFamily: fontFamily, fontWeight: "normal"},
-          ~light={fontFamily: fontFamily, fontWeight: "normal"},
-        ),
-        ~ios=ThemeProvider.Theme.Fonts.platformFont(
-          ~regular={fontFamily: fontFamily, fontWeight: "normal"},
-          ~thin={fontFamily: fontFamily, fontWeight: "normal"},
-          ~medium={fontFamily: fontFamily, fontWeight: "normal"},
-          ~light={fontFamily: fontFamily, fontWeight: "normal"},
-        ),
-      ),
-    )
-
-    let animation = ThemeProvider.Theme.Animation.make(~scale=1.)
-    let roundness = 0
-    let dark = true
-    let colors = ThemeProvider.Theme.Colors.make(
-      ~primary="#470FF4",
-      ~accent="#87FF65",
-      ~background="#eae8ff",
-      ~backdrop="rgba(0, 0, 0, 0.33)",
-      ~disabled="#adacb5",
-      ~error="#c83e4d",
-      ~placeholder="#470FF4",
-      ~surface="white",
-      ~text="black",
-    )
-    let screens = Js.Dict.fromList(list{("Achievements", "Achievements/:id")})
-
-    let theme = ThemeProvider.Theme.make(~fonts, ~animation, ~dark, ~roundness, ~colors, ())
-    let {status} = ActData.useActAuth()
-    <FillView style={Style.style(~backgroundColor="#eae8ff", ())}>
-      <Native.NavigationContainer
-        linking={
-          prefixes: [`io.act.auth://${Platform.os === Platform.ios ? "" : "io.act.host/"}`],
-          config: {screens: screens},
-        }>
-        <ActDrawer>
-          {
-            // This approach of rendering the screens based on auth status throws a
-            // react navigation/keycloak redirect warning sayting "this redirect URI/component doesnst exist"
-            // because the component itself is not rendered due to this instance of pattern matching
-            switch status {
-            | Authenticated => <Screen name="Entry" component=EntryComponent.make />
-            | Unauthenticated =>
-              <Screen
-                name="Login" options={_ => options(~gestureEnabled=false, ())} component=Login.make
-              />
-            | _ => <Screen name="Pending" component=Pending.make />
-            }
-          }
-        </ActDrawer>
-      </Native.NavigationContainer>
-    </FillView>
+    <FillView style={Style.style(~backgroundColor="#eae8ff", ())}> <ActDrawer /> </FillView>
   }
 }

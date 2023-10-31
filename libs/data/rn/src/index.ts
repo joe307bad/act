@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { useContext } from 'react';
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 import { registryFactory, schemaAndMigrations } from '@act/data/core';
-import KeycloakProvider, { AuthContext } from './KeycloakProvider';
+import KeycloakProvider, { AuthContext, AuthStatus } from './KeycloakProvider';
 import Config from 'react-native-config';
 import {
   useEnvironment,
@@ -32,5 +32,6 @@ export {
   useEnvironment,
   EnvironmentProvider,
   useSync,
-  SyncProvider
+  SyncProvider,
+  AuthStatus
 };

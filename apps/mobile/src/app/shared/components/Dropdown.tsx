@@ -1,4 +1,6 @@
-import React, { useRef } from 'react';
+// @ts-nocheck
+// TODO typings for RNPickerSelect
+import React from 'react';
 import { TouchableRipple, useTheme } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';

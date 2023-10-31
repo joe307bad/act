@@ -61,6 +61,7 @@
     "react-native-image-picker": "*",
     "react-native-permissions": "*",
     "react-native-fast-image": "*",
-    "@react-navigation/elements": "*"
+    "@react-navigation/elements": "*",
+    "memoize-one": "*"
   }
 }

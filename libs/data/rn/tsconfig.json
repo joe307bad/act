@@ -2,7 +2,8 @@
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "esModuleInterop": true,
-    "jsx": "react-native"
+    "jsx": "react-native",
+    "downlevelIteration": true
   },
   "files": [],
   "include": [],

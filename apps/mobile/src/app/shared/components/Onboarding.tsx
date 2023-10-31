@@ -6,7 +6,7 @@ import {
   Headline,
   TouchableRipple
 } from 'react-native-paper';
-import { Text, Platform } from 'react-native';
+import { Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AwesomeButtonSmall } from '../../AwesomeButton';
 import {
@@ -36,10 +36,9 @@ const Onboarding = () => {
   const theme = useTheme();
   const [showEnvironementDetails, setShowEnvironmentDetails] =
     useState(false);
-  const [syncStatus, setSyncStatus] =
-    useState<'SUCCESS' | 'FAILURE' | 'PROCESSING' | 'INITIAL'>(
-      'INITIAL'
-    );
+  const [syncStatus, setSyncStatus] = useState<
+    'SUCCESS' | 'FAILURE' | 'PROCESSING' | 'INITIAL'
+  >('INITIAL');
 
   const { keycloak } = useKeycloak();
 

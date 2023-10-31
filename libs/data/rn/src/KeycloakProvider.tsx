@@ -35,10 +35,13 @@ export const AuthContext = React.createContext<{
   setInitialSyncComplete?: (initialSyncComplete?: boolean) => void;
 }>({});
 
-const KeycloakProvider: FC = ({ children }) => {
+const KeycloakProvider: FC<{ children: JSX.Element }> = ({
+  children
+}) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const [forceLogout, setForceLogout] =
-    useState<boolean | undefined>();
+  const [forceLogout, setForceLogout] = useState<
+    boolean | undefined
+  >();
   const loggingOut = useRef(false);
 
   useEffect(() => {

@@ -10,18 +10,19 @@ import { useEnvironment } from './EnvironmentProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Bugsnag from '@bugsnag/react-native';
 
-export const SyncProviderContext =
-  createContext<{
-    sync: () => Promise<{ rejectSyncGracefully?: boolean }>;
-    lastPulledAt: number | undefined;
-    syncStatus: SyncStatus;
-  }>(undefined);
+export const SyncProviderContext = createContext<{
+  sync: () => Promise<{ rejectSyncGracefully?: boolean }>;
+  lastPulledAt: number | undefined;
+  syncStatus: SyncStatus;
+}>(undefined);
 
 export const useSync = () => useContext(SyncProviderContext);
 
 type SyncStatus = 'PROCESSING' | 'SUCCESS' | 'FAILURE' | 'INITIAL';
 
-export const SyncProvider: FC = ({ children }) => {
+export const SyncProvider: FC<{ children: JSX.Element }> = ({
+  children
+}) => {
   const syncProcessing = useRef(false);
   const { apiUrl } = useEnvironment();
   const [lastPulledAt, setLastPulledAt] = useState<number>();

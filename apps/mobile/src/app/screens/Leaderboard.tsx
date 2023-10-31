@@ -20,6 +20,13 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Chip from '../shared/components/Chip';
 import { UserAchievements } from '../achievement/UserAchievements';
 import { useGlobalContext } from '@act/data/rn';
+import { Achievement, CheckinAchievement } from '@act/data/core';
+import {
+  useAchievements,
+  useCheckinAchievements,
+  withCheckinAchievements,
+  withAchievements
+} from '../shared/services';
 
 const LeaderboardItem: FC<{
   name: string;
@@ -109,17 +116,19 @@ type LeaderboardItemData = {
   points: number;
 };
 
-export const Leaderboard: FC = () => {
+const LeaderboardComponent: FC = ({
+  checkinAchievements,
+  achievements
+}: {
+  checkinAchievements: CheckinAchievement[];
+  achievements: Achievement[];
+}) => {
   const {
-    achievementsByCategory,
-    achievementsByCheckin,
     checkinsByUser,
     categoriesById,
     fullNamesByUser,
     checkinsById
   } = useGlobalContext();
-
-  const achievementsById = achievementsByCategory[1].get('all');
 
   const [leaderboard, setLeaderboard] =
     useState<LeaderboardItemData[]>();
@@ -128,6 +137,10 @@ export const Leaderboard: FC = () => {
   const [selectedUser, setSelectedUser] = useState<string>();
   const [userAchievementsVisible, setUserAchievementsVisible] =
     useState(false);
+  const { getAchievementsByCheckinId } = useCheckinAchievements(
+    checkinAchievements
+  );
+  const { getAchievementById } = useAchievements(achievements);
 
   useEffect(() => {
     if (checkinsByUser.size > 0) {
@@ -143,7 +156,7 @@ export const Leaderboard: FC = () => {
               checkins.keys()
             ).reduce((acc, checkinId) => {
               const achievementsForCheckin =
-                achievementsByCheckin.get(checkinId);
+                getAchievementsByCheckinId(checkinId);
 
               const checkinApproved =
                 checkinsById.get(checkinId)?.approved;
@@ -152,29 +165,31 @@ export const Leaderboard: FC = () => {
                 return acc;
               }
 
-              const totalForAchievements = Array.from(
-                achievementsForCheckin
-              ).reduce((accc, [achievementId, count]) => {
-                const achievement =
-                  achievementsById?.get(achievementId);
-                if (!achievement) {
-                  return accc;
-                }
+              const totalForAchievements =
+                achievementsForCheckin.reduce(
+                  (accc, { achievementId, count }) => {
+                    const achievement =
+                      getAchievementById(achievementId);
+                    if (!achievement) {
+                      return accc;
+                    }
 
-                const userAlreadyHasAchievement =
-                  userAchievements.get(achievementId);
+                    const userAlreadyHasAchievement =
+                      userAchievements.get(achievementId);
 
-                if (userAlreadyHasAchievement) {
-                  userAchievements.set(
-                    achievementId,
-                    userAlreadyHasAchievement + count
-                  );
-                } else {
-                  userAchievements.set(achievementId, count);
-                }
+                    if (userAlreadyHasAchievement) {
+                      userAchievements.set(
+                        achievementId,
+                        userAlreadyHasAchievement + count
+                      );
+                    } else {
+                      userAchievements.set(achievementId, count);
+                    }
 
-                return accc + achievement.points * count;
-              }, 0);
+                    return accc + achievement.points * count;
+                  },
+                  0
+                );
               return acc + totalForAchievements;
             }, 0);
             acc.achievementsByUser.set(userId, userAchievements);
@@ -194,8 +209,8 @@ export const Leaderboard: FC = () => {
       setAchievementsByUser(abu);
     }
   }, [
-    achievementsByCategory,
-    achievementsByCheckin,
+    getAchievementsByCheckinId,
+    getAchievementById,
     checkinsByUser,
     categoriesById,
     fullNamesByUser
@@ -238,3 +253,7 @@ export const Leaderboard: FC = () => {
     </>
   );
 };
+
+export const Leaderboard = withAchievements(
+  withCheckinAchievements(LeaderboardComponent)
+);
