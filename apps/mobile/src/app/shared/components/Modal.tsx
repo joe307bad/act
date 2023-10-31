@@ -65,6 +65,7 @@ type ModalProps = {
   showEntireHeadline?: boolean;
   disableSubmit?: boolean;
   thumbnail?: string;
+  children: JSX.Element | JSX.Element[];
 };
 const Modal: FC<ModalProps> = ({
   visible,

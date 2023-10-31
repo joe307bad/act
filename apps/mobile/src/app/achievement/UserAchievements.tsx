@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import Modal from '../shared/components/Modal';
 import { Rows, Row, Box } from '@mobily/stacks';
 import { AchievementRowLite } from './AchievementRowLite';
@@ -6,16 +6,27 @@ import { FlatList } from 'react-native';
 import { Surface } from 'react-native-paper';
 import { Dropdown } from '../shared/components/Dropdown';
 import { useGlobalContext } from '@act/data/rn';
+import { Achievement } from '@act/data/core';
+import * as services from '../shared/services';
+import { useAchievements } from '../shared/services';
 
 const UserAchievementsTabbedList: FC<{
+  achievements: Achievement[];
   userAchievementCounts: Map<string, number>;
   setSelectedInfo: (title: string, description: string) => void;
-}> = ({ userAchievementCounts, setSelectedInfo }) => {
+}> = ({
+  achievements: allAchievements,
+  userAchievementCounts,
+  setSelectedInfo
+}) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const { achievementsByCategory, categoriesById } =
-    useGlobalContext();
-  const achievements =
-    achievementsByCategory[1].get(selectedCategory);
+  const { categoriesById } = useGlobalContext();
+  const { getAchievementsByCategory } =
+    useAchievements(allAchievements);
+  const achievements = useMemo(
+    () => getAchievementsByCategory(selectedCategory),
+    [selectedCategory]
+  );
 
   return (
     <Rows>
@@ -35,31 +46,22 @@ const UserAchievementsTabbedList: FC<{
       </Row>
       <Row>
         <Box padding={2} paddingBottom={0} paddingTop={0}>
-          {achievements && (
+          {achievements.length > 0 && (
             <FlatList
-              data={Array.from(achievements).filter(
-                ([achievementId]) =>
-                  userAchievementCounts.has(achievementId)
+              data={achievements.filter((a) =>
+                userAchievementCounts.has(a.id)
               )}
               renderItem={({ item }) => {
-                const [achievementId, count] = item;
-                const achievement = achievements.get(achievementId);
+                const { id, name, description } = item;
                 return (
                   <AchievementRowLite
-                    item={achievement}
-                    fixedCount={userAchievementCounts.get(
-                      achievementId
-                    )}
-                    onPress={() =>
-                      setSelectedInfo(
-                        achievement.name,
-                        achievement.description
-                      )
-                    }
+                    item={item}
+                    fixedCount={userAchievementCounts.get(id)}
+                    onPress={() => setSelectedInfo(name, description)}
                   />
                 );
               }}
-              keyExtractor={([id]) => id}
+              keyExtractor={({ id }) => id}
             />
           )}
         </Box>
@@ -68,13 +70,15 @@ const UserAchievementsTabbedList: FC<{
   );
 };
 
-export const UserAchievements: FC<{
+export const UserAchievementsComponent: FC<{
+  achievements: Achievement[];
   userAchievementCounts: Map<string, number>;
   totalPoints?: number;
   userId?: string;
   onDismiss: () => void;
   visible?: boolean;
 }> = ({
+  achievements,
   userAchievementCounts,
   totalPoints,
   userId,
@@ -102,6 +106,7 @@ export const UserAchievements: FC<{
     >
       {userId && (
         <UserAchievementsTabbedList
+          achievements={achievements}
           userAchievementCounts={userAchievementCounts}
           setSelectedInfo={(title, description) =>
             setSelectedInfo({ name: title, description })
@@ -111,3 +116,7 @@ export const UserAchievements: FC<{
     </Modal>
   );
 };
+
+export const UserAchievements = services.withAchievements(
+  UserAchievementsComponent
+);

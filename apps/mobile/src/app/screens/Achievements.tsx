@@ -17,12 +17,7 @@ import { Dropdown } from '../shared/components/Dropdown';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Switch } from '../shared/components/Switch';
 import { isEmpty } from 'lodash';
-import withObservables from '@nozbe/with-observables';
-import DatabaseProvider, {
-  withDatabase
-} from '@nozbe/watermelondb/DatabaseProvider';
-import { map } from 'rxjs/operators';
-import { Database } from '@nozbe/watermelondb';
+import { withAchievements } from '../shared/services';
 
 function Achievements({
   achievements: a,
@@ -166,39 +161,4 @@ function Achievements({
   );
 }
 
-const enhance = withObservables(
-  [],
-  ({ database }: { database: Database }) => {
-    return {
-      achievements: database
-        .get<Achievement>('achievements')
-        .query()
-        .observeWithColumns([
-          'name',
-          'points',
-          'category_id',
-          'photo',
-          'enabled'
-        ])
-        .pipe(
-          map((as: Achievement[]) =>
-            as.sort((a, b) => b.points - a.points)
-          )
-        ),
-      categories: database
-        .get<AchievementCategory>('achievement_categories')
-        .query()
-        .observeWithColumns(['name'])
-    };
-  }
-);
-
-const A = withDatabase(enhance(Achievements));
-
-export default function () {
-  return (
-    <DatabaseProvider database={db.get}>
-      <A />
-    </DatabaseProvider>
-  );
-}
+export default withAchievements(Achievements);

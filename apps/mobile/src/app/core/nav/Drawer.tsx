@@ -1,31 +1,38 @@
 import React, { FC, useEffect, useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { Platform, ScrollView, Text, View } from 'react-native';
 import {
-  List,
-  useTheme,
   Button,
+  Headline,
+  List,
   Title,
-  Headline
+  useTheme
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   createDrawerNavigator,
-  DrawerContentComponentProps,
-  DrawerContentOptions
+  DrawerContentComponentProps
 } from '@react-navigation/drawer';
 import { AwesomeButtonMedium } from '../../AwesomeButton';
-import db, { useActAuth, useSettings, useSync } from '@act/data/rn';
+import {
+  useActAuth,
+  useSettings,
+  useSync,
+  AuthStatus
+} from '@act/data/rn';
 import { Box, Column, Columns, Stack } from '@mobily/stacks';
 import { useKeycloak } from '@react-keycloak/native';
 import KeycloakReactNativeClient from '@react-keycloak/native/lib/typescript/src/keycloak/client';
 import { formatTimestamp } from '../formatTimestamp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SyncStatus } from '../../shared/components/SyncStatus';
+import { NavigationContainer } from '@react-navigation/native';
+import Entry from '../../Entry';
+import Onboarding from '../../shared/components/Onboarding';
 
 MaterialCommunityIcons.loadFont();
 
 const DrawerList: FC<
-  DrawerContentComponentProps<DrawerContentOptions> & {
+  DrawerContentComponentProps & {
     theme: ReactNativePaper.Theme;
     keycloak: KeycloakReactNativeClient;
     setForceLogout: (forceLogout: boolean) => void;
@@ -297,25 +304,49 @@ const DrawerList: FC<
 
 const D = createDrawerNavigator();
 
-const Drawer = ({ children }) => {
+const Drawer = () => {
   const theme = useTheme();
   const { keycloak } = useKeycloak();
-  const { setForceLogout } = useActAuth();
+  const { setForceLogout, status } = useActAuth();
   return (
-    <D.Navigator
-      overlayColor="transparent"
-      drawerPosition="right"
-      drawerContent={(props) => (
-        <DrawerList
-          {...props}
-          theme={theme}
-          keycloak={keycloak}
-          setForceLogout={setForceLogout}
-        />
-      )}
+    <NavigationContainer
+      linking={{
+        prefixes: [
+          `io.act.auth://${
+            Platform.OS === 'ios' ? '' : 'io.act.host/'
+          }`
+        ],
+        config: { screens: { Achievements: 'Achievements/*' } }
+      }}
     >
-      {children}
-    </D.Navigator>
+      <D.Navigator
+        drawerContent={(props) => (
+          <DrawerList
+            {...props}
+            theme={theme}
+            keycloak={keycloak}
+            setForceLogout={setForceLogout}
+          />
+        )}
+      >
+        {(() => {
+          console.log({ status });
+          switch (status) {
+            case AuthStatus.Authenticated:
+              return <D.Screen name="Entry" component={Entry} />;
+            case AuthStatus.Unauthenticated:
+              return <D.Screen name="Login" component={Onboarding} />;
+            case AuthStatus.Pending:
+              return (
+                <D.Screen
+                  name="Pending"
+                  component={() => <Headline>{''}</Headline>}
+                />
+              );
+          }
+        })()}
+      </D.Navigator>
+    </NavigationContainer>
   );
 };
 

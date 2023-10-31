@@ -20,13 +20,8 @@ import withObservables from '@nozbe/with-observables';
 import { map } from 'rxjs/operators';
 
 type GlobalContext = {
-  achievementsByCategory: [
-    Map<string, Map<string, Achievement>>,
-    Map<string, Map<string, Achievement>>
-  ];
   categoriesById: Map<string, AchievementCategory>;
   checkinsByUser: Map<string, Map<string, string>>;
-  achievementsByCheckin: Map<string, Map<string, number>>;
   fullNamesByUser: Map<string, string>;
   checkinsById: Map<string, Checkin>;
   usersByCheckin: Map<string, string[]>;
@@ -35,10 +30,8 @@ type GlobalContext = {
 };
 
 const GlobalContext = createContext<Partial<GlobalContext>>({
-  achievementsByCategory: [new Map(), new Map()],
   categoriesById: new Map(),
   checkinsByUser: new Map(),
-  achievementsByCheckin: new Map(),
   fullNamesByUser: new Map(),
   checkinsById: new Map(),
   usersByCheckin: new Map(),
@@ -49,16 +42,15 @@ const GlobalContext = createContext<Partial<GlobalContext>>({
 export const useGlobalContext = () => useContext(GlobalContext);
 
 const GlobalContextProviderComponent: FC<{
-  achievements: Achievement[];
-  categories: AchievementCategory[];
+  categories: { name: string; id: string }[];
   checkins: Checkin[];
   users: User[];
   checkinAchievements: CheckinAchievement[];
   checkinUsers: CheckinUser[];
   uploads: string[];
+  children: JSX.Element;
 }> = ({
   categories,
-  achievements,
   children,
   checkinAchievements,
   checkinUsers,
@@ -66,21 +58,11 @@ const GlobalContextProviderComponent: FC<{
   users,
   uploads
 }) => {
-  const [achievementsByCategory, setAchievementsByCategory] =
-    useState<
-      [
-        Map<string, Map<string, Achievement>>,
-        Map<string, Map<string, Achievement>>
-      ]
-    >([new Map(), new Map()]);
   const [categoriesById, setCategoriesById] = useState<
     Map<string, AchievementCategory>
   >(new Map());
   const [checkinsByUser, setCheckinsByUser] = useState<
     Map<string, Map<string, string>>
-  >(new Map());
-  const [achievementsByCheckin, setAchievementsByCheckins] = useState<
-    Map<string, Map<string, number>>
   >(new Map());
   const [fullNamesByUser, setFullNamesByUser] = useState<
     Map<string, string>
@@ -158,8 +140,6 @@ const GlobalContextProviderComponent: FC<{
           usersByCheckin: new Map()
         }
       );
-
-      setAchievementsByCheckins(parsedCheckins.achievementsByCheckin);
       setCheckinsById(parsedCheckins.checkinsById);
       setUsersByCheckin(parsedCheckins.usersByCheckin);
 
@@ -221,64 +201,10 @@ const GlobalContextProviderComponent: FC<{
     return acc;
   };
 
-  useEffect(() => {
-    const a = achievements.reduce(
-      (
-        acc: [
-          Map<string, Map<string, Achievement>>,
-          Map<string, Map<string, Achievement>>
-        ],
-        achievement: Achievement
-      ) => {
-        let [enabled, all] = acc;
-
-        (all = addToCategory(achievement, false, 'all', all)),
-          (enabled = addToCategory(
-            achievement,
-            true,
-            'all',
-            enabled
-          ));
-
-        if (achievement.category?.id === null) {
-          return [
-            addToCategory(achievement, true, 'noCategory', enabled),
-            addToCategory(achievement, false, 'noCategory', all)
-          ];
-        }
-
-        return [
-          addToCategory(
-            achievement,
-            true,
-            achievement.category.id || undefined,
-            enabled
-          ),
-          addToCategory(
-            achievement,
-            false,
-            achievement.category.id || undefined,
-            all
-          )
-        ];
-      },
-      [new Map(), new Map()]
-    );
-
-    setAchievementsByCategory(
-      a as [
-        Map<string, Map<string, Achievement>>,
-        Map<string, Map<string, Achievement>>
-      ]
-    );
-  }, [achievements]);
-
   return (
     <GlobalContext.Provider
       value={{
         checkinsByUser,
-        achievementsByCheckin,
-        achievementsByCategory,
         categoriesById,
         fullNamesByUser,
         checkinsById,
@@ -293,17 +219,6 @@ const GlobalContextProviderComponent: FC<{
 };
 
 export const GlobalContextProvider = withObservables([''], () => ({
-  achievements: db.get
-    .get<Achievement>('achievements')
-    .query()
-    .observeWithColumns([
-      'name',
-      'points',
-      'category_id',
-      'photo',
-      'enabled'
-    ])
-    .pipe(map((as) => as.sort((a, b) => b.points - a.points))),
   categories: db.get
     .get<AchievementCategory>('achievement_categories')
     .query()
@@ -329,7 +244,7 @@ export const GlobalContextProvider = withObservables([''], () => ({
     .query()
     .observe()
     .pipe(
-      map((us) =>
+      map((us: Upload[]) =>
         us
           .sort((a, b) => b.createdAt - a.createdAt)
           .map((u) => u.name)

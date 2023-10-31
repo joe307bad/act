@@ -9,7 +9,10 @@ import {
 import Bugsnag from '@bugsnag/react-native';
 import Config from 'react-native-config';
 import { StacksProvider } from '@mobily/stacks';
-import { configureFonts, Provider } from 'react-native-paper';
+import {
+  configureFonts,
+  Provider
+} from 'react-native-paper';
 import { Root } from '../../re/Index.bs';
 
 if (Config.ENABLE_BUGSNAG) {

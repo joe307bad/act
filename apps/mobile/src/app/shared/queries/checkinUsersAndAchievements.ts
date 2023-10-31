@@ -9,7 +9,7 @@ export const checkinUsersAndAchievements = () => ({
     .query()
     .observeWithColumns(['approved'])
     .pipe(
-      map((ucs) =>
+      map((ucs: CheckinUser[]) =>
         ucs
           .sort((a, b) => b.createdAt - a.createdAt)
           .reduce((acc, item) => {
@@ -30,7 +30,7 @@ export const checkinUsersAndAchievements = () => ({
     .query()
     .observeWithColumns(['count'])
     .pipe(
-      map((cas) =>
+      map((cas: CheckinAchievement[]) =>
         cas.reduce((acc, item) => {
           const exists = acc.get(item.checkinId);
           if (exists) {

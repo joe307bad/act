@@ -22,7 +22,9 @@ export const EnvironmentContext = createContext<EnvironmentManager>(
 
 export const useEnvironment = () => useContext(EnvironmentContext);
 
-export const EnvironmentProvider: FC = ({ children }) => {
+export const EnvironmentProvider: FC<{ children: JSX.Element }> = ({
+  children
+}) => {
   const [environmentManager, setEnvironmentManager] =
     useState<EnvironmentManager>();
 

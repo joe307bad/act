@@ -7,6 +7,7 @@ import React, {
   ReactElement,
   SetStateAction,
   useEffect,
+  useMemo,
   useState
 } from 'react';
 import { Option } from './Selector/Option';
@@ -17,6 +18,7 @@ import { Rows, Row, Box } from '@mobily/stacks';
 
 import { Dropdown } from './Dropdown';
 import { useGlobalContext } from '@act/data/rn';
+import { useAchievements, withAchievements } from '../services';
 export type TabbedListProps<T, C> = {
   optionTitleProperty: string;
   optionSubtitleProperty?: string;
@@ -65,7 +67,9 @@ export const TabbedListComponent: <
   T extends BaseModel,
   C extends Category
 >(
-  p: PropsWithChildren<TabbedListProps<T, C>>
+  p: PropsWithChildren<TabbedListProps<T, C>> & {
+    achievements: Achievement[];
+  }
 ) => ReactElement = ({
   onChange,
   initialSelected = new Map(),
@@ -74,14 +78,13 @@ export const TabbedListComponent: <
   hiddenOptions,
   showInfoButton,
   setSelectedInfo,
-  onOptionSelect
+  onOptionSelect,
+  achievements: allAchievements
 }) => {
   const [items, setItems] = useState<Map<string, Achievement>>(
     new Map()
   );
-  const { achievementsByCategory, categoriesById } =
-    useGlobalContext();
-  const [enabledAchievementsByCategory, _] = achievementsByCategory;
+  const { categoriesById } = useGlobalContext();
   const [itemsCounts, setItemsCounts] = useState<Map<string, number>>(
     new Map()
   );
@@ -121,8 +124,12 @@ export const TabbedListComponent: <
     }
   }, [items]);
 
-  const achievements =
-    enabledAchievementsByCategory.get(selectedCategory);
+  const { getAchievementsByCategory } =
+    useAchievements(allAchievements);
+  const achievements = useMemo(
+    () => getAchievementsByCategory(selectedCategory),
+    [selectedCategory]
+  );
   return (
     <Rows>
       <Row height="content">
@@ -145,8 +152,8 @@ export const TabbedListComponent: <
             <FlatList
               data={
                 hiddenOptions.size === 0
-                  ? Array.from(achievements.values())
-                  : Array.from(achievements.values()).filter(
+                  ? achievements
+                  : achievements.filter(
                       (a) => !hiddenOptions.has(a.id)
                     )
               }
@@ -200,4 +207,4 @@ export const TabbedListComponent: <
   );
 };
 
-export const TabbedList = memo(TabbedListComponent);
+export const TabbedList = memo(withAchievements(TabbedListComponent));

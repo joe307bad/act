@@ -52,8 +52,10 @@ type CommonSelectorProps = Partial<{
   type?: 'TABBED_LIST' | 'OPTIONS_LIST';
 }>;
 
-type TabbedSelectorProps<T extends BaseModel, C extends Category> =
-  CommonSelectorProps & TLP<T, C>;
+type TabbedSelectorProps<
+  T extends BaseModel,
+  C extends Category
+> = CommonSelectorProps & TLP<T, C>;
 
 type RegularSelectorProps<T> = CommonSelectorProps & {
   data?: T[];
@@ -70,7 +72,7 @@ function Selector<T extends BaseModel>(
 function Selector<T extends BaseModel, C extends Category = null>(
   props: CommonSelectorProps &
     TabbedSelectorProps<T, C> &
-    RegularSelectorProps<T>
+    RegularSelectorProps<T> & { achievements: Achievement[] }
 ) {
   const {
     data,
@@ -84,13 +86,12 @@ function Selector<T extends BaseModel, C extends Category = null>(
     fullHeight,
     selectable,
     showCountDropdown,
-    defaultSelected,
     showPointCount,
-    inlineTags,
     showInfoButton,
     onSelectorChange,
     value,
-    type = 'OPTIONS_LIST'
+    type = 'OPTIONS_LIST',
+    achievements
   } = props;
   const theme = useTheme();
   const { fullNamesByUser } = useGlobalContext();
@@ -178,15 +179,10 @@ function Selector<T extends BaseModel, C extends Category = null>(
     }
   }, [value]);
 
-  const { achievementsByCategory } = useGlobalContext();
-
   useEffect(() => {
     if (isEmpty(debouncedSearchCriteria)) {
       setHiddenOptions(new Set());
     } else {
-      const achievements = Array.from(
-        achievementsByCategory[1].get('all')?.values()
-      );
       setHiddenOptions(
         new Set(
           achievements
@@ -256,9 +252,13 @@ function Selector<T extends BaseModel, C extends Category = null>(
             defaultSelected={value}
             onChange={onOptionsListChange}
             data={data as T[]}
+            // @ts-ignore
+            // TODO fix types
             optionSubtitleProperty={
               (optionSubtitleProperty as keyof T) || ''
             }
+            // @ts-ignore
+            // TODO fix types
             optionTitleProperty={optionTitleProperty as keyof T}
             selectable={selectable}
             showCountDropdown={showCountDropdown}

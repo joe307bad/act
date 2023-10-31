@@ -3,7 +3,7 @@ import {
   Surface,
   TouchableRipple
 } from 'react-native-paper';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Column,
@@ -26,24 +26,44 @@ import { isEmpty } from 'lodash';
 import { Dropdown } from '../shared/components/Dropdown';
 import { formatTimestamp } from '../core/formatTimestamp';
 import { SingleCheckin } from '../checkin/SingleCheckin';
-import { Achievement, CreateCheckin } from '@act/data/core';
+import {
+  Achievement,
+  CheckinAchievement,
+  CreateCheckin
+} from '@act/data/core';
 import { CheckinSuccess } from '../checkin/CheckinSuccess';
+import * as services from '../shared/services';
+import {
+  useAchievements,
+  useCheckinAchievements
+} from '../shared/services';
 
-export const UserCheckins = () => {
+const UserCheckinsComponent = ({
+  achievements,
+  checkinAchievements
+}: {
+  checkinAchievements: CheckinAchievement[];
+  achievements: Achievement[];
+}) => {
   const { currentUser } = useActAuth();
   const theme = useTheme();
   const [selectedUser, setSelectedUser] = useState(currentUser.id);
   const {
-    achievementsByCategory,
     checkinsByUser,
     fullNamesByUser,
     checkinsById,
-    achievementsByCheckin,
     usersByCheckin
   } = useGlobalContext();
-  const achievementsById = achievementsByCategory[1].get('all');
   const [selectedAchievement, setSelectedAchievement] =
-    useState<Achievement>();
+    useState<string>();
+  const { getAchievementById } = useAchievements(achievements);
+  const { getAchievementsByCheckinId } = useCheckinAchievements(
+    checkinAchievements
+  );
+  const achievement = useMemo(
+    () => getAchievementById(selectedAchievement),
+    [selectedAchievement]
+  );
   const [note, setNote] = useState('');
   const [confirmedCheckin, setConfirmedCheckin] =
     useState<CreateCheckin>();
@@ -64,19 +84,17 @@ export const UserCheckins = () => {
 
   const RenderItem = ({ item }) => {
     const [checkinId, checkinUserId] = item;
-    const achievements = achievementsByCheckin.get(checkinId);
     const checkin = checkinsById.get(checkinId);
+    const achievements = getAchievementsByCheckinId(checkinId);
     const usersForCheckin = usersByCheckin.get(checkinId);
 
     const total = !achievements
       ? 0
-      : Array.from(achievements).reduce(
-          (acc, [achievementId, count]) => {
-            const achievement = achievementsById?.get(achievementId);
-            if (!achievement) {
+      : achievements.reduce(
+          (acc, { achievementId, count, points }) => {
+            if (!achievementId) {
               return acc;
             }
-            const { points } = achievement;
             return (acc += points * count);
           },
           0
@@ -136,23 +154,12 @@ export const UserCheckins = () => {
             </Row>
             {achievements && (
               <Row>
-                {Array.from(achievements)
+                {achievements
                   .sort((a, b) => {
-                    const prevAachievement = achievementsById?.get(
-                      b[0]
-                    );
-                    const achievement = achievementsById?.get(a[0]);
-                    if (!prevAachievement || !achievement) {
-                      return 0;
-                    }
-                    return (
-                      prevAachievement.points - achievement.points
-                    );
+                    return a.points - b.points;
                   })
-                  .reduce((acc, [achievementId, count], i) => {
-                    const achievement =
-                      achievementsById?.get(achievementId);
-                    if (!achievement) {
+                  .reduce((acc, { achievementId, count }, i) => {
+                    if (!achievementId) {
                       return acc;
                     }
                     return [
@@ -160,7 +167,7 @@ export const UserCheckins = () => {
                       <TouchableRipple
                         key={i}
                         onPress={() =>
-                          setSelectedAchievement(achievement)
+                          setSelectedAchievement(achievementId)
                         }
                       >
                         <Columns
@@ -275,16 +282,16 @@ export const UserCheckins = () => {
       </Rows>
       <SingleCheckin
         visible={!!selectedAchievement && !confirmedCheckin}
-        achievement={selectedAchievement}
+        achievement={achievement}
         disableSubmit={syncStatus === 'PROCESSING'}
         note={note}
         setNote={setNote}
         onConfirm={async (note: string) => {
           const checkin: CreateCheckin = {
-            achievementCounts: new Map([[selectedAchievement.id, 1]]),
+            achievementCounts: new Map([[selectedAchievement, 1]]),
             insertProps: { note },
             isAdmin: currentUser.admin,
-            points: selectedAchievement.points,
+            points: achievement.points,
             users: [currentUser.id]
           };
 
@@ -312,3 +319,7 @@ export const UserCheckins = () => {
     </>
   );
 };
+
+export const UserCheckins = services.withAchievements(
+  services.withCheckinAchievements(UserCheckinsComponent)
+);

@@ -8,6 +8,8 @@ const AwesomeButton = ({ children, onPress, disabled = false }) => {
   //ALUMINUM: '#676B6D',
   //DARK_ALUMINUM: '#525557',
   return (
+    // TODO ReallyAwesomeButton should have children prop
+    // @ts-ignore
     <ReallyAwesomeButton
       stretch
       backgroundColor={disabled ? '#676B6D' : colors.primary}
@@ -35,6 +37,8 @@ export const AwesomeButtonMedium = ({
   const { colors } = useTheme();
   const outlined = type === 'outlined';
   return (
+    // TODO ReallyAwesomeButton should have children prop
+    // @ts-ignore
     <ReallyAwesomeButton
       stretch
       backgroundColor={disabled ? '#676B6D' : colors.primary}
@@ -75,6 +79,8 @@ export const AwesomeButtonSmall = ({
   const { colors } = useTheme();
   const outlined = type === 'outlined';
   return (
+    // TODO ReallyAwesomeButton should have children prop
+    // @ts-ignore
     <ReallyAwesomeButton
       stretch
       springRelease={false}
