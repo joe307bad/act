@@ -1,0 +1,29 @@
+name: tsc
+on: [pull_request]
+
+jobs:
+  build:
+    name: compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+
+      - name: Compile ReScript
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: re:build
+          
+      - name: Compile mobile project
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: type-check:mobile
